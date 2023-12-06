@@ -1,0 +1,13 @@
+diff --color -rupN old/libvo/cgx_common.c new/libvo/cgx_common.c
+--- old/libvo/cgx_common.c	2023-08-09 23:02:49.292052159 +0200
++++ new/libvo/cgx_common.c	2023-08-09 22:53:08.181267984 +0200
+@@ -76,6 +76,9 @@ extern uint32 AppID;
+ extern struct ApplicationIFace *IApplication;
+ #endif
+ 
++//fullpath patch
++extern char fullpath_mplayer[1024];
++
+ #ifndef   DOS_RDARGS_H
+ #include <dos/rdargs.h>
+ #endif

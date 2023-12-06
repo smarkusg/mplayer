@@ -1,0 +1,235 @@
+diff --color -rupN old/README_AOS4 new/README_AOS4
+--- old/README_AOS4	2023-08-30 11:34:35.000000000 +0200
++++ new/README_AOS4	2023-09-14 14:11:39.243884002 +0200
+@@ -7,7 +7,7 @@ url: http://www.mplayerhq.hu
+ category: video/play
+ replaces: video/play/mickjt-mplayer.lha
+ requirements: AmigaOS 4.1 + Enhancer Software Core 2 (optional)
+-license: GNU
++license: GPL
+ minosversion: 4.1
+ distribute: yes
+ fileid: 10446
+@@ -40,10 +40,13 @@ Thanks also to pjs, sundown, K-L, AmigaS
+ Know problems:
+ ==============
+ 
+-* External windows have problems when opened while MPlayer is playing a video in fullscreen
+-* Stay paused if using MPlayer-GUI and paused outside of it
+-* vo_comp.c: Videos are not correctly centered on screen if opened into another seperated screen
+-* vo_cgx_wpa.c: Video scaling in driver need to be reimplemented
++* External windows in p96_pip/pip and wpa have problem when opening while MPlayer is playing a video in fullscreen
++* Incorrect display size when entering fullscreen if using custom AutoScroll dimensions on Workbench screen
++* Stay paused if using MPlayer-GUI and paused outside of it (pausing get_time_pos)
++* Wav audio files noises if using AHI output driver, they works fine with -ao sdl
++* SDL/GL windows cannot be deiconified from AppIcon if previously they were iconified from the Exchanger commodity
++* vo_comp.c: Videos are not correctly centered on screen if opened into another separated screen
++* vo_cgx_wpa.c: Video scaling support need to be reimplemented
+ * vo_pip.c: Fullscreen support need to be reimplemented
+ * vo_p96pip.c: Strange background color when starting a video, issue under investigation
+ * vo_p96pip.c: Problem with high resolution videos (es. 1920*1080 videos caused a big stripe in the right area of the video)
+@@ -53,15 +56,15 @@ Changelog:
+ ==========
+ 
+ MPlayer 1.5 (MPlayer 1.5) - MickJT, Marek, Javier and samo79 (xx.xx.2023)
+-	* Based on MPlayer 1.5 SVN-r38423 (FFmpeg 6.0)
++	* Based on MPlayer 1.5 SVN-r38435 (FFmpeg 6.0)
+ 	  From now on, the AmigaOS4 release will follow the official versioning scheme!
+-	* Compiled with GCC 11.2
+-	* Currently compiled with optimisation -O2
++	* Compiled with GCC 11.2 + LTO (currently compiled with optimisation -O2)
+ 	* Added support for va.library (VAAPI) providing hardware video decoding! (needs RadeonHD v5 / RadeonRX) WIP WIP
+-	* Added video's path in all availible video outputs (show file path in MPlayer window)
+-	* Added more video formats in ASL requester and reorder them alphabetically
+-	* Added gadgets for iconification and fullscreen
++	* Added support for append, now dragging more than one files will append them
+ 	* Added support for AmiUpdate (yes again!)
++	* Added video's path in all availible video outputs (show file path in MPlayer window)
++	* Added more audio/video formats in ASL requester and reorder them alphabetically
++	* Added gadgets for iconification and fullscreen in all availible video outputs
+ 	* Added "Iconify" option menu to iconify MPlayer from menu
+ 	* Added "Open subtitles" option menu to load the subtitles from MPlayer
+ 	* Added "Unload subtitles" option menu to unload the subtitles from MPlayer
+@@ -70,15 +73,16 @@ MPlayer 1.5 (MPlayer 1.5) - MickJT, Mare
+ 	* Added "Record stream" option menu to record network streams WIP
+ 	* Added "Aspect Ratio" option menu to manage the aspect ratio of the video playing WIP
+ 	* Added "MPlayer-GUI" option menu to open MPlayer-GUI from MPlayer
+-	* Added Polish and Spanish catalogs (credits: Marek and Javier)
++	* Added catalogs for Polish, German and Spanish (credits: Marek, Maijestro and Javier)
+ 	* Fixed support for AppWindow, now drag and drop of files over AmiDock works (thx Javier!)
+ 	* Fixed crash on AltiVec version if launched on non AltiVec CPUs
+ 	* Fixed crash on quit in the GL video outputs
+ 	* PIP: Added support for menu
+ 	* Disabled some more debug outputs that was printing to shell
+-	* Separation of video outputs for SM502 G4 vo_sdl_sm502.c (useful for QEMU emulation)
++	* MPlayer can now be controlled with the Exchanger commodity (show, hide and quit)
++	* Separation of video outputs for SM502 G4 vo_sdl_sm502.c (useful in QEMU emulation)
+ 	* Made screen/window titles standard in all availible video outputs
+-	* Made drag and drop/append standard in all availible video outputs
++	* Made drag and drop standard in all availible video outputs
+ 	* Improved RegisterApplication support
+ 	* New banner and iconsets (thx Mason!)
+ 	* A lot of bugfixes and code cleanup
+@@ -93,7 +97,7 @@ MPlayer 1.0.2 (MPlayer 1.4) - MickJT & G
+ 	  - Added MenuClass support if available (AmigaOS 4.1 FE required)
+ 	  - Added AISS images to MenuClass if available (TBIMAGES: assign required)
+ 	  - Added locale/catalog support
+-	  - Added Italian translation (samo79)
++	  - Added Italian catalog (samo79)
+ 	  - Added GCC version in InfoWindow about window
+ 	  - Added __GNUC__ and #if HAVE_ALTIVEC in version.sh
+ 	  - Use of MenuImageSize environment variable to specify AISS picture size (SETENV SAVE MenuImageSize 16)
+@@ -101,7 +105,7 @@ MPlayer 1.0.2 (MPlayer 1.4) - MickJT & G
+ 	  - Use of environment variable Disable_Banner_Images to disable about window banner (SETENV SAVE Disable_Banner_Images 1)
+ 	  - Reenable AppWindow support to handle drop of files over the icon (*bugged)
+ 	  - Fixed new about window crash and avoid multiple openings
+-	  - When a window is still open, trying to open another window or to quit MPlayer blinks the screen
++	  - When a window is still opened, trying to open another window or quit MPlayer will blinks the screen
+ 	  - PrintMsg timeout is now set to 15 seconds instead of 10 seconds
+ 	  - MSG_Requester_Title_About for InfoWindow about window
+ 	  - Menu shortcuts modifications
+@@ -143,7 +147,7 @@ MPlayer 6.5.6 (MPlayer 1.1.1)
+ 	* Conf/input.conf now has mapped keys for dvdnav
+ 	* Menu, now as dvdnav option (you most disable cache in config to use this option)
+ 	* Lots of code missing in preinit() on p96_pip, hope this helps ;-)
+-	* Comp_yuv now has the same changes as vo_comp_yuv2
++	* Comp_yuv: Now has the same changes as vo_comp_yuv2
+ 	* Comp_yuv2: Extra pageflip when going in fullscreen or window, for low FPS videos
+ 	* P96_pip: Wrong BytesPerRow fix
+ 	* P96_pip: Replaced p96LockBitmap() with LockBitmap() (it's two jump's faster, I think)
+@@ -193,14 +197,14 @@ MPlayer 6.5 (MPlayer 1.1.1)
+ 
+ MPlayer 6.4 (MPlayer 1.1.1)
+ 	* Removed debug output from:
+-	  stream.c, cache2.c, mplayer.c, vo_comp_yuv2.c, vo_comp_yuv
++	  stream.c, cache2.c, mplayer.c, vo_comp_yuv.c, vo_comp_yuv2
+ 	* Formatted some text in:
+ 	  ao_ahi_dev.c
+ 	* Replaced PIP video output with P96_pip video output
+ 	* Fixed OSD for CGX_WPA
+ 	* Fixed SDL video output, window mode now is default
+-	* Added NODMA and NODRI option for comp_yuv and comp_yuv2
+-	* Fixed a bug in comp_yuv, colors where not copied correctly,
++	* Added NODMA and NODRI option for vo_comp_yuv and vo_comp_yuv2
++	* Fixed a bug in vo_comp_yuv, colors where not copied correctly
+ 	  If the picture was drawn by 16 pixels slices of the height,
+ 	  (y offset was ignored), instead of by frame or DRI
+ 	* Fixed ARexx dead lock issue (for MPlayer-GUI)
+@@ -211,13 +215,13 @@ MPlayer 6.3 (MPlayer 1.1.1)
+ 	  Now use MemCopyQuick() instead of MemCopy()
+ 
+ MPlayer 6.2 (MPlayer 1.1.1)
+-	* Fixed a bug that can crash MPlayer when its started in comp_yuv
+-	* Solved an audio/video sync problem with video by threading comp_yuv,
++	* Fixed a bug that can crash MPlayer when its started in vo_comp_yuv
++	* Solved an audio/video sync problem with video by threading vo_comp_yuv
+ 	  Because of the amount of data needed to process in the page_flip,
+ 	  plus the wait for vertical blanker in MPlayer slows down the video decoding,
+ 	  MPlayer can now use the CPU power it has more efficient, this can result in
+ 	  higher CPU load, but should improve playback on high definition video
+-	* New version of comp_yuv is comp_yuv2, I kept the old one for testing
++	* New version of vo_comp_yuv is now vo_comp_yuv2, I kept the old one for testing
+ 	  See -vo help, for more info
+ 	  Note: The extra complexity can make vo look slower on some benchmarks,
+ 	  vc speed should have increased in speed, (but benchmarks are unrealistic
+@@ -235,13 +239,13 @@ MPlayer 6.2 (MPlayer 1.1.1)
+ MPlayer 6.1 (MPlayer 1.1.1)
+ 	* Comp_yuv: Fixed green line on top of window/screen
+ 	* Fixed problem finding all screen modes
+-	* Tried to increase AHI buffer (hope audio gets better)
++	* Tried to increase the AHI buffer (hope audio gets better)
+ 	* Rewrote args for video outputs
+ 	  (vo:help now supported)
+ 	* Fixed support for multiple monitors
+ 	  vo:monitor=0 is for first monitor, 
+ 	  vo:monitor=1 is for second monitor
+-	* Comp_yuv, comp_yuv & cgx_wpa now respect monitor nr.
++	* Comp_yuv, comp & cgx_wpa now respect monitor nr.
+ 	  (Sorry don't think this can be done for overlay PIP / p96_pip)
+ 	* Comp_yuv: Now respects -monitoraspect command line argument
+ 	* Comp_yuv: Default monitor aspect is now taken for named public screen, 
+@@ -255,11 +259,11 @@ MPlayer 6.0 (MPlayer 1.1.1)
+ 	  (Most important replaced AAC codec, no more crashes)
+ 	* New FFmpeg 2.2
+ 	  See FFmpeg changelog for more informations
+-	* Fixed Direct Rendering (DR) support added to comp_yuv, some codecs will use DR,
++	* Fixed Direct Rendering (DR) support added to vo_comp_yuv, some codecs will use DR,
+ 	  this improve speed by moving less data around (some problems with subtitles)
+ 	* Fixed MPEG codec, so that DR works with interleaved yuv420p bitmaps
+ 	  (MPEG codec expects non interleaved yuv420p bitmaps and check bpr)
+-	* Added Prefetch buffer to prevent inefficiency in device IO of AmigaOS4
++	* Added Prefetch buffer to prevent inefficiency in IO device of AmigaOS4
+ 	  (This fixed slow DVD read speed)
+ 	* Ported AHI_DEV to version 1.1.1, changed timeing, and reduced buffer size
+ 	  (Done to fix lip sync issue)
+@@ -280,7 +284,7 @@ MPlayer 5.1 (MPlayer 1.0 RC5)
+ 	* Fixed screen Blanker
+ 	* Moved code to center window to gfx_common.c, this effects p96_pip, cgx_wpa and comp 
+ 	* Fixes to get MPlayer compiling with the newest SDK
+-	* Fix for ARexx ASync problem
++	* Fix for the ARexx ASync problem
+ 
+ MPlayer 4.2 (MPlayer 1.0 RC5)
+ 	* Fixed ARexx GetTimeLength
+@@ -291,8 +295,8 @@ MPlayer 4.1 (MPlayer 1.0 RC5)
+ 	* Fixed ARexx so it works while playing audio files
+ 	* Fixed ARexx so "Address MPlayer.1;VOLUME 100 ABS" works
+ 	* Fixed ARexx so you don't get error codes, changed to use result instead
+-	* ARexx now you get RC = -3 if command is not found
+-	* ARexx HELP now returns all commands MPlayer supports
++	* ARexx now it get RC = -3 if command is not found
++	* ARexx HELP now returns all commands that MPlayer supports
+ 
+ MPlayer 3.1 (MPlayer 1.0 RC5)
+ 	* Added aspect ratio for vo_comp
+@@ -324,7 +328,7 @@ MPlayer 1.0 (MPlayer 1.0 RC5)
+ 	* Fixed a lockup problem when closing MPlayer without a GUI, missing #ifdef
+ 	* Fixed a problem with vo_comp where graphics was zoomed in after resizing window
+ 	* Fixed a problem with vo_comp because FFmpeg was initialized wrong for this output driver
+-	* Purged vo_p96_pip removed all GUI stuff. (a bit broken now, but works, will be fixed in some other version)
++	* Purged vo_p96_pip removed all GUI stuff (a bit broken for now but works, it will be fixed in some other version)
+ 	* Renamed pip to p96_pip for compatibility
+ 
+ 
+@@ -342,11 +346,11 @@ MPlayer 1.0 RC3 for AmigaOS4 - Summer Ed
+ 	* Now it is possible to take screenshots of a movie by pressing 's'
+ 
+ MPlayer 1.0 RC3 for AmigaOS4 (1.04.2009)
+-	* Should be really faster than previous version (due to a faster FFmpeg...)
++	* Should be really faster than the previous version (due to a faster FFmpeg)
+ 	* Fixed fullscreen mouse pointer hide/show when click the mouse
+-	* Now if you press "c"...
++	* SDL: Now if you press 'c'...
+ 	* Fixed Fullscreen play
+-	* Updated to the latest version of MPlayer
++	* Updated to the latest CVS version of MPlayer
+ 	* Fixed ARexx port. Now the Daniel GUI should work ok
+ 	  - Thanks to Fab for his MorphOS port of MPlayer that is a lot enhanced and faster... :-)
+ 
+@@ -386,7 +390,7 @@ MPlayer 1.0 Pre8 Dirty Preview Experimen
+ 	* An ARexx port that is useful with the new Daniel's GUI
+ 	* Support for WMV3
+ 	* Using MPlayer 1.0 Pre8 (plus CVS changes) version. This include many new features and codecs. Look at their site (http://www.mplayerhq.hu)
+-	* Many endianess bug fixed on many formats
++	* Many endianess bug fixed on various formats
+ 	* Full internet streaming support
+ 	* A menu on video screen (only when is in window mode)
+ 	* The video driver now scale movies correctly (except for 16:9 one when in fullscreen...)
+@@ -419,7 +423,7 @@ MPlayer 1.0 Pre6 Dirty Preview #4 (24.03
+ 	These are the major improvements:
+ 
+ 	* First of all the speed: You can notice a speed increased of a 25-30%. This thanks to the new Olaf Barthel's clib2-thread safe
+-	* New video drivers and audio drivers:
++	* New video and audio drivers:
+ 	  -vo sdl
+ 	  -ao sdl
+ 	  -vo jpg
+@@ -455,7 +459,7 @@ MPlayer 1.0 Pre6 Dirty Preview #3 (1.02.
+ 	  -vo_jpeg
+ 	  -vo_png
+ 	  That allow to save a video into a single frames (JPEG and PNG respectively)
+-	* MPlayer now is compiled with new thread safe clib2 by Olaf Barthel
++	* MPlayer is now compiled with the new thread safe clib2 by Olaf Barthel
+ 	* DVD Playing
+ 	  The DVD can be viewed with:
+ 	  -dvd-device a1ide.device:x dvd://1

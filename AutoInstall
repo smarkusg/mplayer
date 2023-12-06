@@ -1,0 +1,17 @@
+; AutoInstall script for MPlayer
+; $VER: MPlayer AutoInstall 1.1 (14.07.2023)
+
+; get the path to the executable from the ENV variable
+Set MPlayer `GetEnv AppPaths/MPlayer`
+Set MPlayer `GetEnv AppPaths/MPlayer-AltiVec`
+
+; now copy everything in the archive (except the exe)
+Copy MPlayer/~(MPlayer) "$MPlayer" ALL CLONE QUIET
+
+; copy and store a backup of the executable for Rollback
+CopyStore MPlayer/MPlayer "$MPlayer"
+CopyStore MPlayer/MPlayer-AltiVec "$MPlayer-AltiVec"
+
+; finally free the variable
+UnSet $MPlayer
+UnSet $MPlayer-AltiVec

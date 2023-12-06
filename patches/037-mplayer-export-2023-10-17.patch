@@ -1,0 +1,775 @@
+diff --color -rupN old/etc/mplayer.desktop new/etc/mplayer.desktop
+--- old/etc/mplayer.desktop	2021-02-17 18:52:57.000000000 +0100
++++ new/etc/mplayer.desktop	2023-10-10 16:25:07.000000000 +0200
+@@ -15,9 +15,9 @@ X-GNOME-FullName[es]=MPlayer Reproductor
+ X-GNOME-FullName[fr]=MPlayer Lecteur multimédia
+ X-GNOME-FullName[it]=MPlayer Lettore multimediale
+ X-GNOME-FullName[ja]=MPlayer メディアプレーヤー
+-Comment=Play movies and songs
++Comment=Play video and music
+ Comment[ca]=Reproduïu vídeos i cançons
+-Comment[de]=Wiedergabe von Filmen und Musik
++Comment[de]=Wiedergabe von Videos und Musik
+ Comment[es]=Reproduce vídeos y música
+ Comment[fr]=Lit les films et musiques
+ Comment[it]=Riproduce filmati e musica
+@@ -29,4 +29,4 @@ TryExec=gmplayer
+ Exec=gmplayer %F
+ Terminal=false
+ Categories=GTK;AudioVideo;Audio;Video;Player;TV;
+-MimeType=application/x-cd-image;application/x-cue;application/x-mpegurl;application/mxf;application/x-netshow-channel;application/ogg;application/ram;application/vnd.adobe.flash.movie;application/vnd.apple.mpegurl;application/vnd.rn-realmedia;application/x-shockwave-flash;application/smil;audio/aac;audio/ac3;audio/x-adpcm;audio/x-aiff;audio/AMR;audio/AMR-WB;audio/x-ape;audio/basic;audio/flac;audio/x-flac;audio/x-flac+ogg;audio/x-m4b;audio/x-matroska;audio/mp2;audio/mp4;audio/mpeg;audio/x-mpegurl;audio/x-ms-asx;audio/x-ms-wma;audio/x-musepack;audio/ogg;audio/vnd.rn-realaudio;audio/x-scpls;audio/x-voc;audio/x-vorbis+ogg;audio/x-wav;audio/x-wavpack;video/3gpp;video/3gpp2;video/dv;video/x-flic;video/x-flv;video/x-matroska;video/mp2t;video/mp4;video/mpeg;video/vnd.mpegurl;video/x-ms-asf;video/x-ms-wmv;video/x-msvideo;video/x-nsv;video/ogg;video/x-ogm+ogg;video/quicktime;video/vnd.rn-realvideo;video/x-theora+ogg;video/webm;x-content/audio-cdda;x-content/audio-dvd;x-content/video-dvd;x-content/video-svcd;x-content/video-vcd;
++MimeType=application/x-cd-image;application/x-cue;application/x-mpegurl;application/mxf;application/x-netshow-channel;application/ogg;application/ram;application/vnd.adobe.flash.movie;application/vnd.apple.mpegurl;application/vnd.rn-realmedia;application/x-shockwave-flash;application/smil;audio/aac;audio/ac3;audio/x-adpcm;audio/x-aiff;audio/AMR;audio/AMR-WB;audio/x-ape;audio/basic;audio/x-dsf;audio/flac;audio/x-flac;audio/x-flac+ogg;audio/x-m4b;audio/x-matroska;audio/mp2;audio/mp4;audio/mpeg;audio/x-mpegurl;audio/x-ms-asx;audio/x-ms-wma;audio/x-musepack;audio/ogg;audio/vnd.rn-realaudio;audio/x-scpls;audio/x-tak;audio/x-voc;audio/x-vorbis+ogg;audio/x-wav;audio/vnd.wave;audio/x-wavpack;image/apng;video/3gpp;video/3gpp2;video/vnd.avi;video/dv;video/x-flic;video/x-flv;video/x-matroska;video/mp2t;video/mp4;video/mpeg;video/vnd.mpegurl;video/x-ms-asf;video/x-ms-wmv;video/x-msvideo;video/x-nsv;video/ogg;video/x-ogm+ogg;video/quicktime;video/vnd.radgamettools.bink;video/vnd.radgamettools.smacker;video/vnd.rn-realvideo;video/x-theora+ogg;video/webm;x-content/audio-cdda;x-content/audio-dvd;x-content/video-dvd;x-content/video-svcd;x-content/video-vcd;
+diff --color -rupN old/gui/dialog/fileselect.c new/gui/dialog/fileselect.c
+--- old/gui/dialog/fileselect.c	2023-10-03 08:48:06.000000000 +0200
++++ new/gui/dialog/fileselect.c	2023-10-10 16:43:01.000000000 +0200
+@@ -72,26 +72,26 @@ int fsType;
+ static gint fsCurrFNameListSelected, fsLastFNameListSelected;
+ 
+ char * const fsVideoAudioFilterNames[][2] = {
+-    { MSGTR_GUI_FilterVideoAvi,           "*.avi"                                                                                                                                                                                                                                                                                                                                                                                                                  },
+-    { MSGTR_GUI_FilterVideoDivX,          "*.divx"                                                                                                                                                                                                                                                                                                                                                                                                                 },
+-    { MSGTR_GUI_FilterVideoFlash,         "*.flv"                                                                                                                                                                                                                                                                                                                                                                                                                  },
+-    { MSGTR_GUI_FilterFileMP3,            "*.mp3"                                                                                                                                                                                                                                                                                                                                                                                                                  },
+-    { MSGTR_GUI_FilterFileMP4,            "*.aac,*.f4a,*.f4b,*.f4v,*.m4a,*.m4b,*.m4v,*.mp4"                                                                                                                                                                                                                                                                                                                                                                        },
+-    { MSGTR_GUI_FilterFileMPEG,           "*.m1v,*.m2v,*.mp2,*.mpe,*.mpeg,*.mpg,*.mpga,*.vdr,*.vob"                                                                                                                                                                                                                                                                                                                                                                },
+-    { MSGTR_GUI_FilterFileMP2TS,          "*.bdm,*.bdmv,*.clpi,*.cpi,*.m2t,*.m2ts,*.mpl,*.mpls,*.mts,*.rec,*.trp,*.ts,*.ty"                                                                                                                                                                                                                                                                                                                                        },
+-    { MSGTR_GUI_FilterMediumMatroska,     "*.mka,*.mkv"                                                                                                                                                                                                                                                                                                                                                                                                            },
+-    { MSGTR_GUI_FilterMediumOgg,          "*.oga,*.ogg,*.ogm,*.ogv,*.ogx,*.spx"                                                                                                                                                                                                                                                                                                                                                                                    },
+-    { MSGTR_GUI_FilterMediumQuickTime,    "*.moov,*.mov,*.qt,*.qtvr"                                                                                                                                                                                                                                                                                                                                                                                               },
+-    { MSGTR_GUI_FilterMediumRealNetworks, "*.ra,*.rm,*.rmvb,*.rv"                                                                                                                                                                                                                                                                                                                                                                                                  },
+-    { MSGTR_GUI_FilterImageCue,           "*.cue"                                                                                                                                                                                                                                                                                                                                                                                                                  },
+-    { MSGTR_GUI_FilterFileWav,            "*.wav"                                                                                                                                                                                                                                                                                                                                                                                                                  },
+-    { MSGTR_GUI_FilterMediumWindows,      "*.asf,*.wma,*.wmv"                                                                                                                                                                                                                                                                                                                                                                                                      },
+-    { MSGTR_GUI_FilterFilePlaylist,       "*.asx,*.m3u,*.m3u8,*.m4u,*.mxu,*.nsc,*.pls,*.ram,*.smi,*.smil,*.sml,*.vlc,*.wax,*.wmx,*.wvx"                                                                                                                                                                                                                                                                                                                            },
+-    { MSGTR_GUI_FilterAudioVideo,         "*.aac,*.ac3,*.ape,*.au,*.avi,*.divx,*.flac,*.flv,*.m2v,*.m4a,*.m4v,*.mjpg,*.mkv,*.mov,*.mp3,*.mp4,*.mpe,*.mpeg,*.mpg,*.ogg,*.rec,*.rm,*.ts,*.vob,*.wav,*.webm,*.wma,*.wmv"                                                                                                                                                                                                                                              },
+-    { MSGTR_GUI_FilterAudioAll,           "*.aac,*.ac3,*.aif,*.aifc,*.aiff,*.amr,*.ape,*.au,*.awb,*.cdg,*.f4a,*.f4b,*.flac,*.m4a,*.m4b,*.mka,*.mp+,*.mp2,*.mp3,*.mpc,*.mpga,*.mpp,*.nsa,*.oga,*.ogg,*.pcm,*.qcp,*.ra,*.snd,*.spx,*.tak,*.voc,*.vqf,*.w64,*.wav,*.wma,*.wv,*.wvp"                                                                                                                                                                                   },
+-    { MSGTR_GUI_FilterVideoAll,           "*.264,*.3g2,*.3ga,*.3gp,*.3gp2,*.3gpp,*.3gpp2,*.apng,*.asf,*.avi,*.bdm,*.bdmv,*.clpi,*.cpi,*.cpk,*.divx,*.dv,*.f4v,*.flc,*.fli,*.flv,*.m1v,*.m2t,*.m2ts,*.m2v,*.m4v,*.mjpg,*.mkv,*.moov,*.mov,*.mp2,*.mp4,*.mpe,*.mpeg,*.mpg,*.mpl,*.mpls,*.mts,*.mxf,*.nsv,*.nuv,*.ogg,*.ogm,*.ogv,*.ogx,*.pva,*.qt,*.qtvr,*.rec,*.rm,*.rmvb,*.roq,*.rv,*.spl,*.str,*.swf,*.trp,*.ts,*.ty,*.vdr,*.viv,*.vivo,*.vob,*.webm,*.wmv,*.y4m" },
+-    { MSGTR_GUI_FilterFileAll,            "*"                                                                                                                                                                                                                                                                                                                                                                                                                      },
+-    { NULL,                               NULL                                                                                                                                                                                                                                                                                                                                                                                                                     }
++    { MSGTR_GUI_FilterVideoAvi,           "*.avi"                                                                                                                                                                                                                                                                                                                                                                                                                              },
++    { MSGTR_GUI_FilterVideoDivX,          "*.divx"                                                                                                                                                                                                                                                                                                                                                                                                                             },
++    { MSGTR_GUI_FilterVideoFlash,         "*.flv"                                                                                                                                                                                                                                                                                                                                                                                                                              },
++    { MSGTR_GUI_FilterFileMP3,            "*.mp3"                                                                                                                                                                                                                                                                                                                                                                                                                              },
++    { MSGTR_GUI_FilterFileMP4,            "*.aac,*.f4a,*.f4b,*.f4v,*.m4a,*.m4b,*.m4v,*.mp4"                                                                                                                                                                                                                                                                                                                                                                                    },
++    { MSGTR_GUI_FilterFileMPEG,           "*.m1v,*.m2v,*.mp2,*.mpe,*.mpeg,*.mpg,*.mpga,*.vdr,*.vob"                                                                                                                                                                                                                                                                                                                                                                            },
++    { MSGTR_GUI_FilterFileMP2TS,          "*.bdm,*.bdmv,*.clpi,*.cpi,*.m2t,*.m2ts,*.mpl,*.mpls,*.mts,*.rec,*.trp,*.ts,*.ty"                                                                                                                                                                                                                                                                                                                                                    },
++    { MSGTR_GUI_FilterMediumMatroska,     "*.mka,*.mkv"                                                                                                                                                                                                                                                                                                                                                                                                                        },
++    { MSGTR_GUI_FilterMediumOgg,          "*.oga,*.ogg,*.ogm,*.ogv,*.ogx,*.spx"                                                                                                                                                                                                                                                                                                                                                                                                },
++    { MSGTR_GUI_FilterMediumQuickTime,    "*.moov,*.mov,*.qt,*.qtvr"                                                                                                                                                                                                                                                                                                                                                                                                           },
++    { MSGTR_GUI_FilterMediumRealNetworks, "*.ra,*.rm,*.rmvb,*.rv"                                                                                                                                                                                                                                                                                                                                                                                                              },
++    { MSGTR_GUI_FilterImageCue,           "*.cue"                                                                                                                                                                                                                                                                                                                                                                                                                              },
++    { MSGTR_GUI_FilterFileWav,            "*.wav"                                                                                                                                                                                                                                                                                                                                                                                                                              },
++    { MSGTR_GUI_FilterMediumWindows,      "*.asf,*.wma,*.wmv"                                                                                                                                                                                                                                                                                                                                                                                                                  },
++    { MSGTR_GUI_FilterFilePlaylist,       "*.asx,*.m3u,*.m3u8,*.m4u,*.mxu,*.nsc,*.pls,*.ram,*.smi,*.smil,*.sml,*.vlc,*.wax,*.wmx,*.wvx"                                                                                                                                                                                                                                                                                                                                        },
++    { MSGTR_GUI_FilterAudioVideo,         "*.aac,*.ac3,*.ape,*.au,*.avi,*.divx,*.flac,*.flv,*.m2v,*.m4a,*.m4v,*.mjpg,*.mkv,*.mov,*.mp3,*.mp4,*.mpe,*.mpeg,*.mpg,*.ogg,*.rec,*.rm,*.ts,*.vob,*.wav,*.webm,*.wma,*.wmv"                                                                                                                                                                                                                                                          },
++    { MSGTR_GUI_FilterAudioAll,           "*.aac,*.ac3,*.aif,*.aifc,*.aiff,*.amr,*.ape,*.au,*.awb,*.cdg,*.dsf,*.f4a,*.f4b,*.flac,*.m4a,*.m4b,*.mka,*.mp+,*.mp2,*.mp3,*.mpc,*.mpga,*.mpp,*.nsa,*.oga,*.ogg,*.pcm,*.qcp,*.ra,*.snd,*.spx,*.tak,*.voc,*.vqf,*.w64,*.wav,*.wma,*.wv,*.wvp"                                                                                                                                                                                         },
++    { MSGTR_GUI_FilterVideoAll,           "*.264,*.3g2,*.3ga,*.3gp,*.3gp2,*.3gpp,*.3gpp2,*.apng,*.asf,*.avi,*.bdm,*.bdmv,*.bik,*.clpi,*.cpi,*.cpk,*.divx,*.dv,*.f4v,*.flc,*.fli,*.flv,*.m1v,*.m2t,*.m2ts,*.m2v,*.m4v,*.mjpg,*.mkv,*.moov,*.mov,*.mp2,*.mp4,*.mpe,*.mpeg,*.mpg,*.mpl,*.mpls,*.mts,*.mxf,*.nsv,*.nuv,*.ogg,*.ogm,*.ogv,*.ogx,*.pva,*.qt,*.qtvr,*.rec,*.rm,*.rmvb,*.roq,*.rv,*.smk,*.spl,*.str,*.swf,*.trp,*.ts,*.ty,*.vdr,*.viv,*.vivo,*.vob,*.webm,*.wmv,*.y4m" },
++    { MSGTR_GUI_FilterFileAll,            "*"                                                                                                                                                                                                                                                                                                                                                                                                                                  },
++    { NULL,                               NULL                                                                                                                                                                                                                                                                                                                                                                                                                                 }
+ };
+ int fsLastVideoAudioFilterSelected = -1;
+ 
+diff --color -rupN old/rpm/mplayer-codecs.spec new/rpm/mplayer-codecs.spec
+--- old/rpm/mplayer-codecs.spec	2023-10-03 08:47:35.000000000 +0200
++++ new/rpm/mplayer-codecs.spec	1970-01-01 01:00:00.000000000 +0100
+@@ -1,318 +0,0 @@
+-%define _codecsdir %{_libdir}/codecs
+-
+-# don't try to strip or compress anything
+-%define __spec_install_post %{nil}
+-%define debug_package %{nil}
+-
+-%define i386_ver 20100303
+-%define ppc_ver 20061022
+-%define alpha_ver 20061028
+-%define x86_64_ver 20071007
+-
+-%define ver %{expand:%{%{_target_cpu}_ver}}
+-
+-Summary: MPlayer essential binary codecs package
+-Name: mplayer-codecs
+-Version: %{ver}
+-Release: 1
+-URL: http://www.mplayerhq.hu/MPlayer/releases/codecs/
+-Group: Applications/Multimedia
+-Source0: http://www.mplayerhq.hu/MPlayer/releases/codecs/all-%{i386_ver}.tar.bz2
+-Source1: http://www.mplayerhq.hu/MPlayer/releases/codecs/all-alpha-%{alpha_ver}.tar.bz2
+-Source2: http://www.mplayerhq.hu/MPlayer/releases/codecs/all-ppc-%{ppc_ver}.tar.bz2
+-Source3: http://www.mplayerhq.hu/MPlayer/releases/codecs/essential-amd64-%{x86_64_ver}.tar.bz2
+-License: Unknown
+-ExclusiveArch: i386 ppc alpha x86_64
+-%ifarch i386
+-Provides: w32codec = %{version}-%{release}
+-%endif
+-BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(id -u -n)
+-
+-%description
+-All-in-one essential end-user package. Contains binary codecs that have
+-no native open-source decoder currently.
+-
+-%package extra
+-Group: Applications/Multimedia
+-Summary: MPlayer optional binary codecs package
+-
+-%description extra
+-MPlayer optional codecs package. Contains additional binary codecs
+-supported by MPlayer.
+-
+-%prep
+-%ifarch i386
+-%setup -q -c %{name}-%{version}
+-%endif
+-%ifarch alpha
+-%setup -q -c %{name}-%{version} -T -a 1
+-%endif
+-%ifarch ppc
+-%setup -q -c %{name}-%{version} -T -a 2
+-%endif
+-%ifarch x86_64
+-%setup -q -c %{name}-%{version} -T -a 3
+-%endif
+-
+-%build
+-# nothing to build
+-
+-%install
+-rm -rf $RPM_BUILD_ROOT
+-
+-install -d $RPM_BUILD_ROOT%{_codecsdir}
+-%ifarch i386
+-install -p all-%{version}/* $RPM_BUILD_ROOT%{_codecsdir}/
+-%endif
+-%ifarch alpha
+-install -p all-alpha-%{alpha_ver}/* $RPM_BUILD_ROOT%{_codecsdir}/
+-%endif
+-%ifarch ppc
+-install -p all-ppc-%{ppc_ver}/* $RPM_BUILD_ROOT%{_codecsdir}/
+-%endif
+-%ifarch x86_64
+-install -p essential-amd64-%{x86_64_ver}/* $RPM_BUILD_ROOT%{_codecsdir}/
+-%endif
+-rm -f $RPM_BUILD_ROOT%{_codecsdir}/README
+-
+-%clean
+-rm -rf $RPM_BUILD_ROOT
+-
+-%files
+-%defattr(0644,root,root,0755)
+-%ifarch i386
+-%doc all-%{i386_ver}/README
+-%{_codecsdir}/acelpdec.ax
+-%{_codecsdir}/alf2cd.acm
+-%{_codecsdir}/aslcodec_dshow.dll
+-%{_codecsdir}/atrac3.acm
+-%{_codecsdir}/atrc.so.6.0
+-%{_codecsdir}/AvidQTAVUICodec.qtx
+-%{_codecsdir}/BeHereiVideo.qtx
+-%{_codecsdir}/CLRVIDDC.DLL
+-%{_codecsdir}/clrviddd.dll
+-%{_codecsdir}/cook.so
+-%{_codecsdir}/CtWbJpg.DLL
+-%{_codecsdir}/DECVW_32.DLL
+-%{_codecsdir}/drvc.so
+-%{_codecsdir}/dspr.so.6.0
+-%{_codecsdir}/frapsvid.dll
+-%{_codecsdir}/iac25_32.ax
+-%{_codecsdir}/icmw_32.dll
+-%{_codecsdir}/imc32.acm
+-%{_codecsdir}/ir41_32.dll
+-%{_codecsdir}/ir50_32.dll
+-%{_codecsdir}/ivvideo.dll
+-%{_codecsdir}/jp2avi.dll
+-%{_codecsdir}/LCMW2.dll
+-%{_codecsdir}/LCODCCMW2E.dll
+-%{_codecsdir}/lhacm.acm
+-%{_codecsdir}/lsvxdec.dll
+-%{_codecsdir}/m3jp2k32.dll
+-%{_codecsdir}/mi-sc4.acm
+-%{_codecsdir}/msh261.drv
+-%{_codecsdir}/msms001.vwp
+-%{_codecsdir}/msscds32.ax
+-%{_codecsdir}/nsrt2432.acm
+-%{_codecsdir}/qpeg32.dll
+-%{_codecsdir}/qtmlClient.dll
+-%{_codecsdir}/QuickTimeEssentials.qtx
+-%{_codecsdir}/QuickTimeInternetExtras.qtx
+-%{_codecsdir}/QuickTime.qts
+-%{_codecsdir}/rt32dcmp.dll
+-%{_codecsdir}/sipr.so.6.0
+-%{_codecsdir}/tm20dec.ax
+-%{_codecsdir}/tokf.so.6.0
+-%{_codecsdir}/tokr.so.6.0
+-%{_codecsdir}/tsd32.dll
+-%{_codecsdir}/tssoft32.acm
+-%{_codecsdir}/tvqdec.dll
+-%{_codecsdir}/VDODEC32.dll
+-%{_codecsdir}/vdowave.drv
+-%{_codecsdir}/vid_3ivX.xa
+-%{_codecsdir}/ViVD2.dll
+-%{_codecsdir}/vivog723.acm
+-%{_codecsdir}/vmnc.dll
+-%{_codecsdir}/voxmsdec.ax
+-%{_codecsdir}/vp4vfw.dll
+-%{_codecsdir}/vp5vfw.dll
+-%{_codecsdir}/vp6vfw.dll
+-%{_codecsdir}/vp7vfw.dll
+-%{_codecsdir}/vssh264core.dll
+-%{_codecsdir}/vssh264dec.dll
+-%{_codecsdir}/vssh264.dll
+-%{_codecsdir}/vsshdsd.dll
+-%{_codecsdir}/vsslight.dll
+-%{_codecsdir}/vsswlt.dll
+-%{_codecsdir}/wma9dmod.dll
+-%{_codecsdir}/wmadmod.dll
+-%{_codecsdir}/wmsdmod.dll
+-%{_codecsdir}/wmspdmod.dll
+-%{_codecsdir}/wmv9dmod.dll
+-%{_codecsdir}/wmvadvd.dll
+-%{_codecsdir}/wmvdmod.dll
+-%{_codecsdir}/wnvwinx.dll
+-%{_codecsdir}/wvc1dmod.dll
+-%{_codecsdir}/xanlib.dll
+-%endif
+-%ifarch alpha
+-%doc all-alpha-%{alpha_ver}/README
+-%endif
+-%ifarch alpha ppc
+-%{_codecsdir}/28_8.so.6.0
+-%{_codecsdir}/atrc.so.6.0
+-%{_codecsdir}/cook.so.6.0
+-%{_codecsdir}/ddnt.so.6.0
+-%{_codecsdir}/dnet.so.6.0
+-%{_codecsdir}/drv2.so.6.0
+-%{_codecsdir}/dspr.so.6.0
+-%{_codecsdir}/sipr.so.6.0
+-%{_codecsdir}/tokr.so.6.0
+-%endif
+-%ifarch ppc
+-%doc all-ppc-%{ppc_ver}/README
+-%{_codecsdir}/vid_iv41.xa
+-%{_codecsdir}/vid_iv50.xa
+-%endif
+-%ifarch x86_64
+-%doc essential-amd64-%{x86_64_ver}/README
+-%{_codecsdir}/cook.so
+-%{_codecsdir}/drvc.so
+-%{_codecsdir}/sipr.so
+-%endif
+-
+-%files extra
+-%ifarch i386
+-%defattr(0644,root,root,0755)
+-%{_codecsdir}/ACDV.dll
+-%{_codecsdir}/ADV601.dll
+-%{_codecsdir}/aoxdxipl.ax
+-%{_codecsdir}/aslcodec_vfw.dll
+-%{_codecsdir}/asusasv2.dll
+-%{_codecsdir}/asusasvd.dll
+-%{_codecsdir}/ativcr2.dll
+-%{_codecsdir}/avimszh.dll
+-%{_codecsdir}/avizlib.dll
+-%{_codecsdir}/blox.dll
+-%{_codecsdir}/BTVVC32.DRV
+-%{_codecsdir}/bw10.dll
+-%{_codecsdir}/camfc.dll
+-%{_codecsdir}/cinedec.ax
+-%{_codecsdir}/cinevfw.dll
+-%{_codecsdir}/CineWave.qtx
+-%{_codecsdir}/cook.so.6.0
+-%{_codecsdir}/ctadp32.acm
+-%{_codecsdir}/ddnt.so.6.0
+-%{_codecsdir}/decvdo.dll
+-%{_codecsdir}/divx.dll
+-%{_codecsdir}/divx_c32.ax
+-%{_codecsdir}/divxa32.acm
+-%{_codecsdir}/divxc32.dll
+-%{_codecsdir}/divxdec.ax
+-%{_codecsdir}/dnet.so.6.0
+-%{_codecsdir}/drv2.so.6.0
+-%{_codecsdir}/drv3.so.6.0
+-%{_codecsdir}/drv4.so.6.0
+-%{_codecsdir}/DVACM.acm
+-%{_codecsdir}/fmcodec.DLL
+-%{_codecsdir}/G2M.dll
+-%{_codecsdir}/GeoCodec.dll
+-%{_codecsdir}/GXAMP4.dll
+-%{_codecsdir}/huffyuv.dll
+-%{_codecsdir}/i263_32.drv
+-%{_codecsdir}/iccvid.dll
+-%{_codecsdir}/imaadp32.acm
+-%{_codecsdir}/ir32_32.dll
+-%{_codecsdir}/kdvyuv8.dll
+-%{_codecsdir}/KGV1-VFW.dll
+-%{_codecsdir}/LCodcCMP.dll
+-%{_codecsdir}/l3codeca.acm
+-%{_codecsdir}/l3codecx.ax
+-%{_codecsdir}/m3jpeg32.dll
+-%{_codecsdir}/m3jpegdec.ax
+-%{_codecsdir}/mcdvd_32.dll
+-%{_codecsdir}/mcmjpg32.dll
+-%{_codecsdir}/MLZCodec.dll
+-%{_codecsdir}/mpg4c32.dll
+-%{_codecsdir}/mpg4ds32.ax
+-%{_codecsdir}/msadp32.acm
+-%{_codecsdir}/msg711.acm
+-%{_codecsdir}/msgsm32.acm
+-%{_codecsdir}/msnaudio.acm
+-%{_codecsdir}/msrle32.dll
+-%{_codecsdir}/msvidc32.dll
+-%{_codecsdir}/MVCodec.dll
+-%{_codecsdir}/mvoice.vwp
+-%{_codecsdir}/mvoiced.vwp
+-%{_codecsdir}/Nsgsm32.acm
+-%{_codecsdir}/Nstsp32.acm
+-%{_codecsdir}/nsvideo.dll
+-%{_codecsdir}/NuB2.dll
+-%{_codecsdir}/nuvision.ax
+-%{_codecsdir}/pclepim1.dll
+-%{_codecsdir}/qdv.dll
+-%{_codecsdir}/scg726.acm
+-%{_codecsdir}/SCLS.DLL
+-%{_codecsdir}/scrvid.dll
+-%{_codecsdir}/Sif1Dec.ax
+-%{_codecsdir}/Sif1_vfw.dll
+-%{_codecsdir}/smcelp32.acm
+-%{_codecsdir}/SN4Codec.dll
+-%{_codecsdir}/sp4x_32.dll
+-%{_codecsdir}/sp5x_32.dll
+-%{_codecsdir}/tm2Xdec.ax
+-%{_codecsdir}/tm2x.dll
+-%{_codecsdir}/TRICDC32.DRV
+-%{_codecsdir}/tsccvid.dll
+-%{_codecsdir}/ubv263d+.ax
+-%{_codecsdir}/ubvmp4d.dll
+-%{_codecsdir}/ultimo.dll
+-%{_codecsdir}/vdo32_30.drv
+-%{_codecsdir}/vdowave2.acm
+-%{_codecsdir}/vdowave.acm
+-%{_codecsdir}/VFCodec.dll
+-%{_codecsdir}/vgpix32d.dll
+-%{_codecsdir}/vid_cvid.xa
+-%{_codecsdir}/vid_cyuv.xa
+-%{_codecsdir}/vid_h261.xa
+-%{_codecsdir}/vid_h263.xa
+-%{_codecsdir}/vid_iv32.xa
+-%{_codecsdir}/vid_iv41.xa
+-%{_codecsdir}/vid_iv50.xa
+-%{_codecsdir}/voxmvdec.ax
+-%{_codecsdir}/vp31vfw.dll
+-%{_codecsdir}/WavCWAIP.dll
+-%{_codecsdir}/wavelet.dll
+-%{_codecsdir}/WAVLOR.DLL
+-%{_codecsdir}/WCMV.dll
+-%{_codecsdir}/wmv8ds32.ax
+-%{_codecsdir}/wmvds32.ax
+-%{_codecsdir}/wnvplay1.dll
+-%{_codecsdir}/wtvc.DLL
+-%{_codecsdir}/wv32vfw.dll
+-%{_codecsdir}/xfcodec.dll
+-%{_codecsdir}/ylc.vcm
+-%{_codecsdir}/Zlib.dll
+-%{_codecsdir}/zmbv.dll
+-%{_codecsdir}/ZyGoAudioS.qtx
+-%endif
+-%ifarch alpha ppc
+-%{_codecsdir}/14_4.so.6.0
+-%{_codecsdir}/drv3.so.6.0
+-%endif
+-%ifarch ppc
+-%{_codecsdir}/vid_cvid.xa
+-%{_codecsdir}/vid_iv32.xa
+-%endif
+-
+-%changelog
+-* Fri Aug 20 2010 Dominik Mierzejewski <rpm@greysector.net> 20100303-1
+-- updated i386 pack
+-
+-* Mon Feb 11 2008 Dominik Mierzejewski <rpm@greysector.net> 20071007-1
+-- updated i386 pack
+-
+-* Sat Oct 06 2007 Dominik Mierzejewski <rpm@greysector.net> 20060622-1
+-- specfile cleanups
+-- added backwards compatibility Provides:
+-- dropped old history
+diff --color -rupN old/rpm/mplayer.spec new/rpm/mplayer.spec
+--- old/rpm/mplayer.spec	2023-10-03 08:47:35.000000000 +0200
++++ new/rpm/mplayer.spec	1970-01-01 01:00:00.000000000 +0100
+@@ -1,361 +0,0 @@
+-%define         date %(date --iso)
+-%define         svnbuild %(date +%Y%m%d)
+-%define         codecsdir %{_libdir}/codecs
+-
+-Name:           mplayer
+-Version:        1.0
+-Release:        0.%{svnbuild}svn%{?dist}
+-Summary:        Movie player playing most video formats and DVDs
+-
+-Group:          Applications/Multimedia
+-License:        GPL
+-URL:            http://www.mplayerhq.hu/
+-Source0:        http://www.mplayerhq.hu/MPlayer/releases/mplayer-export-snapshot.tar.bz2
+-Source1:        http://www.mplayerhq.hu/MPlayer/skins/Blue-1.7.tar.bz2
+-BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
+-
+-BuildRequires:  SDL-devel
+-BuildRequires:  aalib-devel
+-BuildRequires:  alsa-lib-devel
+-BuildRequires:  cdparanoia-devel
+-BuildRequires:  desktop-file-utils
+-BuildRequires:  em8300-devel
+-BuildRequires:  enca-devel
+-BuildRequires:  faac-devel
+-BuildRequires:  faad2-devel
+-BuildRequires:  fontconfig-devel
+-BuildRequires:  freetype-devel >= 2.0.9
+-BuildRequires:  fribidi-devel
+-BuildRequires:  giflib-devel
+-BuildRequires:  gtk2-devel
+-BuildRequires:  ladspa-devel
+-BuildRequires:  lame-devel
+-BuildRequires:  libGL-devel
+-BuildRequires:  libXinerama-devel
+-BuildRequires:  libXv-devel
+-BuildRequires:  libXvMC-devel
+-BuildRequires:  libXxf86dga-devel
+-BuildRequires:  libXxf86vm-devel
+-BuildRequires:  libcaca-devel
+-BuildRequires:  libdca-devel
+-BuildRequires:  libdv-devel
+-BuildRequires:  libdvdnav-devel
+-BuildRequires:  libjpeg-devel
+-BuildRequires:  libmpcdec-devel
+-BuildRequires:  libtheora-devel
+-BuildRequires:  libvorbis-devel
+-BuildRequires:  lirc-devel
+-BuildRequires:  live-devel
+-BuildRequires:  lzo-devel >= 2
+-BuildRequires:  speex-devel >= 1.1
+-BuildRequires:  twolame-devel
+-BuildRequires:  x264-devel
+-BuildRequires:  xvidcore-devel >= 0.9.2
+-%{?_with_arts:BuildRequires: arts-devel}
+-%{?_with_amr:BuildRequires: amrnb-devel amrwb-devel}
+-%{?_with_directfb:BuildRequires: directfb-devel}
+-%{?_with_esound:BuildRequires: esound-devel}
+-%{?_with_jack:BuildRequires: jack-audio-connection-kit-devel}
+-%{?_with_libmad:BuildRequires:  libmad-devel}
+-%{?_with_openal:BuildRequires: openal-devel}
+-%{?_with_samba:BuildRequires: samba-common}
+-%{?_with_svgalib:BuildRequires: svgalib-devel}
+-%{?_with_xmms:BuildRequires: xmms-devel}
+-# for XML docs, SVN only
+-BuildRequires:  docbook-dtds
+-BuildRequires:  docbook-style-xsl
+-BuildRequires:  libxml2
+-BuildRequires:  libxslt
+-
+-%description
+-MPlayer is a movie player that plays most MPEG, VOB, AVI, OGG/OGM,
+-VIVO, ASF/WMA/WMV, QT/MOV/MP4, FLI, RM, NuppelVideo, yuv4mpeg, FILM,
+-RoQ, and PVA files. You can also use it to watch VCDs, SVCDs, DVDs,
+-3ivx, RealMedia, and DivX movies.
+-It supports a wide range of output drivers including X11, XVideo, DGA,
+-OpenGL, SVGAlib, fbdev, AAlib, DirectFB etc. There are also nice
+-antialiased shaded subtitles and OSD.
+-Non-default rpmbuild options:
+---with samba:   Enable Samba (smb://) support
+---with xmms:    Enable XMMS input plugin support
+---with amr:     Enable AMR support
+---with libmad:  Enable libmad support
+---with openal:  Enable OpenAL support
+---with jack:    Enable JACK support
+---with arts:    Enable aRts support
+---with esound:  Enable EsounD support
+---with directfb:Enable DirectFB support
+---with svgalib: Enable SVGAlib support
+-
+-%package        gui
+-Summary:        GUI for MPlayer
+-Group:          Applications/Multimedia
+-Requires:       mplayer = %{version}-%{release}
+-
+-%description    gui
+-This package contains a GUI for MPlayer and a default skin for it.
+-
+-%package     -n mencoder
+-Summary:        MPlayer movie encoder
+-Group:          Applications/Multimedia
+-Requires:       mplayer = %{version}-%{release}
+-
+-%description -n mencoder
+-This package contains the MPlayer movie encoder.
+-
+-%package        doc
+-Summary:        MPlayer documentation in various languages
+-Group:          Documentation
+-
+-%description    doc
+-MPlayer documentation in various languages.
+-
+-
+-%prep
+-%setup -q -n mplayer-export-%{date}
+-
+-doconv() {
+-    iconv -f $1 -t $2 -o DOCS/man/$3/mplayer.1.utf8 DOCS/man/$3/mplayer.1 && \
+-    mv DOCS/man/$3/mplayer.1.utf8 DOCS/man/$3/mplayer.1
+-}
+-for lang in de es fr it ; do doconv iso-8859-1 utf-8 $lang ; done
+-for lang in hu pl ; do doconv iso-8859-2 utf-8 $lang ; done
+-for lang in ru ; do doconv koi8-r utf-8 $lang ; done
+-
+-mv DOCS/man/zh DOCS/man/zh_CN
+-
+-%build
+-./configure \
+-    --prefix=%{_prefix} \
+-    --bindir=%{_bindir} \
+-    --datadir=%{_datadir}/mplayer \
+-    --mandir=%{_mandir} \
+-    --confdir=%{_sysconfdir}/mplayer \
+-    --libdir=%{_libdir} \
+-    --codecsdir=%{codecsdir} \
+-    \
+-    --disable-encoder=FAAC \
+-    --disable-encoder=MP3LAME \
+-    --disable-encoder=X264 \
+-    \
+-    --enable-gui \
+-    --disable-termcap \
+-    --disable-bitmap-font \
+-    --enable-lirc \
+-    --enable-joystick \
+-    %{!?_with_samba:--disable-smb} \
+-    --disable-dvdread-internal \
+-    --disable-libdvdcss-internal \
+-    --enable-menu \
+-    \
+-    --disable-tremor-internal \
+-    %{!?_with_amr:--disable-libamr_nb --disable-libamr_wb} \
+-    %{!?_with_libmad:--disable-mad} \
+-    %{?_with_xmms:--enable-xmms} \
+-    \
+-    --disable-svga \
+-    --enable-xvmc \
+-    --%{?_with_directfb:enable}%{!?_with_directfb:disable}-directfb \
+-    %{!?_with_svgalib:--disable-svga} \
+-    \
+-    %{!?_with_arts:--disable-arts} \
+-    %{!?_with_esound:--disable-esd} \
+-    %{!?_with_jack:--disable-jack} \
+-    %{!?_with_openal:--disable-openal} \
+-    \
+-    --language=all \
+-    \
+-    %{?_with_xmms:--with-xmmslibdir=%{_libdir}} \
+-    --with-xvmclib=XvMCW
+-
+-%{__make}
+-
+-mv -f mplayer gmplayer
+-%{__make} distclean
+-
+-./configure \
+-    --prefix=%{_prefix} \
+-    --bindir=%{_bindir} \
+-    --datadir=%{_datadir}/mplayer \
+-    --mandir=%{_mandir} \
+-    --confdir=%{_sysconfdir}/mplayer \
+-    --libdir=%{_libdir} \
+-    --codecsdir=%{codecsdir} \
+-    \
+-    --disable-encoder=FAAC \
+-    --disable-encoder=MP3LAME \
+-    --disable-encoder=X264 \
+-    \
+-    --disable-termcap \
+-    --disable-bitmap-font \
+-    --enable-lirc \
+-    --enable-joystick \
+-    %{!?_with_samba:--disable-smb} \
+-    --disable-dvdread-internal \
+-    --disable-libdvdcss-internal \
+-    --enable-menu \
+-    \
+-    --disable-tremor-internal \
+-    %{!?_with_amr:--disable-libamr_nb --disable-libamr_wb} \
+-    %{!?_with_libmad:--disable-mad} \
+-    %{?_with_xmms:--enable-xmms} \
+-    \
+-    --disable-svga \
+-    --enable-xvmc \
+-    --%{?_with_directfb:enable}%{!?_with_directfb:disable}-directfb \
+-    %{!?_with_svgalib:--disable-svga} \
+-    \
+-    %{!?_with_arts:--disable-arts} \
+-    %{!?_with_esound:--disable-esd} \
+-    %{!?_with_jack:--disable-jack} \
+-    %{!?_with_openal:--disable-openal} \
+-    \
+-    --language=all \
+-    \
+-    %{?_with_xmms:--with-xmmslibdir=%{_libdir}} \
+-    --with-xvmclib=XvMCW
+-
+-%{__make}
+-
+-# build HTML documentation from XML files
+-pushd DOCS/xml
+-%{__make} html-chunked
+-popd
+-
+-%install
+-rm -rf $RPM_BUILD_ROOT doc
+-
+-make install DESTDIR=$RPM_BUILD_ROOT STRIPBINARIES=no
+-install -pm 755 TOOLS/midentify.sh $RPM_BUILD_ROOT%{_bindir}/
+-
+-# Clean up documentation
+-mkdir doc
+-cp -pR DOCS/* doc/
+-rm -r doc/man doc/xml doc/README
+-mv doc/HTML/* doc/
+-rm -rf doc/HTML
+-
+-# Default config files
+-install -Dpm 644 etc/example.conf \
+-    $RPM_BUILD_ROOT%{_sysconfdir}/mplayer/mplayer.conf
+-# use Nimbus Sans L font for OSD (via fontconfig)
+-echo "fontconfig=yes" >>$RPM_BUILD_ROOT%{_sysconfdir}/mplayer/mplayer.conf
+-echo "font=\"Sans\"" >>$RPM_BUILD_ROOT%{_sysconfdir}/mplayer/mplayer.conf
+-
+-install -pm 644 etc/{input,menu}.conf $RPM_BUILD_ROOT%{_sysconfdir}/mplayer/
+-
+-# GUI mplayer
+-install -pm 755 g%{name} $RPM_BUILD_ROOT%{_bindir}/
+-
+-# Default skin
+-install -dm 755 $RPM_BUILD_ROOT%{_datadir}/mplayer/skins
+-tar xjC $RPM_BUILD_ROOT%{_datadir}/mplayer/skins --exclude=.svn -f %{SOURCE1}
+-ln -s Blue $RPM_BUILD_ROOT%{_datadir}/mplayer/skins/default
+-
+-# Icons
+-install -dm 755 $RPM_BUILD_ROOT%{_datadir}/icons/hicolor/16x16/apps
+-install -pm 644 etc/mplayer16x16.png \
+-    $RPM_BUILD_ROOT%{_datadir}/icons/hicolor/16x16/apps/mplayer.png
+-install -dm 755 $RPM_BUILD_ROOT%{_datadir}/icons/hicolor/22x22/apps
+-install -pm 644 etc/mplayer22x22.png \
+-    $RPM_BUILD_ROOT%{_datadir}/icons/hicolor/22x22/apps/mplayer.png
+-install -dm 755 $RPM_BUILD_ROOT%{_datadir}/icons/hicolor/24x24/apps
+-install -pm 644 etc/mplayer24x24.png \
+-    $RPM_BUILD_ROOT%{_datadir}/icons/hicolor/24x24/apps/mplayer.png
+-install -dm 755 $RPM_BUILD_ROOT%{_datadir}/icons/hicolor/32x32/apps
+-install -pm 644 etc/mplayer32x32.png \
+-    $RPM_BUILD_ROOT%{_datadir}/icons/hicolor/32x32/apps/mplayer.png
+-install -dm 755 $RPM_BUILD_ROOT%{_datadir}/icons/hicolor/48x48/apps
+-install -pm 644 etc/mplayer48x48.png \
+-    $RPM_BUILD_ROOT%{_datadir}/icons/hicolor/48x48/apps/mplayer.png
+-install -dm 755 $RPM_BUILD_ROOT%{_datadir}/icons/hicolor/256x256/apps
+-install -pm 644 etc/mplayer256x256.png \
+-    $RPM_BUILD_ROOT%{_datadir}/icons/hicolor/256x256/apps/mplayer.png
+-
+-# Desktop file
+-desktop-file-install \
+-        --dir $RPM_BUILD_ROOT%{_datadir}/applications \
+-        etc/%{name}.desktop
+-
+-# Codec dir
+-install -dm 755 $RPM_BUILD_ROOT%{codecsdir}
+-
+-
+-%post gui
+-gtk-update-icon-cache -qf %{_datadir}/icons/hicolor &>/dev/null || :
+-update-desktop-database &>/dev/null || :
+-
+-
+-%postun gui
+-gtk-update-icon-cache -qf %{_datadir}/icons/hicolor &>/dev/null || :
+-update-desktop-database &>/dev/null || :
+-
+-
+-%clean
+-rm -rf $RPM_BUILD_ROOT
+-
+-
+-%files
+-%defattr(-, root, root, -)
+-%doc AUTHORS Changelog LICENSE README
+-%dir %{_sysconfdir}/mplayer
+-%config(noreplace) %{_sysconfdir}/mplayer/mplayer.conf
+-%config(noreplace) %{_sysconfdir}/mplayer/input.conf
+-%config(noreplace) %{_sysconfdir}/mplayer/menu.conf
+-%{_bindir}/midentify.sh
+-%{_bindir}/mplayer
+-%dir %{codecsdir}/
+-%dir %{_datadir}/mplayer/
+-%{_mandir}/man1/mplayer.1*
+-%lang(cs) %{_mandir}/cs/man1/mplayer.1*
+-%lang(de) %{_mandir}/de/man1/mplayer.1*
+-%lang(es) %{_mandir}/es/man1/mplayer.1*
+-%lang(fr) %{_mandir}/fr/man1/mplayer.1*
+-%lang(hu) %{_mandir}/hu/man1/mplayer.1*
+-%lang(it) %{_mandir}/it/man1/mplayer.1*
+-%lang(pl) %{_mandir}/pl/man1/mplayer.1*
+-%lang(ru) %{_mandir}/ru/man1/mplayer.1*
+-%lang(zh_CN) %{_mandir}/zh_CN/man1/mplayer.1*
+-
+-%files gui
+-%defattr(-, root, root, -)
+-%{_bindir}/gmplayer
+-%{_datadir}/applications/*mplayer.desktop
+-%{_datadir}/icons/hicolor/16x16/apps/mplayer.png
+-%{_datadir}/icons/hicolor/22x22/apps/mplayer.png
+-%{_datadir}/icons/hicolor/24x24/apps/mplayer.png
+-%{_datadir}/icons/hicolor/32x32/apps/mplayer.png
+-%{_datadir}/icons/hicolor/48x48/apps/mplayer.png
+-%{_datadir}/icons/hicolor/256x256/apps/mplayer.png
+-%{_datadir}/mplayer/skins/
+-
+-%files -n mencoder
+-%defattr(-, root, root, -)
+-%{_bindir}/mencoder
+-%{_mandir}/man1/mencoder.1*
+-%lang(cs) %{_mandir}/cs/man1/mencoder.1*
+-%lang(de) %{_mandir}/de/man1/mencoder.1*
+-%lang(es) %{_mandir}/es/man1/mencoder.1*
+-%lang(fr) %{_mandir}/fr/man1/mencoder.1*
+-%lang(hu) %{_mandir}/hu/man1/mencoder.1*
+-%lang(it) %{_mandir}/it/man1/mencoder.1*
+-%lang(pl) %{_mandir}/pl/man1/mencoder.1*
+-%lang(ru) %{_mandir}/ru/man1/mencoder.1*
+-%lang(zh_CN) %{_mandir}/zh_CN/man1/mencoder.1*
+-
+-%files doc
+-%defattr(-, root, root, -)
+-%doc doc/en/ doc/tech/
+-%lang(cs) %doc doc/cs/
+-%lang(de) %doc doc/de/
+-%lang(es) %doc doc/es/
+-%lang(fr) %doc doc/fr/
+-%lang(hu) %doc doc/hu/
+-%lang(pl) %doc doc/pl/
+-%lang(ru) %doc doc/ru/
+-%lang(zh_CN) %doc doc/zh_CN/
+-
+-
+-%changelog
+-* Sat Oct 06 2007 Dominik Mierzejewski <rpm at greysector.net>
+-- adapted livna specfile for inclusion in SVN
+diff --color -rupN old/snapshot_version new/snapshot_version
+--- old/snapshot_version	2023-10-03 08:47:35.000000000 +0200
++++ new/snapshot_version	2023-10-17 05:15:31.000000000 +0200
+@@ -1 +1 @@
+-38435-snapshot
++38440-snapshot
+diff --color -rupN old/stream/network.c new/stream/network.c
+--- old/stream/network.c	2023-10-03 08:48:06.000000000 +0200
++++ new/stream/network.c	2023-10-08 11:58:01.000000000 +0200
+@@ -81,6 +81,7 @@ const mime_struct_t mime_type_table[] =
+ 	{ "video/x-mpeg2", DEMUXER_TYPE_UNKNOWN },
+ 	// AVI ??? => video/x-msvideo
+ 	{ "video/x-msvideo", DEMUXER_TYPE_AVI },
++	{ "video/vnd.avi", DEMUXER_TYPE_AVI },
+ 	// MOV => video/quicktime
+ 	{ "video/quicktime", DEMUXER_TYPE_MOV },
+ 	// ASF

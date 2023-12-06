@@ -1,0 +1,21 @@
+diff --color -rupN old/amigaos/amigaos_stuff.c new/amigaos/amigaos_stuff.c
+--- old/amigaos/amigaos_stuff.c	2023-08-07 14:04:50.948020354 +0200
++++ new/amigaos/amigaos_stuff.c	2023-08-07 14:32:42.434375829 +0200
+@@ -89,13 +89,15 @@ extern void PrintMsg(CONST_STRPTR text,
+ #include "SDL/SDL_syswm.h"
+ void AmigaOS_ScreenTitle(const char *vo_str)
+ {
+-  char scrtitle[128];
++  static char scrtitle[128];
+   SDL_SysWMinfo wmInfo;
+   SDL_GetWMInfo(&wmInfo);
+   struct Window *win = (struct Window*)wmInfo.window;
+ 
+   sprintf(scrtitle, AMIGA_VERSION" (%s)\0",vo_str);
+-    SetWindowTitles(win, (CONST_STRPTR)~0, scrtitle);
++
++  SetWindowTitles(win, (CONST_STRPTR)~0, scrtitle);
++
+ }
+ 
+ const char version[] = "$VER: " AMIGA_VERSION " " VERSION ;

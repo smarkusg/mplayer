@@ -1,0 +1,14 @@
+diff --color -rupN old/amigaos/amigaos_stuff.c new/amigaos/amigaos_stuff.c
+--- old/amigaos/amigaos_stuff.c	2023-08-03 19:09:14.739051125 +0200
++++ new/amigaos/amigaos_stuff.c	2023-08-03 19:16:50.400071197 +0200
+@@ -308,8 +308,8 @@ void AmigaOS_ParseArg(int argc, char *ar
+ 	if (result != VECTORTYPE_ALTIVEC)
+ 	{
+ 		mp_msg(MSGT_VO, MSGL_ERR, "Sorry, this version is only for AltiVec capable machine! \n");
+-               EasyRequester("Sorry, this version is only for AltiVec capable machine!",
+-                          "Cancel");
++		EasyRequester( CS(MSG_Warning_Altivec), CS(MSG_Warning_Button_OK) );
++
+ 		// markus put MPlayer to exit mode
+ 		exit_player_with_rc(0, 0);
+ 		// end markus

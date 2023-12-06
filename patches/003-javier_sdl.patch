@@ -1,0 +1,14 @@
++++ libvo/sdl_common.c  2023-08-01 18:13:26
+@@ -195,7 +195,9 @@ sdl_set_mode(int bpp, uint32_t flags)
+     }
+
+ #ifdef __AMIGAOS4__
+-    AmigaOS_ScreenTitle(mpctx->video_out->info->short_name); // used to get -vo string/short_name
++    if(mpctx->video_out) {
++        AmigaOS_ScreenTitle(mpctx->video_out->info->short_name); // used to get -vo string/short_name) AmigaOS_ScreenTitle(mpctx->video_out->info->short_name); // used to get -vo string/short_name
++    }
+ #endif
+
+     vo_dwidth  = s->w;
+
+

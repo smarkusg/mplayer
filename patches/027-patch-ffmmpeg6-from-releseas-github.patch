@@ -1,0 +1,1326 @@
+diff --color -rupN old/ffmpeg/configure new/ffmpeg/configure
+--- old/ffmpeg/configure	2023-08-01 08:28:44.000000000 +0200
++++ new/ffmpeg/configure	2023-08-30 14:09:49.677302933 +0200
+@@ -7044,7 +7044,7 @@ enabled nvenc &&
+     test_cc -I$source_path <<EOF || disable nvenc
+ #include <ffnvcodec/nvEncodeAPI.h>
+ NV_ENCODE_API_FUNCTION_LIST flist;
+-void f(void) { struct { const GUID guid; } s[] = { { NV_ENC_PRESET_HQ_GUID } }; }
++void f(void) { struct { const GUID guid; } s[] = { { NV_ENC_CODEC_H264_GUID } }; }
+ int main(void) { return 0; }
+ EOF
+ 
+diff --color -rupN old/ffmpeg/doc/examples/Makefile.example new/ffmpeg/doc/examples/Makefile.example
+--- old/ffmpeg/doc/examples/Makefile.example	2023-08-01 08:28:43.000000000 +0200
++++ new/ffmpeg/doc/examples/Makefile.example	2023-08-30 14:09:49.677302933 +0200
+@@ -43,8 +43,8 @@ OBJS=$(addsuffix .o,$(EXAMPLES))
+ # the following examples make explicit use of the math library
+ avcodec:           LDLIBS += -lm
+ encode_audio:      LDLIBS += -lm
+-muxing:            LDLIBS += -lm
+-resampling_audio:  LDLIBS += -lm
++mux:               LDLIBS += -lm
++resample_audio:    LDLIBS += -lm
+ 
+ .phony: all clean-test clean
+ 
+diff --color -rupN old/ffmpeg/fftools/ffmpeg_demux.c new/ffmpeg/fftools/ffmpeg_demux.c
+--- old/ffmpeg/fftools/ffmpeg_demux.c	2023-08-01 08:28:43.000000000 +0200
++++ new/ffmpeg/fftools/ffmpeg_demux.c	2023-08-30 14:09:49.677302933 +0200
+@@ -628,8 +628,12 @@ static void add_input_streams(const Opti
+         MATCH_PER_STREAM_OPT(codec_tags, str, codec_tag, ic, st);
+         if (codec_tag) {
+             uint32_t tag = strtol(codec_tag, &next, 0);
+-            if (*next)
+-                tag = AV_RL32(codec_tag);
++            if (*next) {
++                uint8_t buf[4] = { 0 };
++                memcpy(buf, codec_tag, FFMIN(sizeof(buf), strlen(codec_tag)));
++                tag = AV_RL32(buf);
++            }
++
+             st->codecpar->codec_tag = tag;
+         }
+ 
+diff --color -rupN old/ffmpeg/fftools/ffmpeg_filter.c new/ffmpeg/fftools/ffmpeg_filter.c
+--- old/ffmpeg/fftools/ffmpeg_filter.c	2023-08-01 08:28:43.000000000 +0200
++++ new/ffmpeg/fftools/ffmpeg_filter.c	2023-08-30 14:09:49.677302933 +0200
+@@ -352,11 +352,13 @@ static int read_binary(const char *path,
+ 
+     *len = fsize;
+ 
+-    return 0;
++    ret = 0;
+ fail:
+     avio_close(io);
+-    av_freep(data);
+-    *len = 0;
++    if (ret < 0) {
++        av_freep(data);
++        *len = 0;
++    }
+     return ret;
+ }
+ 
+diff --color -rupN old/ffmpeg/fftools/ffmpeg_mux_init.c new/ffmpeg/fftools/ffmpeg_mux_init.c
+--- old/ffmpeg/fftools/ffmpeg_mux_init.c	2023-08-01 08:28:43.000000000 +0200
++++ new/ffmpeg/fftools/ffmpeg_mux_init.c	2023-08-30 14:09:49.679303060 +0200
+@@ -606,8 +606,11 @@ static OutputStream *new_output_stream(M
+     MATCH_PER_STREAM_OPT(codec_tags, str, codec_tag, oc, st);
+     if (codec_tag) {
+         uint32_t tag = strtol(codec_tag, &next, 0);
+-        if (*next)
+-            tag = AV_RL32(codec_tag);
++        if (*next) {
++            uint8_t buf[4] = { 0 };
++            memcpy(buf, codec_tag, FFMIN(sizeof(buf), strlen(codec_tag)));
++            tag = AV_RL32(buf);
++        }
+         ost->st->codecpar->codec_tag = tag;
+         if (ost->enc_ctx)
+             ost->enc_ctx->codec_tag = tag;
+@@ -2063,7 +2066,7 @@ static void parse_forced_key_frames(Keyf
+         if (next)
+             *next++ = 0;
+ 
+-        if (!memcmp(p, "chapters", 8)) {
++        if (strstr(p, "chapters") == p) {
+             AVChapter * const *ch = mux->fc->chapters;
+             unsigned int    nb_ch = mux->fc->nb_chapters;
+             int j;
+diff --color -rupN old/ffmpeg/libavcodec/aac_ac3_parser.c new/ffmpeg/libavcodec/aac_ac3_parser.c
+--- old/ffmpeg/libavcodec/aac_ac3_parser.c	2023-08-01 08:28:43.000000000 +0200
++++ new/ffmpeg/libavcodec/aac_ac3_parser.c	2023-08-30 14:09:49.679303060 +0200
+@@ -95,6 +95,7 @@ get_next:
+            duration in seconds is still correct (as is the number of bits in
+            the frame). */
+         if (avctx->codec_id != AV_CODEC_ID_AAC) {
++#if CONFIG_AC3_PARSER
+             AC3HeaderInfo hdr, *phrd = &hdr;
+             int offset = ff_ac3_find_syncword(buf, buf_size);
+ 
+@@ -146,7 +147,9 @@ FF_ENABLE_DEPRECATION_WARNINGS
+             if (hdr.bitstream_mode == 0x7 && hdr.channels > 1)
+                 avctx->audio_service_type = AV_AUDIO_SERVICE_TYPE_KARAOKE;
+             bit_rate = hdr.bit_rate;
++#endif
+         } else {
++#if CONFIG_AAC_PARSER
+             AACADTSHeaderInfo hdr, *phrd = &hdr;
+             int ret = avpriv_adts_header_parse(&phrd, buf, buf_size);
+ 
+@@ -154,6 +157,7 @@ FF_ENABLE_DEPRECATION_WARNINGS
+                 return i;
+ 
+             bit_rate = hdr.bit_rate;
++#endif
+         }
+ 
+         /* Calculate the average bit rate */
+diff --color -rupN old/ffmpeg/libavcodec/aacps_tablegen.h new/ffmpeg/libavcodec/aacps_tablegen.h
+--- old/ffmpeg/libavcodec/aacps_tablegen.h	2023-08-01 08:28:44.000000000 +0200
++++ new/ffmpeg/libavcodec/aacps_tablegen.h	2023-08-30 14:09:49.679303060 +0200
+@@ -34,7 +34,7 @@
+ #include "libavutil/common.h"
+ #include "libavutil/libm.h"
+ #include "libavutil/mathematics.h"
+-#include "libavutil/mem.h"
++#include "libavutil/mem_internal.h"
+ #define NR_ALLPASS_BANDS20 30
+ #define NR_ALLPASS_BANDS34 50
+ #define PS_AP_LINKS 3
+diff --color -rupN old/ffmpeg/libavcodec/aacpsy.c new/ffmpeg/libavcodec/aacpsy.c
+--- old/ffmpeg/libavcodec/aacpsy.c	2023-08-01 08:28:43.000000000 +0200
++++ new/ffmpeg/libavcodec/aacpsy.c	2023-08-30 14:09:49.679303060 +0200
+@@ -267,7 +267,7 @@ static av_cold void lame_window_init(Aac
+         AacPsyChannel *pch = &ctx->ch[i];
+ 
+         if (avctx->flags & AV_CODEC_FLAG_QSCALE)
+-            pch->attack_threshold = psy_vbr_map[avctx->global_quality / FF_QP2LAMBDA].st_lrm;
++            pch->attack_threshold = psy_vbr_map[av_clip(avctx->global_quality / FF_QP2LAMBDA, 0, 10)].st_lrm;
+         else
+             pch->attack_threshold = lame_calc_attack_threshold(avctx->bit_rate / avctx->ch_layout.nb_channels / 1000);
+ 
+diff --color -rupN old/ffmpeg/libavcodec/decode.c new/ffmpeg/libavcodec/decode.c
+--- old/ffmpeg/libavcodec/decode.c	2023-08-01 08:28:44.000000000 +0200
++++ new/ffmpeg/libavcodec/decode.c	2023-08-30 14:09:49.679303060 +0200
+@@ -140,7 +140,7 @@ static int extract_packet_props(AVCodecI
+     if (pkt) {
+         ret = av_packet_copy_props(avci->last_pkt_props, pkt);
+         if (!ret)
+-            avci->last_pkt_props->opaque = (void *)(intptr_t)pkt->size; // Needed for ff_decode_frame_props().
++            avci->last_pkt_props->stream_index = pkt->size; // Needed for ff_decode_frame_props().
+     }
+     return ret;
+ }
+@@ -461,7 +461,7 @@ FF_ENABLE_DEPRECATION_WARNINGS
+         pkt->dts                  = AV_NOPTS_VALUE;
+         if (!(codec->caps_internal & FF_CODEC_CAP_SETS_FRAME_PROPS)) {
+             // See extract_packet_props() comment.
+-            avci->last_pkt_props->opaque = (void *)((intptr_t)avci->last_pkt_props->opaque - consumed);
++            avci->last_pkt_props->stream_index = avci->last_pkt_props->stream_index - consumed;
+             avci->last_pkt_props->pts = AV_NOPTS_VALUE;
+             avci->last_pkt_props->dts = AV_NOPTS_VALUE;
+         }
+@@ -1355,7 +1355,7 @@ int ff_decode_frame_props(AVCodecContext
+         int ret = ff_decode_frame_props_from_pkt(avctx, frame, pkt);
+         if (ret < 0)
+             return ret;
+-        frame->pkt_size     = (int)(intptr_t)pkt->opaque;
++        frame->pkt_size = pkt->stream_index;
+     }
+ #if FF_API_REORDERED_OPAQUE
+ FF_DISABLE_DEPRECATION_WARNINGS
+diff --color -rupN old/ffmpeg/libavcodec/dvenc.c new/ffmpeg/libavcodec/dvenc.c
+--- old/ffmpeg/libavcodec/dvenc.c	2023-08-01 08:28:43.000000000 +0200
++++ new/ffmpeg/libavcodec/dvenc.c	2023-08-30 14:09:49.679303060 +0200
+@@ -104,7 +104,9 @@ static av_cold int dvvideo_encode_init(A
+     ff_fdctdsp_init(&fdsp, avctx);
+     ff_me_cmp_init(&mecc, avctx);
+     ff_pixblockdsp_init(&pdsp, avctx);
+-    ff_set_cmp(&mecc, mecc.ildct_cmp, avctx->ildct_cmp);
++    ret = ff_set_cmp(&mecc, mecc.ildct_cmp, avctx->ildct_cmp);
++    if (ret < 0)
++        return AVERROR(EINVAL);
+ 
+     s->get_pixels = pdsp.get_pixels;
+     s->ildct_cmp  = mecc.ildct_cmp[5];
+diff --color -rupN old/ffmpeg/libavcodec/me_cmp.c new/ffmpeg/libavcodec/me_cmp.c
+--- old/ffmpeg/libavcodec/me_cmp.c	2023-08-01 08:28:43.000000000 +0200
++++ new/ffmpeg/libavcodec/me_cmp.c	2023-08-30 14:09:49.679303060 +0200
+@@ -473,8 +473,9 @@ static int zero_cmp(MpegEncContext *s, c
+     return 0;
+ }
+ 
+-void ff_set_cmp(MECmpContext *c, me_cmp_func *cmp, int type)
++int ff_set_cmp(MECmpContext *c, me_cmp_func *cmp, int type)
+ {
++    int ret = 0;
+     int i;
+ 
+     memset(cmp, 0, sizeof(void *) * 6);
+@@ -533,9 +534,13 @@ void ff_set_cmp(MECmpContext *c, me_cmp_
+ #endif
+         default:
+             av_log(NULL, AV_LOG_ERROR,
+-                   "internal error in cmp function selection\n");
++                   "invalid cmp function selection\n");
++            ret = -1;
++            break;
+         }
+     }
++
++    return ret;
+ }
+ 
+ #define BUTTERFLY2(o1, o2, i1, i2)              \
+diff --color -rupN old/ffmpeg/libavcodec/me_cmp.h new/ffmpeg/libavcodec/me_cmp.h
+--- old/ffmpeg/libavcodec/me_cmp.h	2023-08-01 08:28:43.000000000 +0200
++++ new/ffmpeg/libavcodec/me_cmp.h	2023-08-30 14:09:49.679303060 +0200
+@@ -89,7 +89,7 @@ void ff_me_cmp_init_ppc(MECmpContext *c,
+ void ff_me_cmp_init_x86(MECmpContext *c, AVCodecContext *avctx);
+ void ff_me_cmp_init_mips(MECmpContext *c, AVCodecContext *avctx);
+ 
+-void ff_set_cmp(MECmpContext *c, me_cmp_func *cmp, int type);
++int ff_set_cmp(MECmpContext *c, me_cmp_func *cmp, int type);
+ 
+ void ff_dsputil_init_dwt(MECmpContext *c);
+ 
+diff --color -rupN old/ffmpeg/libavcodec/motion_est.c new/ffmpeg/libavcodec/motion_est.c
+--- old/ffmpeg/libavcodec/motion_est.c	2023-08-01 08:28:43.000000000 +0200
++++ new/ffmpeg/libavcodec/motion_est.c	2023-08-30 14:09:49.681303187 +0200
+@@ -309,6 +309,7 @@ int ff_init_me(MpegEncContext *s){
+     MotionEstContext * const c= &s->me;
+     int cache_size= FFMIN(ME_MAP_SIZE>>ME_MAP_SHIFT, 1<<ME_MAP_SHIFT);
+     int dia_size= FFMAX(FFABS(s->avctx->dia_size)&255, FFABS(s->avctx->pre_dia_size)&255);
++    int ret;
+ 
+     if(FFMIN(s->avctx->dia_size, s->avctx->pre_dia_size) < -FFMIN(ME_MAP_SIZE, MAX_SAB_SIZE)){
+         av_log(s->avctx, AV_LOG_ERROR, "ME_MAP size is too small for SAB diamond\n");
+@@ -324,10 +325,12 @@ int ff_init_me(MpegEncContext *s){
+         av_log(s->avctx, AV_LOG_INFO, "ME_MAP size may be a little small for the selected diamond size\n");
+     }
+ 
+-    ff_set_cmp(&s->mecc, s->mecc.me_pre_cmp, c->avctx->me_pre_cmp);
+-    ff_set_cmp(&s->mecc, s->mecc.me_cmp,     c->avctx->me_cmp);
+-    ff_set_cmp(&s->mecc, s->mecc.me_sub_cmp, c->avctx->me_sub_cmp);
+-    ff_set_cmp(&s->mecc, s->mecc.mb_cmp,     c->avctx->mb_cmp);
++    ret  = ff_set_cmp(&s->mecc, s->mecc.me_pre_cmp, c->avctx->me_pre_cmp);
++    ret |= ff_set_cmp(&s->mecc, s->mecc.me_cmp,     c->avctx->me_cmp);
++    ret |= ff_set_cmp(&s->mecc, s->mecc.me_sub_cmp, c->avctx->me_sub_cmp);
++    ret |= ff_set_cmp(&s->mecc, s->mecc.mb_cmp,     c->avctx->mb_cmp);
++    if (ret < 0)
++        return ret;
+ 
+     c->flags    = get_flags(c, 0, c->avctx->me_cmp    &FF_CMP_CHROMA);
+     c->sub_flags= get_flags(c, 0, c->avctx->me_sub_cmp&FF_CMP_CHROMA);
+diff --color -rupN old/ffmpeg/libavcodec/mpegvideo_enc.c new/ffmpeg/libavcodec/mpegvideo_enc.c
+--- old/ffmpeg/libavcodec/mpegvideo_enc.c	2023-08-01 08:28:43.000000000 +0200
++++ new/ffmpeg/libavcodec/mpegvideo_enc.c	2023-08-30 14:09:49.681303187 +0200
+@@ -902,8 +902,10 @@ av_cold int ff_mpv_encode_init(AVCodecCo
+ 
+     s->quant_precision = 5;
+ 
+-    ff_set_cmp(&s->mecc, s->mecc.ildct_cmp,      avctx->ildct_cmp);
+-    ff_set_cmp(&s->mecc, s->mecc.frame_skip_cmp, s->frame_skip_cmp);
++    ret  = ff_set_cmp(&s->mecc, s->mecc.ildct_cmp,      avctx->ildct_cmp);
++    ret |= ff_set_cmp(&s->mecc, s->mecc.frame_skip_cmp, s->frame_skip_cmp);
++    if (ret < 0)
++        return AVERROR(EINVAL);
+ 
+     if (CONFIG_H263_ENCODER && s->out_format == FMT_H263) {
+         ff_h263_encode_init(s);
+diff --color -rupN old/ffmpeg/libavcodec/nvdec_mpeg12.c new/ffmpeg/libavcodec/nvdec_mpeg12.c
+--- old/ffmpeg/libavcodec/nvdec_mpeg12.c	2023-08-01 08:28:43.000000000 +0200
++++ new/ffmpeg/libavcodec/nvdec_mpeg12.c	2023-08-30 14:09:49.681303187 +0200
+@@ -83,8 +83,9 @@ static int nvdec_mpeg12_start_frame(AVCo
+     };
+ 
+     for (i = 0; i < 64; ++i) {
+-        ppc->QuantMatrixIntra[i] = s->intra_matrix[i];
+-        ppc->QuantMatrixInter[i] = s->inter_matrix[i];
++        int n = s->idsp.idct_permutation[i];
++        ppc->QuantMatrixIntra[i] = s->intra_matrix[n];
++        ppc->QuantMatrixInter[i] = s->inter_matrix[n];
+     }
+ 
+     return 0;
+diff --color -rupN old/ffmpeg/libavcodec/nvdec_mpeg4.c new/ffmpeg/libavcodec/nvdec_mpeg4.c
+--- old/ffmpeg/libavcodec/nvdec_mpeg4.c	2023-08-01 08:28:43.000000000 +0200
++++ new/ffmpeg/libavcodec/nvdec_mpeg4.c	2023-08-30 14:09:49.681303187 +0200
+@@ -88,8 +88,9 @@ static int nvdec_mpeg4_start_frame(AVCod
+     };
+ 
+     for (i = 0; i < 64; ++i) {
+-        ppc->QuantMatrixIntra[i] = s->intra_matrix[i];
+-        ppc->QuantMatrixInter[i] = s->inter_matrix[i];
++        int n = s->idsp.idct_permutation[i];
++        ppc->QuantMatrixIntra[i] = s->intra_matrix[n];
++        ppc->QuantMatrixInter[i] = s->inter_matrix[n];
+     }
+ 
+     // We need to pass the full frame buffer and not just the slice
+diff --color -rupN old/ffmpeg/libavcodec/nvenc.c new/ffmpeg/libavcodec/nvenc.c
+--- old/ffmpeg/libavcodec/nvenc.c	2023-08-01 08:28:44.000000000 +0200
++++ new/ffmpeg/libavcodec/nvenc.c	2023-08-30 14:09:49.681303187 +0200
+@@ -28,7 +28,6 @@
+ #include "av1.h"
+ #endif
+ 
+-#include "libavutil/buffer.h"
+ #include "libavutil/hwcontext_cuda.h"
+ #include "libavutil/hwcontext.h"
+ #include "libavutil/cuda_check.h"
+@@ -44,9 +43,14 @@
+ #define CHECK_CU(x) FF_CUDA_CHECK_DL(avctx, dl_fn->cuda_dl, x)
+ 
+ #define NVENC_CAP 0x30
++
++#ifndef NVENC_NO_DEPRECATED_RC
+ #define IS_CBR(rc) (rc == NV_ENC_PARAMS_RC_CBR ||             \
+                     rc == NV_ENC_PARAMS_RC_CBR_LOWDELAY_HQ || \
+                     rc == NV_ENC_PARAMS_RC_CBR_HQ)
++#else
++#define IS_CBR(rc) (rc == NV_ENC_PARAMS_RC_CBR)
++#endif
+ 
+ const enum AVPixelFormat ff_nvenc_pix_fmts[] = {
+     AV_PIX_FMT_YUV420P,
+@@ -163,25 +167,6 @@ static int nvenc_print_error(AVCodecCont
+     return ret;
+ }
+ 
+-typedef struct FrameData {
+-    int64_t pts;
+-    int64_t duration;
+-#if FF_API_REORDERED_OPAQUE
+-    int64_t reordered_opaque;
+-#endif
+-
+-    void        *frame_opaque;
+-    AVBufferRef *frame_opaque_ref;
+-} FrameData;
+-
+-static void reorder_queue_flush(AVFifo *queue)
+-{
+-    FrameData fd;
+-
+-    while (av_fifo_read(queue, &fd, 1) >= 0)
+-        av_buffer_unref(&fd.frame_opaque_ref);
+-}
+-
+ typedef struct GUIDTuple {
+     const GUID guid;
+     int flags;
+@@ -457,7 +442,7 @@ static int nvenc_check_cap(AVCodecContex
+ static int nvenc_check_capabilities(AVCodecContext *avctx)
+ {
+     NvencContext *ctx = avctx->priv_data;
+-    int ret;
++    int tmp, ret;
+ 
+     ret = nvenc_check_codec_support(avctx);
+     if (ret < 0) {
+@@ -538,16 +523,18 @@ static int nvenc_check_capabilities(AVCo
+     }
+ 
+ #ifdef NVENC_HAVE_BFRAME_REF_MODE
++    tmp = (ctx->b_ref_mode >= 0) ? ctx->b_ref_mode : NV_ENC_BFRAME_REF_MODE_DISABLED;
+     ret = nvenc_check_cap(avctx, NV_ENC_CAPS_SUPPORT_BFRAME_REF_MODE);
+-    if (ctx->b_ref_mode == NV_ENC_BFRAME_REF_MODE_EACH && ret != 1 && ret != 3) {
++    if (tmp == NV_ENC_BFRAME_REF_MODE_EACH && ret != 1 && ret != 3) {
+         av_log(avctx, AV_LOG_WARNING, "Each B frame as reference is not supported\n");
+         return AVERROR(ENOSYS);
+-    } else if (ctx->b_ref_mode != NV_ENC_BFRAME_REF_MODE_DISABLED && ret == 0) {
++    } else if (tmp != NV_ENC_BFRAME_REF_MODE_DISABLED && ret == 0) {
+         av_log(avctx, AV_LOG_WARNING, "B frames as references are not supported\n");
+         return AVERROR(ENOSYS);
+     }
+ #else
+-    if (ctx->b_ref_mode != 0) {
++    tmp = (ctx->b_ref_mode >= 0) ? ctx->b_ref_mode : 0;
++    if (tmp > 0) {
+         av_log(avctx, AV_LOG_WARNING, "B frames as references need SDK 8.1 at build time\n");
+         return AVERROR(ENOSYS);
+     }
+@@ -922,6 +909,7 @@ static void nvenc_override_rate_control(
+     case NV_ENC_PARAMS_RC_CONSTQP:
+         set_constqp(avctx);
+         return;
++#ifndef NVENC_NO_DEPRECATED_RC
+     case NV_ENC_PARAMS_RC_VBR_MINQP:
+         if (avctx->qmin < 0) {
+             av_log(avctx, AV_LOG_WARNING,
+@@ -932,12 +920,15 @@ static void nvenc_override_rate_control(
+         }
+         /* fall through */
+     case NV_ENC_PARAMS_RC_VBR_HQ:
++#endif
+     case NV_ENC_PARAMS_RC_VBR:
+         set_vbr(avctx);
+         break;
+     case NV_ENC_PARAMS_RC_CBR:
++#ifndef NVENC_NO_DEPRECATED_RC
+     case NV_ENC_PARAMS_RC_CBR_HQ:
+     case NV_ENC_PARAMS_RC_CBR_LOWDELAY_HQ:
++#endif
+         break;
+     }
+ 
+@@ -980,6 +971,10 @@ static av_cold int nvenc_recalc_surfaces
+     ctx->nb_surfaces = FFMAX(1, FFMIN(MAX_REGISTERED_FRAMES, ctx->nb_surfaces));
+     ctx->async_depth = FFMIN(ctx->async_depth, ctx->nb_surfaces - 1);
+ 
++    // Output in the worst case will only start when the surface buffer is completely full.
++    // Hence we need to keep at least the max amount of surfaces plus the max reorder delay around.
++    ctx->frame_data_array_nb = ctx->nb_surfaces + ctx->encode_config.frameIntervalP - 1;
++
+     return 0;
+ }
+ 
+@@ -1207,12 +1202,14 @@ static av_cold int nvenc_setup_h264_conf
+ 
+     h264->outputPictureTimingSEI = 1;
+ 
++#ifndef NVENC_NO_DEPRECATED_RC
+     if (cc->rcParams.rateControlMode == NV_ENC_PARAMS_RC_CBR_LOWDELAY_HQ ||
+         cc->rcParams.rateControlMode == NV_ENC_PARAMS_RC_CBR_HQ ||
+         cc->rcParams.rateControlMode == NV_ENC_PARAMS_RC_VBR_HQ) {
+         h264->adaptiveTransformMode = NV_ENC_H264_ADAPTIVE_TRANSFORM_ENABLE;
+         h264->fmoMode = NV_ENC_H264_FMO_DISABLE;
+     }
++#endif
+ 
+     if (ctx->flags & NVENC_LOSSLESS) {
+         h264->qpPrimeYZeroTransformBypassFlag = 1;
+@@ -1768,8 +1765,12 @@ static av_cold int nvenc_setup_surfaces(
+     if (!ctx->surfaces)
+         return AVERROR(ENOMEM);
+ 
+-    ctx->reorder_queue = av_fifo_alloc2(ctx->nb_surfaces, sizeof(FrameData), 0);
+-    if (!ctx->reorder_queue)
++    ctx->frame_data_array = av_calloc(ctx->frame_data_array_nb, sizeof(*ctx->frame_data_array));
++    if (!ctx->frame_data_array)
++        return AVERROR(ENOMEM);
++
++    ctx->timestamp_list = av_fifo_alloc2(ctx->nb_surfaces, sizeof(int64_t), 0);
++    if (!ctx->timestamp_list)
+         return AVERROR(ENOMEM);
+ 
+     ctx->unused_surface_queue = av_fifo_alloc2(ctx->nb_surfaces, sizeof(NvencSurface*), 0);
+@@ -1853,12 +1854,17 @@ av_cold int ff_nvenc_encode_close(AVCode
+         p_nvenc->nvEncEncodePicture(ctx->nvencoder, &params);
+     }
+ 
+-    reorder_queue_flush(ctx->reorder_queue);
+-    av_fifo_freep2(&ctx->reorder_queue);
++    av_fifo_freep2(&ctx->timestamp_list);
+     av_fifo_freep2(&ctx->output_surface_ready_queue);
+     av_fifo_freep2(&ctx->output_surface_queue);
+     av_fifo_freep2(&ctx->unused_surface_queue);
+ 
++    if (ctx->frame_data_array) {
++        for (i = 0; i < ctx->nb_surfaces; i++)
++            av_buffer_unref(&ctx->frame_data_array[i].frame_opaque_ref);
++        av_freep(&ctx->frame_data_array);
++    }
++
+     if (ctx->surfaces && (avctx->pix_fmt == AV_PIX_FMT_CUDA || avctx->pix_fmt == AV_PIX_FMT_D3D11)) {
+         for (i = 0; i < ctx->nb_registered_frames; i++) {
+             if (ctx->registered_frames[i].mapped)
+@@ -2198,73 +2204,95 @@ static void nvenc_codec_specific_pic_par
+     }
+ }
+ 
+-static void reorder_queue_enqueue(AVFifo *queue, const AVCodecContext *avctx,
+-                                  const AVFrame *frame, AVBufferRef **opaque_ref)
++static inline void timestamp_queue_enqueue(AVFifo *queue, int64_t timestamp)
+ {
+-    FrameData fd;
++    av_fifo_write(queue, &timestamp, 1);
++}
+ 
+-    fd.pts              = frame->pts;
+-    fd.duration         = frame->duration;
+-#if FF_API_REORDERED_OPAQUE
+-FF_DISABLE_DEPRECATION_WARNINGS
+-    fd.reordered_opaque = frame->reordered_opaque;
+-FF_ENABLE_DEPRECATION_WARNINGS
+-#endif
+-    fd.frame_opaque     = frame->opaque;
+-    fd.frame_opaque_ref = *opaque_ref;
++static inline int64_t timestamp_queue_dequeue(AVFifo *queue)
++{
++    int64_t timestamp = AV_NOPTS_VALUE;
++    // The following call might fail if the queue is empty.
++    av_fifo_read(queue, &timestamp, 1);
++
++    return timestamp;
++}
++
++static int nvenc_set_timestamp(AVCodecContext *avctx,
++                               NV_ENC_LOCK_BITSTREAM *params,
++                               AVPacket *pkt)
++{
++    NvencContext *ctx = avctx->priv_data;
+ 
+-    *opaque_ref = NULL;
++    pkt->pts = params->outputTimeStamp;
+ 
+-    av_fifo_write(queue, &fd, 1);
++    if (avctx->codec_descriptor->props & AV_CODEC_PROP_REORDER) {
++        pkt->dts = timestamp_queue_dequeue(ctx->timestamp_list) -
++            FFMAX(ctx->encode_config.frameIntervalP - 1, 0) * FFMAX(avctx->ticks_per_frame, 1);
++    } else {
++        pkt->dts = pkt->pts;
++    }
++
++    return 0;
+ }
+ 
+-static int64_t reorder_queue_dequeue(AVFifo *queue, AVCodecContext *avctx,
+-                                     AVPacket *pkt)
++static int nvenc_store_frame_data(AVCodecContext *avctx, NV_ENC_PIC_PARAMS *pic_params, const AVFrame *frame)
+ {
+-    FrameData fd;
++    NvencContext *ctx = avctx->priv_data;
++    int res = 0;
+ 
+-    // The following call might fail if the queue is empty.
+-    if (av_fifo_read(queue, &fd, 1) < 0)
+-        return AV_NOPTS_VALUE;
++    int idx = ctx->frame_data_array_pos;
++    NvencFrameData *frame_data = &ctx->frame_data_array[idx];
++
++    // in case the encoder got reconfigured, there might be leftovers
++    av_buffer_unref(&frame_data->frame_opaque_ref);
++
++    if (frame && frame->opaque_ref && avctx->flags & AV_CODEC_FLAG_COPY_OPAQUE) {
++        frame_data->frame_opaque_ref = av_buffer_ref(frame->opaque_ref);
++        if (!frame_data->frame_opaque_ref)
++            return AVERROR(ENOMEM);
++    }
++
++    frame_data->duration = frame->duration;
++    frame_data->frame_opaque = frame->opaque;
+ 
+-    if (pkt) {
+ #if FF_API_REORDERED_OPAQUE
+ FF_DISABLE_DEPRECATION_WARNINGS
+-        avctx->reordered_opaque = fd.reordered_opaque;
++    frame_data->reordered_opaque = frame->reordered_opaque;
+ FF_ENABLE_DEPRECATION_WARNINGS
+ #endif
+-        pkt->duration           = fd.duration;
+ 
+-        if (avctx->flags & AV_CODEC_FLAG_COPY_OPAQUE) {
+-            pkt->opaque             = fd.frame_opaque;
+-            pkt->opaque_ref         = fd.frame_opaque_ref;
+-            fd.frame_opaque_ref     = NULL;
+-        }
+-    }
++    ctx->frame_data_array_pos = (ctx->frame_data_array_pos + 1) % ctx->frame_data_array_nb;
++    pic_params->inputDuration = idx;
+ 
+-    av_buffer_unref(&fd.frame_opaque_ref);
+-
+-    return fd.pts;
++    return res;
+ }
+ 
+-static int nvenc_set_timestamp(AVCodecContext *avctx,
+-                               NV_ENC_LOCK_BITSTREAM *params,
+-                               AVPacket *pkt)
++static int nvenc_retrieve_frame_data(AVCodecContext *avctx, NV_ENC_LOCK_BITSTREAM *lock_params, AVPacket *pkt)
+ {
+     NvencContext *ctx = avctx->priv_data;
+-    int64_t dts;
++    int res = 0;
+ 
+-    pkt->pts = params->outputTimeStamp;
++    int idx = lock_params->outputDuration;
++    NvencFrameData *frame_data = &ctx->frame_data_array[idx];
+ 
+-    dts = reorder_queue_dequeue(ctx->reorder_queue, avctx, pkt);
++    pkt->duration = frame_data->duration;
+ 
+-    if (avctx->codec_descriptor->props & AV_CODEC_PROP_REORDER) {
+-        pkt->dts = dts - FFMAX(ctx->encode_config.frameIntervalP - 1, 0) * FFMAX(avctx->ticks_per_frame, 1);
+-    } else {
+-        pkt->dts = pkt->pts;
++#if FF_API_REORDERED_OPAQUE
++FF_DISABLE_DEPRECATION_WARNINGS
++    avctx->reordered_opaque = frame_data->reordered_opaque;
++FF_ENABLE_DEPRECATION_WARNINGS
++#endif
++
++    if (avctx->flags & AV_CODEC_FLAG_COPY_OPAQUE) {
++        pkt->opaque = frame_data->frame_opaque;
++        pkt->opaque_ref = frame_data->frame_opaque_ref;
++        frame_data->frame_opaque_ref = NULL;
+     }
+ 
+-    return 0;
++    av_buffer_unref(&frame_data->frame_opaque_ref);
++
++    return res;
+ }
+ 
+ static int process_output_surface(AVCodecContext *avctx, AVPacket *pkt, NvencSurface *tmpoutsurf)
+@@ -2353,10 +2381,14 @@ static int process_output_surface(AVCode
+     if (res < 0)
+         goto error2;
+ 
++    res = nvenc_retrieve_frame_data(avctx, &lock_params, pkt);
++    if (res < 0)
++        goto error2;
++
+     return 0;
+ 
+ error:
+-    reorder_queue_dequeue(ctx->reorder_queue, avctx, NULL);
++    timestamp_queue_dequeue(ctx->timestamp_list);
+ 
+ error2:
+     return res;
+@@ -2586,8 +2618,6 @@ static int nvenc_send_frame(AVCodecConte
+     int sei_count = 0;
+     int i;
+ 
+-    AVBufferRef *opaque_ref = NULL;
+-
+     NvencContext *ctx = avctx->priv_data;
+     NvencDynLoadFunctions *dl_fn = &ctx->nvenc_dload_funcs;
+     NV_ENCODE_API_FUNCTION_LIST *p_nvenc = &dl_fn->nvenc_funcs;
+@@ -2650,22 +2680,18 @@ static int nvenc_send_frame(AVCodecConte
+             sei_count = res;
+         }
+ 
++        res = nvenc_store_frame_data(avctx, &pic_params, frame);
++        if (res < 0)
++            return res;
++
+         nvenc_codec_specific_pic_params(avctx, &pic_params, ctx->sei_data, sei_count);
+     } else {
+         pic_params.encodePicFlags = NV_ENC_PIC_FLAG_EOS;
+     }
+ 
+-    // make a reference for enqueing in the reorder queue here,
+-    // so that reorder_queue_enqueue() cannot fail
+-    if (frame && frame->opaque_ref && avctx->flags & AV_CODEC_FLAG_COPY_OPAQUE) {
+-        opaque_ref = av_buffer_ref(frame->opaque_ref);
+-        if (!opaque_ref)
+-            return AVERROR(ENOMEM);
+-    }
+-
+     res = nvenc_push_context(avctx);
+     if (res < 0)
+-        goto opaque_ref_fail;
++        return res;
+ 
+     nv_status = p_nvenc->nvEncEncodePicture(ctx->nvencoder, &pic_params);
+ 
+@@ -2674,17 +2700,17 @@ static int nvenc_send_frame(AVCodecConte
+ 
+     res = nvenc_pop_context(avctx);
+     if (res < 0)
+-        goto opaque_ref_fail;
++        return res;
+ 
+     if (nv_status != NV_ENC_SUCCESS &&
+-        nv_status != NV_ENC_ERR_NEED_MORE_INPUT) {
+-        res = nvenc_print_error(avctx, nv_status, "EncodePicture failed!");
+-        goto opaque_ref_fail;
+-    }
++        nv_status != NV_ENC_ERR_NEED_MORE_INPUT)
++        return nvenc_print_error(avctx, nv_status, "EncodePicture failed!");
+ 
+     if (frame && frame->buf[0]) {
+         av_fifo_write(ctx->output_surface_queue, &in_surf, 1);
+-        reorder_queue_enqueue(ctx->reorder_queue, avctx, frame, &opaque_ref);
++
++        if (avctx->codec_descriptor->props & AV_CODEC_PROP_REORDER)
++            timestamp_queue_enqueue(ctx->timestamp_list, frame->pts);
+     }
+ 
+     /* all the pending buffers are now ready for output */
+@@ -2694,10 +2720,6 @@ static int nvenc_send_frame(AVCodecConte
+     }
+ 
+     return 0;
+-
+-opaque_ref_fail:
+-    av_buffer_unref(&opaque_ref);
+-    return res;
+ }
+ 
+ int ff_nvenc_receive_packet(AVCodecContext *avctx, AVPacket *pkt)
+@@ -2756,5 +2778,5 @@ av_cold void ff_nvenc_encode_flush(AVCod
+     NvencContext *ctx = avctx->priv_data;
+ 
+     nvenc_send_frame(avctx, NULL);
+-    reorder_queue_flush(ctx->reorder_queue);
++    av_fifo_reset2(ctx->timestamp_list);
+ }
+diff --color -rupN old/ffmpeg/libavcodec/nvenc.h new/ffmpeg/libavcodec/nvenc.h
+--- old/ffmpeg/libavcodec/nvenc.h	2023-08-01 08:28:43.000000000 +0200
++++ new/ffmpeg/libavcodec/nvenc.h	2023-08-30 14:09:49.681303187 +0200
+@@ -31,6 +31,7 @@ typedef void ID3D11Device;
+ #include <ffnvcodec/nvEncodeAPI.h>
+ 
+ #include "compat/cuda/dynlink_loader.h"
++#include "libavutil/buffer.h"
+ #include "libavutil/fifo.h"
+ #include "libavutil/opt.h"
+ #include "hwconfig.h"
+@@ -77,6 +78,11 @@ typedef void ID3D11Device;
+ #define NVENC_HAVE_SINGLE_SLICE_INTRA_REFRESH
+ #endif
+ 
++// SDK 12.1 compile time feature checks
++#if NVENCAPI_CHECK_VERSION(12, 1)
++#define NVENC_NO_DEPRECATED_RC
++#endif
++
+ typedef struct NvencSurface
+ {
+     NV_ENC_INPUT_PTR input_surface;
+@@ -90,6 +96,18 @@ typedef struct NvencSurface
+     NV_ENC_BUFFER_FORMAT format;
+ } NvencSurface;
+ 
++typedef struct NvencFrameData
++{
++    int64_t duration;
++
++#if FF_API_REORDERED_OPAQUE
++    int64_t reordered_opaque;
++#endif
++
++    void        *frame_opaque;
++    AVBufferRef *frame_opaque_ref;
++} NvencFrameData;
++
+ typedef struct NvencDynLoadFunctions
+ {
+     CudaFunctions *cuda_dl;
+@@ -168,10 +186,14 @@ typedef struct NvencContext
+     int nb_surfaces;
+     NvencSurface *surfaces;
+ 
++    NvencFrameData *frame_data_array;
++    int frame_data_array_nb;
++    int frame_data_array_pos;
++
+     AVFifo *unused_surface_queue;
+     AVFifo *output_surface_queue;
+     AVFifo *output_surface_ready_queue;
+-    AVFifo *reorder_queue;
++    AVFifo *timestamp_list;
+ 
+     NV_ENC_SEI_PAYLOAD *sei_data;
+     int sei_data_size;
+diff --color -rupN old/ffmpeg/libavcodec/nvenc_h264.c new/ffmpeg/libavcodec/nvenc_h264.c
+--- old/ffmpeg/libavcodec/nvenc_h264.c	2023-08-01 08:28:43.000000000 +0200
++++ new/ffmpeg/libavcodec/nvenc_h264.c	2023-08-30 14:09:49.681303187 +0200
+@@ -100,6 +100,7 @@ static const AVOption options[] = {
+     { "constqp",      "Constant QP mode",                   0,                    AV_OPT_TYPE_CONST, { .i64 = NV_ENC_PARAMS_RC_CONSTQP },                   0, 0, VE, "rc" },
+     { "vbr",          "Variable bitrate mode",              0,                    AV_OPT_TYPE_CONST, { .i64 = NV_ENC_PARAMS_RC_VBR },                       0, 0, VE, "rc" },
+     { "cbr",          "Constant bitrate mode",              0,                    AV_OPT_TYPE_CONST, { .i64 = NV_ENC_PARAMS_RC_CBR },                       0, 0, VE, "rc" },
++#ifndef NVENC_NO_DEPRECATED_RC
+     { "vbr_minqp",    "Variable bitrate mode with MinQP (deprecated)", 0,         AV_OPT_TYPE_CONST, { .i64 = RCD(NV_ENC_PARAMS_RC_VBR_MINQP) },            0, 0, VE, "rc" },
+     { "ll_2pass_quality", "Multi-pass optimized for image quality (deprecated)",
+                                                             0,                    AV_OPT_TYPE_CONST, { .i64 = RCD(NV_ENC_PARAMS_RC_2_PASS_QUALITY) },       0, 0, VE, "rc" },
+@@ -109,6 +110,17 @@ static const AVOption options[] = {
+     { "cbr_ld_hq",    "Constant bitrate low delay high quality mode", 0,          AV_OPT_TYPE_CONST, { .i64 = RCD(NV_ENC_PARAMS_RC_CBR_LOWDELAY_HQ) },      0, 0, VE, "rc" },
+     { "cbr_hq",       "Constant bitrate high quality mode", 0,                    AV_OPT_TYPE_CONST, { .i64 = RCD(NV_ENC_PARAMS_RC_CBR_HQ) },               0, 0, VE, "rc" },
+     { "vbr_hq",       "Variable bitrate high quality mode", 0,                    AV_OPT_TYPE_CONST, { .i64 = RCD(NV_ENC_PARAMS_RC_VBR_HQ) },               0, 0, VE, "rc" },
++#else
++    { "vbr_minqp",    "Variable bitrate mode with MinQP (deprecated)", 0,         AV_OPT_TYPE_CONST, { .i64 = RCD(NV_ENC_PARAMS_RC_VBR) },                  0, 0, VE, "rc" },
++    { "ll_2pass_quality", "Multi-pass optimized for image quality (deprecated)",
++                                                            0,                    AV_OPT_TYPE_CONST, { .i64 = RCD(NV_ENC_PARAMS_RC_VBR) },                  0, 0, VE, "rc" },
++    { "ll_2pass_size", "Multi-pass optimized for constant frame size (deprecated)",
++                                                            0,                    AV_OPT_TYPE_CONST, { .i64 = RCD(NV_ENC_PARAMS_RC_CBR) },                  0, 0, VE, "rc" },
++    { "vbr_2pass",    "Multi-pass variable bitrate mode (deprecated)", 0,         AV_OPT_TYPE_CONST, { .i64 = RCD(NV_ENC_PARAMS_RC_VBR) },                  0, 0, VE, "rc" },
++    { "cbr_ld_hq",    "Constant bitrate low delay high quality mode", 0,          AV_OPT_TYPE_CONST, { .i64 = RCD(NV_ENC_PARAMS_RC_CBR) },                  0, 0, VE, "rc" },
++    { "cbr_hq",       "Constant bitrate high quality mode", 0,                    AV_OPT_TYPE_CONST, { .i64 = RCD(NV_ENC_PARAMS_RC_CBR) },                  0, 0, VE, "rc" },
++    { "vbr_hq",       "Variable bitrate high quality mode", 0,                    AV_OPT_TYPE_CONST, { .i64 = RCD(NV_ENC_PARAMS_RC_VBR) },                  0, 0, VE, "rc" },
++#endif
+     { "rc-lookahead", "Number of frames to look ahead for rate-control",
+                                                             OFFSET(rc_lookahead), AV_OPT_TYPE_INT,   { .i64 = 0 }, 0, INT_MAX, VE },
+     { "surfaces",     "Number of concurrent surfaces",      OFFSET(nb_surfaces),  AV_OPT_TYPE_INT,   { .i64 = 0 }, 0, MAX_REGISTERED_FRAMES, VE },
+diff --color -rupN old/ffmpeg/libavcodec/nvenc_hevc.c new/ffmpeg/libavcodec/nvenc_hevc.c
+--- old/ffmpeg/libavcodec/nvenc_hevc.c	2023-08-01 08:28:43.000000000 +0200
++++ new/ffmpeg/libavcodec/nvenc_hevc.c	2023-08-30 14:09:49.683303314 +0200
+@@ -89,6 +89,7 @@ static const AVOption options[] = {
+     { "constqp",      "Constant QP mode",                   0,                    AV_OPT_TYPE_CONST, { .i64 = NV_ENC_PARAMS_RC_CONSTQP },                   0, 0, VE, "rc" },
+     { "vbr",          "Variable bitrate mode",              0,                    AV_OPT_TYPE_CONST, { .i64 = NV_ENC_PARAMS_RC_VBR },                       0, 0, VE, "rc" },
+     { "cbr",          "Constant bitrate mode",              0,                    AV_OPT_TYPE_CONST, { .i64 = NV_ENC_PARAMS_RC_CBR },                       0, 0, VE, "rc" },
++#ifndef NVENC_NO_DEPRECATED_RC
+     { "vbr_minqp",    "Variable bitrate mode with MinQP (deprecated)", 0,         AV_OPT_TYPE_CONST, { .i64 = RCD(NV_ENC_PARAMS_RC_VBR_MINQP) },            0, 0, VE, "rc" },
+     { "ll_2pass_quality", "Multi-pass optimized for image quality (deprecated)",
+                                                             0,                    AV_OPT_TYPE_CONST, { .i64 = RCD(NV_ENC_PARAMS_RC_2_PASS_QUALITY) },       0, 0, VE, "rc" },
+@@ -98,6 +99,17 @@ static const AVOption options[] = {
+     { "cbr_ld_hq",    "Constant bitrate low delay high quality mode", 0,          AV_OPT_TYPE_CONST, { .i64 = RCD(NV_ENC_PARAMS_RC_CBR_LOWDELAY_HQ) },      0, 0, VE, "rc" },
+     { "cbr_hq",       "Constant bitrate high quality mode", 0,                    AV_OPT_TYPE_CONST, { .i64 = RCD(NV_ENC_PARAMS_RC_CBR_HQ) },               0, 0, VE, "rc" },
+     { "vbr_hq",       "Variable bitrate high quality mode", 0,                    AV_OPT_TYPE_CONST, { .i64 = RCD(NV_ENC_PARAMS_RC_VBR_HQ) },               0, 0, VE, "rc" },
++#else
++    { "vbr_minqp",    "Variable bitrate mode with MinQP (deprecated)", 0,         AV_OPT_TYPE_CONST, { .i64 = RCD(NV_ENC_PARAMS_RC_VBR) },                  0, 0, VE, "rc" },
++    { "ll_2pass_quality", "Multi-pass optimized for image quality (deprecated)",
++                                                            0,                    AV_OPT_TYPE_CONST, { .i64 = RCD(NV_ENC_PARAMS_RC_VBR) },                  0, 0, VE, "rc" },
++    { "ll_2pass_size", "Multi-pass optimized for constant frame size (deprecated)",
++                                                            0,                    AV_OPT_TYPE_CONST, { .i64 = RCD(NV_ENC_PARAMS_RC_CBR) },                  0, 0, VE, "rc" },
++    { "vbr_2pass",    "Multi-pass variable bitrate mode (deprecated)", 0,         AV_OPT_TYPE_CONST, { .i64 = RCD(NV_ENC_PARAMS_RC_VBR) },                  0, 0, VE, "rc" },
++    { "cbr_ld_hq",    "Constant bitrate low delay high quality mode", 0,          AV_OPT_TYPE_CONST, { .i64 = RCD(NV_ENC_PARAMS_RC_CBR) },                  0, 0, VE, "rc" },
++    { "cbr_hq",       "Constant bitrate high quality mode", 0,                    AV_OPT_TYPE_CONST, { .i64 = RCD(NV_ENC_PARAMS_RC_CBR) },                  0, 0, VE, "rc" },
++    { "vbr_hq",       "Variable bitrate high quality mode", 0,                    AV_OPT_TYPE_CONST, { .i64 = RCD(NV_ENC_PARAMS_RC_VBR) },                  0, 0, VE, "rc" },
++#endif
+     { "rc-lookahead", "Number of frames to look ahead for rate-control",
+                                                             OFFSET(rc_lookahead), AV_OPT_TYPE_INT,   { .i64 = 0 }, 0, INT_MAX, VE },
+     { "surfaces",     "Number of concurrent surfaces",      OFFSET(nb_surfaces),  AV_OPT_TYPE_INT,   { .i64 = 0 }, 0, MAX_REGISTERED_FRAMES, VE },
+diff --color -rupN old/ffmpeg/libavcodec/on2avc.c new/ffmpeg/libavcodec/on2avc.c
+--- old/ffmpeg/libavcodec/on2avc.c	2023-08-01 08:28:44.000000000 +0200
++++ new/ffmpeg/libavcodec/on2avc.c	2023-08-30 14:09:49.683303314 +0200
+@@ -51,9 +51,9 @@ typedef struct On2AVCContext {
+     AVCodecContext *avctx;
+     AVFloatDSPContext *fdsp;
+     AVTXContext *mdct, *mdct_half, *mdct_small;
+-    AVTXContext *fft128, *fft256, *fft512, *fft1024;
++    AVTXContext *fft64, *fft128, *fft256, *fft512;
+     av_tx_fn mdct_fn, mdct_half_fn, mdct_small_fn;
+-    av_tx_fn fft128_fn, fft256_fn, fft512_fn, fft1024_fn;
++    av_tx_fn fft64_fn, fft128_fn, fft256_fn, fft512_fn;
+     void (*wtf)(struct On2AVCContext *ctx, float *out, float *in, int size);
+ 
+     int is_av500;
+@@ -475,16 +475,16 @@ static void wtf_end_512(On2AVCContext *c
+     zero_head_and_tail(tmp1 + 256, 128, 13, 7);
+     zero_head_and_tail(tmp1 + 384, 128, 15, 5);
+ 
+-    c->fft128_fn(c->fft128, src +   0, tmp1 +   0, sizeof(float));
+-    c->fft128_fn(c->fft128, src + 128, tmp1 + 128, sizeof(float));
+-    c->fft128_fn(c->fft128, src + 256, tmp1 + 256, sizeof(float));
+-    c->fft128_fn(c->fft128, src + 384, tmp1 + 384, sizeof(float));
++    c->fft64_fn(c->fft64, src +   0, tmp1 +   0, sizeof(float));
++    c->fft64_fn(c->fft64, src + 128, tmp1 + 128, sizeof(float));
++    c->fft64_fn(c->fft64, src + 256, tmp1 + 256, sizeof(float));
++    c->fft64_fn(c->fft64, src + 384, tmp1 + 384, sizeof(float));
+ 
+     combine_fft(src, src + 128, src + 256, src + 384, tmp1,
+                 ff_on2avc_ctab_1, ff_on2avc_ctab_2,
+                 ff_on2avc_ctab_3, ff_on2avc_ctab_4, 512, 2);
+ 
+-    c->fft512_fn(c->fft512, src, tmp1, sizeof(float));
++    c->fft256_fn(c->fft256, src, tmp1, sizeof(float));
+ 
+     pretwiddle(&tmp0[  0], src, 512, 84, 4, 16, 4, ff_on2avc_tabs_20_84_1);
+     pretwiddle(&tmp0[128], src, 512, 84, 4, 16, 4, ff_on2avc_tabs_20_84_2);
+@@ -503,16 +503,16 @@ static void wtf_end_1024(On2AVCContext *
+     zero_head_and_tail(tmp1 + 512, 256, 13, 7);
+     zero_head_and_tail(tmp1 + 768, 256, 15, 5);
+ 
+-    c->fft256_fn(c->fft256, src +   0, tmp1 +   0, sizeof(float));
+-    c->fft256_fn(c->fft256, src + 256, tmp1 + 256, sizeof(float));
+-    c->fft256_fn(c->fft256, src + 512, tmp1 + 512, sizeof(float));
+-    c->fft256_fn(c->fft256, src + 768, tmp1 + 768, sizeof(float));
++    c->fft128_fn(c->fft128, src +   0, tmp1 +   0, sizeof(float));
++    c->fft128_fn(c->fft128, src + 256, tmp1 + 256, sizeof(float));
++    c->fft128_fn(c->fft128, src + 512, tmp1 + 512, sizeof(float));
++    c->fft128_fn(c->fft128, src + 768, tmp1 + 768, sizeof(float));
+ 
+     combine_fft(src, src + 256, src + 512, src + 768, tmp1,
+                 ff_on2avc_ctab_1, ff_on2avc_ctab_2,
+                 ff_on2avc_ctab_3, ff_on2avc_ctab_4, 1024, 1);
+ 
+-    c->fft1024_fn(c->fft1024, src, tmp1, sizeof(float));
++    c->fft512_fn(c->fft512, src, tmp1, sizeof(float));
+ 
+     pretwiddle(&tmp0[  0], src, 1024, 84, 4, 16, 4, ff_on2avc_tabs_20_84_1);
+     pretwiddle(&tmp0[256], src, 1024, 84, 4, 16, 4, ff_on2avc_tabs_20_84_2);
+@@ -700,7 +700,7 @@ static int on2avc_reconstruct_channel_ex
+             break;
+         case WINDOW_TYPE_EXT5:
+             c->wtf(c, buf, in, 512);
+-            c->mdct_half_fn(c->mdct, buf + 512, in + 512, sizeof(float));
++            c->mdct_half_fn(c->mdct_half, buf + 512, in + 512, sizeof(float));
+             for (i = 0; i < 256; i++) {
+                 FFSWAP(float, buf[i + 512], buf[1023 - i]);
+             }
+@@ -956,14 +956,14 @@ static av_cold int on2avc_decode_init(AV
+     if ((ret = av_tx_init(&c->mdct_small, &c->mdct_small_fn, AV_TX_FLOAT_MDCT, 1, 128, &scale, 0)) < 0)
+         return ret;
+ 
+-    if ((ret = av_tx_init(&c->fft1024, &c->fft1024_fn, AV_TX_FLOAT_FFT, 1, 1024, NULL, 0)) < 0)
+-        return ret;
+     if ((ret = av_tx_init(&c->fft512, &c->fft512_fn, AV_TX_FLOAT_FFT, 1, 512, NULL, 0)) < 0)
+         return ret;
+-    if ((ret = av_tx_init(&c->fft256, &c->fft256_fn, AV_TX_FLOAT_FFT, 0, 256, NULL, 0)) < 0)
++    if ((ret = av_tx_init(&c->fft256, &c->fft256_fn, AV_TX_FLOAT_FFT, 1, 256, NULL, 0)) < 0)
+         return ret;
+     if ((ret = av_tx_init(&c->fft128, &c->fft128_fn, AV_TX_FLOAT_FFT, 0, 128, NULL, 0)) < 0)
+         return ret;
++    if ((ret = av_tx_init(&c->fft64, &c->fft64_fn, AV_TX_FLOAT_FFT, 0, 64, NULL, 0)) < 0)
++        return ret;
+ 
+     c->fdsp = avpriv_float_dsp_alloc(avctx->flags & AV_CODEC_FLAG_BITEXACT);
+     if (!c->fdsp)
+@@ -998,10 +998,10 @@ static av_cold int on2avc_decode_close(A
+     av_tx_uninit(&c->mdct);
+     av_tx_uninit(&c->mdct_half);
+     av_tx_uninit(&c->mdct_small);
++    av_tx_uninit(&c->fft64);
+     av_tx_uninit(&c->fft128);
+     av_tx_uninit(&c->fft256);
+     av_tx_uninit(&c->fft512);
+-    av_tx_uninit(&c->fft1024);
+ 
+     av_freep(&c->fdsp);
+ 
+diff --color -rupN old/ffmpeg/libavcodec/snowenc.c new/ffmpeg/libavcodec/snowenc.c
+--- old/ffmpeg/libavcodec/snowenc.c	2023-08-01 08:28:43.000000000 +0200
++++ new/ffmpeg/libavcodec/snowenc.c	2023-08-30 14:09:49.683303314 +0200
+@@ -129,8 +129,10 @@ static av_cold int encode_init(AVCodecCo
+     if (ret)
+         return ret;
+ 
+-    ff_set_cmp(&s->mecc, s->mecc.me_cmp, s->avctx->me_cmp);
+-    ff_set_cmp(&s->mecc, s->mecc.me_sub_cmp, s->avctx->me_sub_cmp);
++    ret  = ff_set_cmp(&s->mecc, s->mecc.me_cmp, s->avctx->me_cmp);
++    ret |= ff_set_cmp(&s->mecc, s->mecc.me_sub_cmp, s->avctx->me_sub_cmp);
++    if (ret < 0)
++        return AVERROR(EINVAL);
+ 
+     s->input_picture = av_frame_alloc();
+     if (!s->input_picture)
+diff --color -rupN old/ffmpeg/libavcodec/vdpau_mpeg12.c new/ffmpeg/libavcodec/vdpau_mpeg12.c
+--- old/ffmpeg/libavcodec/vdpau_mpeg12.c	2023-08-01 08:28:44.000000000 +0200
++++ new/ffmpeg/libavcodec/vdpau_mpeg12.c	2023-08-30 14:09:49.683303314 +0200
+@@ -75,8 +75,9 @@ static int vdpau_mpeg_start_frame(AVCode
+     info->f_code[1][0]               = s->mpeg_f_code[1][0];
+     info->f_code[1][1]               = s->mpeg_f_code[1][1];
+     for (i = 0; i < 64; ++i) {
+-        info->intra_quantizer_matrix[i]     = s->intra_matrix[i];
+-        info->non_intra_quantizer_matrix[i] = s->inter_matrix[i];
++        int n = s->idsp.idct_permutation[i];
++        info->intra_quantizer_matrix[i]     = s->intra_matrix[n];
++        info->non_intra_quantizer_matrix[i] = s->inter_matrix[n];
+     }
+ 
+     return ff_vdpau_common_start_frame(pic_ctx, buffer, size);
+diff --color -rupN old/ffmpeg/libavcodec/vdpau_mpeg4.c new/ffmpeg/libavcodec/vdpau_mpeg4.c
+--- old/ffmpeg/libavcodec/vdpau_mpeg4.c	2023-08-01 08:28:43.000000000 +0200
++++ new/ffmpeg/libavcodec/vdpau_mpeg4.c	2023-08-30 14:09:49.683303314 +0200
+@@ -74,8 +74,9 @@ static int vdpau_mpeg4_start_frame(AVCod
+     info->alternate_vertical_scan_flag      = s->alternate_scan;
+     info->top_field_first                   = s->top_field_first;
+     for (i = 0; i < 64; ++i) {
+-        info->intra_quantizer_matrix[i]     = s->intra_matrix[i];
+-        info->non_intra_quantizer_matrix[i] = s->inter_matrix[i];
++        int n = s->idsp.idct_permutation[i];
++        info->intra_quantizer_matrix[i]     = s->intra_matrix[n];
++        info->non_intra_quantizer_matrix[i] = s->inter_matrix[n];
+     }
+ 
+     ff_vdpau_common_start_frame(pic_ctx, buffer, size);
+diff --color -rupN old/ffmpeg/libavcodec/vorbisdec.c new/ffmpeg/libavcodec/vorbisdec.c
+--- old/ffmpeg/libavcodec/vorbisdec.c	2023-08-01 08:28:44.000000000 +0200
++++ new/ffmpeg/libavcodec/vorbisdec.c	2023-08-30 14:09:49.683303314 +0200
+@@ -38,6 +38,7 @@
+ #include "codec_internal.h"
+ #include "decode.h"
+ #include "get_bits.h"
++#include "internal.h"
+ #include "vorbis.h"
+ #include "vorbisdsp.h"
+ #include "vorbis_data.h"
+@@ -134,7 +135,6 @@ typedef struct vorbis_context_s {
+     av_tx_fn      mdct_fn[2];
+ 
+     uint8_t       first_frame;
+-    int64_t       initial_pts;
+     uint32_t      version;
+     uint8_t       audio_channels;
+     uint32_t      audio_samplerate;
+@@ -1839,13 +1839,7 @@ static int vorbis_decode_frame(AVCodecCo
+ 
+     if (!vc->first_frame) {
+         vc->first_frame = 1;
+-        vc->initial_pts = frame->pts;
+-    }
+-
+-    if (frame->pts == vc->initial_pts) {
+-        *got_frame_ptr = 0;
+-        av_frame_unref(frame);
+-        return buf_size;
++        avctx->internal->skip_samples = len;
+     }
+ 
+     ff_dlog(NULL, "parsed %d bytes %d bits, returned %d samples (*ch*bits) \n",
+@@ -1877,6 +1871,7 @@ static av_cold void vorbis_decode_flush(
+                              sizeof(*vc->saved));
+     }
+     vc->previous_window = -1;
++    vc->first_frame = 0;
+ }
+ 
+ const FFCodec ff_vorbis_decoder = {
+diff --color -rupN old/ffmpeg/libavcodec/x86/mathops.h new/ffmpeg/libavcodec/x86/mathops.h
+--- old/ffmpeg/libavcodec/x86/mathops.h	2023-08-01 08:28:43.000000000 +0200
++++ new/ffmpeg/libavcodec/x86/mathops.h	2023-08-30 14:09:49.683303314 +0200
+@@ -35,12 +35,20 @@
+ static av_always_inline av_const int MULL(int a, int b, unsigned shift)
+ {
+     int rt, dummy;
++    if (__builtin_constant_p(shift))
+     __asm__ (
+         "imull %3               \n\t"
+         "shrdl %4, %%edx, %%eax \n\t"
+         :"=a"(rt), "=d"(dummy)
+-        :"a"(a), "rm"(b), "ci"((uint8_t)shift)
++        :"a"(a), "rm"(b), "i"(shift & 0x1F)
+     );
++    else
++        __asm__ (
++            "imull %3               \n\t"
++            "shrdl %4, %%edx, %%eax \n\t"
++            :"=a"(rt), "=d"(dummy)
++            :"a"(a), "rm"(b), "c"((uint8_t)shift)
++        );
+     return rt;
+ }
+ 
+@@ -113,19 +121,31 @@ __asm__ volatile(\
+ // avoid +32 for shift optimization (gcc should do that ...)
+ #define NEG_SSR32 NEG_SSR32
+ static inline  int32_t NEG_SSR32( int32_t a, int8_t s){
++    if (__builtin_constant_p(s))
+     __asm__ ("sarl %1, %0\n\t"
+          : "+r" (a)
+-         : "ic" ((uint8_t)(-s))
++         : "i" (-s & 0x1F)
+     );
++    else
++        __asm__ ("sarl %1, %0\n\t"
++               : "+r" (a)
++               : "c" ((uint8_t)(-s))
++        );
+     return a;
+ }
+ 
+ #define NEG_USR32 NEG_USR32
+ static inline uint32_t NEG_USR32(uint32_t a, int8_t s){
++    if (__builtin_constant_p(s))
+     __asm__ ("shrl %1, %0\n\t"
+          : "+r" (a)
+-         : "ic" ((uint8_t)(-s))
++         : "i" (-s & 0x1F)
+     );
++    else
++        __asm__ ("shrl %1, %0\n\t"
++               : "+r" (a)
++               : "c" ((uint8_t)(-s))
++        );
+     return a;
+ }
+ 
+diff --color -rupN old/ffmpeg/libavfilter/graphparser.c new/ffmpeg/libavfilter/graphparser.c
+--- old/ffmpeg/libavfilter/graphparser.c	2023-08-01 08:28:44.000000000 +0200
++++ new/ffmpeg/libavfilter/graphparser.c	2023-08-30 14:09:49.683303314 +0200
+@@ -532,8 +532,7 @@ int avfilter_graph_segment_create_filter
+         for (size_t j = 0; j < ch->nb_filters; j++) {
+             AVFilterParams *p = ch->filters[j];
+             const AVFilter *f = avfilter_get_by_name(p->filter_name);
+-            char inst_name[30], *name = p->instance_name ? p->instance_name :
+-                                                           inst_name;
++            char name[64];
+ 
+             // skip already processed filters
+             if (p->filter || !p->filter_name)
+@@ -546,7 +545,9 @@ int avfilter_graph_segment_create_filter
+             }
+ 
+             if (!p->instance_name)
+-                snprintf(inst_name, sizeof(inst_name), "Parsed_%s_%zu", f->name, idx);
++                snprintf(name, sizeof(name), "Parsed_%s_%zu", f->name, idx);
++            else
++                snprintf(name, sizeof(name), "%s@%s", f->name, p->instance_name);
+ 
+             p->filter = avfilter_graph_alloc_filter(seg->graph, f, name);
+             if (!p->filter)
+diff --color -rupN old/ffmpeg/libavfilter/vf_untile.c new/ffmpeg/libavfilter/vf_untile.c
+--- old/ffmpeg/libavfilter/vf_untile.c	2023-08-01 08:28:44.000000000 +0200
++++ new/ffmpeg/libavfilter/vf_untile.c	2023-08-30 14:09:49.683303314 +0200
+@@ -134,8 +134,8 @@ static int activate(AVFilterContext *ctx
+         if (!(s->desc->flags & AV_PIX_FMT_FLAG_PAL)) {
+             for (i = 1; i < 3; i ++) {
+                 if (out->data[i]) {
+-                    out->data[i] += (y >> s->desc->log2_chroma_w) * out->linesize[i];
+-                    out->data[i] += (x >> s->desc->log2_chroma_h) * s->max_step[i];
++                    out->data[i] += (y >> s->desc->log2_chroma_h) * out->linesize[i];
++                    out->data[i] += (x >> s->desc->log2_chroma_w) * s->max_step[i];
+                 }
+             }
+         }
+diff --color -rupN old/ffmpeg/libavfilter/vf_vpp_qsv.c new/ffmpeg/libavfilter/vf_vpp_qsv.c
+--- old/ffmpeg/libavfilter/vf_vpp_qsv.c	2023-08-01 08:28:44.000000000 +0200
++++ new/ffmpeg/libavfilter/vf_vpp_qsv.c	2023-08-30 14:09:49.683303314 +0200
+@@ -602,6 +602,7 @@ not_ready:
+     return FFERROR_NOT_READY;
+ 
+ eof:
++    pts = av_rescale_q(pts, inlink->time_base, outlink->time_base);
+     ff_outlink_set_status(outlink, status, pts);
+     return 0;
+ }
+diff --color -rupN old/ffmpeg/libavfilter/vsrc_ddagrab.c new/ffmpeg/libavfilter/vsrc_ddagrab.c
+--- old/ffmpeg/libavfilter/vsrc_ddagrab.c	2023-08-01 08:28:44.000000000 +0200
++++ new/ffmpeg/libavfilter/vsrc_ddagrab.c	2023-08-30 14:09:49.685303440 +0200
+@@ -533,8 +533,23 @@ static int update_mouse_pointer(AVFilter
+         return 0;
+ 
+     if (frame_info->PointerPosition.Visible) {
+-        dda->mouse_x = frame_info->PointerPosition.Position.x;
+-        dda->mouse_y = frame_info->PointerPosition.Position.y;
++        switch (dda->output_desc.Rotation) {
++        case DXGI_MODE_ROTATION_ROTATE90:
++            dda->mouse_x = frame_info->PointerPosition.Position.y;
++            dda->mouse_y = dda->output_desc.DesktopCoordinates.right - dda->output_desc.DesktopCoordinates.left - frame_info->PointerPosition.Position.x - 1;
++            break;
++        case DXGI_MODE_ROTATION_ROTATE180:
++            dda->mouse_x = dda->output_desc.DesktopCoordinates.right - dda->output_desc.DesktopCoordinates.left - frame_info->PointerPosition.Position.x - 1;
++            dda->mouse_y = dda->output_desc.DesktopCoordinates.bottom - dda->output_desc.DesktopCoordinates.top - frame_info->PointerPosition.Position.y - 1;
++            break;
++        case DXGI_MODE_ROTATION_ROTATE270:
++            dda->mouse_x = dda->output_desc.DesktopCoordinates.bottom - dda->output_desc.DesktopCoordinates.top - frame_info->PointerPosition.Position.y - 1;
++            dda->mouse_y = frame_info->PointerPosition.Position.x;
++            break;
++        default:
++            dda->mouse_x = frame_info->PointerPosition.Position.x;
++            dda->mouse_y = frame_info->PointerPosition.Position.y;
++        }
+     } else {
+         dda->mouse_x = dda->mouse_y = -1;
+     }
+@@ -585,7 +600,7 @@ static int update_mouse_pointer(AVFilter
+     return 0;
+ }
+ 
+-static int next_frame_internal(AVFilterContext *avctx, ID3D11Texture2D **desktop_texture)
++static int next_frame_internal(AVFilterContext *avctx, ID3D11Texture2D **desktop_texture, int need_frame)
+ {
+     DXGI_OUTDUPL_FRAME_INFO frame_info;
+     DdagrabContext *dda = avctx->priv;
+@@ -608,18 +623,32 @@ static int next_frame_internal(AVFilterC
+     if (dda->draw_mouse) {
+         ret = update_mouse_pointer(avctx, &frame_info);
+         if (ret < 0)
+-            return ret;
++            goto error;
++    }
++
++    if (need_frame && (!frame_info.LastPresentTime.QuadPart || !frame_info.AccumulatedFrames)) {
++        ret = AVERROR(EAGAIN);
++        goto error;
+     }
+ 
+     hr = IDXGIResource_QueryInterface(desktop_resource, &IID_ID3D11Texture2D, (void**)desktop_texture);
+-    IDXGIResource_Release(desktop_resource);
+-    desktop_resource = NULL;
++    release_resource(&desktop_resource);
+     if (FAILED(hr)) {
+         av_log(avctx, AV_LOG_ERROR, "DXGIResource QueryInterface failed\n");
+-        return AVERROR_EXTERNAL;
++        ret = AVERROR_EXTERNAL;
++        goto error;
+     }
+ 
+     return 0;
++
++error:
++    release_resource(&desktop_resource);
++
++    hr = IDXGIOutputDuplication_ReleaseFrame(dda->dxgi_outdupl);
++    if (FAILED(hr))
++        av_log(avctx, AV_LOG_ERROR, "DDA error ReleaseFrame failed!\n");
++
++    return ret;
+ }
+ 
+ static int probe_output_format(AVFilterContext *avctx)
+@@ -631,7 +660,7 @@ static int probe_output_format(AVFilterC
+     av_assert1(!dda->probed_texture);
+ 
+     do {
+-        ret = next_frame_internal(avctx, &dda->probed_texture);
++        ret = next_frame_internal(avctx, &dda->probed_texture, 1);
+     } while(ret == AVERROR(EAGAIN));
+     if (ret < 0)
+         return ret;
+@@ -839,6 +868,41 @@ static int draw_mouse_pointer(AVFilterCo
+         D3D11_SUBRESOURCE_DATA init_data = { 0 };
+         D3D11_BUFFER_DESC buf_desc = { 0 };
+ 
++        switch (dda->output_desc.Rotation) {
++        case DXGI_MODE_ROTATION_ROTATE90:
++            vertices[ 0] = x;                   vertices[ 1] = y;
++            vertices[ 5] = x;                   vertices[ 6] = y - tex_desc.Width;
++            vertices[10] = x + tex_desc.Height; vertices[11] = y;
++            vertices[15] = x + tex_desc.Height; vertices[16] = y - tex_desc.Width;
++            vertices[ 3] = 0.0f; vertices[ 4] = 0.0f;
++            vertices[ 8] = 1.0f; vertices[ 9] = 0.0f;
++            vertices[13] = 0.0f; vertices[14] = 1.0f;
++            vertices[18] = 1.0f; vertices[19] = 1.0f;
++            break;
++        case DXGI_MODE_ROTATION_ROTATE180:
++            vertices[ 0] = x - tex_desc.Width; vertices[ 1] = y;
++            vertices[ 5] = x - tex_desc.Width; vertices[ 6] = y - tex_desc.Height;
++            vertices[10] = x;                  vertices[11] = y;
++            vertices[15] = x;                  vertices[16] = y - tex_desc.Height;
++            vertices[ 3] = 1.0f; vertices[ 4] = 0.0f;
++            vertices[ 8] = 1.0f; vertices[ 9] = 1.0f;
++            vertices[13] = 0.0f; vertices[14] = 0.0f;
++            vertices[18] = 0.0f; vertices[19] = 1.0f;
++            break;
++        case DXGI_MODE_ROTATION_ROTATE270:
++            vertices[ 0] = x - tex_desc.Height; vertices[ 1] = y + tex_desc.Width;
++            vertices[ 5] = x - tex_desc.Height; vertices[ 6] = y;
++            vertices[10] = x;                   vertices[11] = y + tex_desc.Width;
++            vertices[15] = x;                   vertices[16] = y;
++            vertices[ 3] = 1.0f; vertices[ 4] = 1.0f;
++            vertices[ 8] = 0.0f; vertices[ 9] = 1.0f;
++            vertices[13] = 1.0f; vertices[14] = 0.0f;
++            vertices[18] = 0.0f; vertices[19] = 0.0f;
++            break;
++        default:
++            break;
++        }
++
+         num_vertices = sizeof(vertices) / (sizeof(FLOAT) * 5);
+ 
+         buf_desc.Usage = D3D11_USAGE_DEFAULT;
+@@ -918,7 +982,7 @@ static int ddagrab_request_frame(AVFilte
+     now -= dda->first_pts;
+ 
+     if (!dda->probed_texture) {
+-        ret = next_frame_internal(avctx, &cur_texture);
++        ret = next_frame_internal(avctx, &cur_texture, 0);
+     } else {
+         cur_texture = dda->probed_texture;
+         dda->probed_texture = NULL;
+diff --color -rupN old/ffmpeg/libavformat/concat.c new/ffmpeg/libavformat/concat.c
+--- old/ffmpeg/libavformat/concat.c	2023-08-01 08:28:43.000000000 +0200
++++ new/ffmpeg/libavformat/concat.c	2023-08-30 14:09:49.685303440 +0200
+@@ -296,6 +296,8 @@ static av_cold int concatf_open(URLConte
+     av_bprint_finalize(&bp, NULL);
+     data->length = i;
+ 
++    if (!data->length)
++        err = AVERROR_INVALIDDATA;
+     if (err < 0)
+         concat_close(h);
+ 
+diff --color -rupN old/ffmpeg/libavutil/hwcontext_vulkan.c new/ffmpeg/libavutil/hwcontext_vulkan.c
+--- old/ffmpeg/libavutil/hwcontext_vulkan.c	2023-08-01 08:28:44.000000000 +0200
++++ new/ffmpeg/libavutil/hwcontext_vulkan.c	2023-08-30 14:09:49.685303440 +0200
+@@ -401,10 +401,10 @@ static const char *vk_ret2str(VkResult r
+ #undef CASE
+ }
+ 
+-static VkBool32 vk_dbg_callback(VkDebugUtilsMessageSeverityFlagBitsEXT severity,
+-                                VkDebugUtilsMessageTypeFlagsEXT messageType,
+-                                const VkDebugUtilsMessengerCallbackDataEXT *data,
+-                                void *priv)
++static VkBool32 VKAPI_CALL vk_dbg_callback(VkDebugUtilsMessageSeverityFlagBitsEXT severity,
++                                           VkDebugUtilsMessageTypeFlagsEXT messageType,
++                                           const VkDebugUtilsMessengerCallbackDataEXT *data,
++                                           void *priv)
+ {
+     int l;
+     AVHWDeviceContext *ctx = priv;
+@@ -1149,7 +1149,7 @@ static void free_exec_ctx(AVHWFramesCont
+ 
+     av_freep(&cmd->queues);
+     av_freep(&cmd->bufs);
+-    cmd->pool = NULL;
++    cmd->pool = VK_NULL_HANDLE;
+ }
+ 
+ static VkCommandBuffer get_buf_exec_ctx(AVHWFramesContext *hwfc, VulkanExecCtx *cmd)
+diff --color -rupN old/ffmpeg/libavutil/vulkan.h new/ffmpeg/libavutil/vulkan.h
+--- old/ffmpeg/libavutil/vulkan.h	2023-08-01 08:28:44.000000000 +0200
++++ new/ffmpeg/libavutil/vulkan.h	2023-08-30 14:09:49.685303440 +0200
+@@ -122,7 +122,11 @@ typedef struct FFVulkanPipeline {
+     VkDescriptorSetLayout         *desc_layout;
+     VkDescriptorPool               desc_pool;
+     VkDescriptorSet               *desc_set;
++#if VK_USE_64_BIT_PTR_DEFINES == 1
+     void                         **desc_staging;
++#else
++    uint64_t                      *desc_staging;
++#endif
+     VkDescriptorSetLayoutBinding **desc_binding;
+     VkDescriptorUpdateTemplate    *desc_template;
+     int                           *desc_set_initialized;
+diff --color -rupN old/ffmpeg/libavutil/wchar_filename.h new/ffmpeg/libavutil/wchar_filename.h
+--- old/ffmpeg/libavutil/wchar_filename.h	2023-08-01 08:28:44.000000000 +0200
++++ new/ffmpeg/libavutil/wchar_filename.h	2023-08-30 14:09:49.685303440 +0200
+@@ -32,7 +32,8 @@ static inline int utf8towchar(const char
+     num_chars = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, filename_utf8, -1, NULL, 0);
+     if (num_chars <= 0) {
+         *filename_w = NULL;
+-        return 0;
++        errno = EINVAL;
++        return -1;
+     }
+     *filename_w = (wchar_t *)av_calloc(num_chars, sizeof(wchar_t));
+     if (!*filename_w) {
+@@ -52,7 +53,8 @@ static inline int wchartocp(unsigned int
+                                         NULL, 0, NULL, NULL);
+     if (num_chars <= 0) {
+         *filename = NULL;
+-        return 0;
++        errno = EINVAL;
++        return -1;
+     }
+     *filename = (char*)av_malloc_array(num_chars, sizeof *filename);
+     if (!*filename) {

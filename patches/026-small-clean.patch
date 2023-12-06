@@ -1,0 +1,71 @@
+diff --color -Naur old/config.h new/config.h
+--- old/config.h	2023-08-30 11:32:00.000000000 +0200
++++ new/config.h	2023-08-30 12:52:06.615789119 +0200
+@@ -70,20 +70,23 @@
+ /* definitions needed by included libraries */
+ /* libmpeg2 */
+ 
+-/* markus missing */ 
++/* markus missing - to check may be below undef ???*/ 
+ #define CONFIG_OPENAL 1
+ 
++#define CONFIG_DIRAC_PARSE 0
++#define CONFIG_PIXELUTILS 0
+ #define HAVE_DIRENT_H 0
+ #define HAVE_UDPLITE_H 0
+ #define HAVE_SYS_TIME_H 0
+ #define HAVE_SYSCTL 0
++#define HAVE_SYSCONF 0
+ #define HAVE_CLOCK_GETTIME 0
+ #define HAVE_NANOSLEEP 0
++#define HAVE_SLEEP 0
+ #define HAVE_USLEEP 0
+ #define HAVE_ACCESS 0
+ #define HAVE_FCNTL 0
+ #define HAVE_LSTAT 0
+-#define HAVE_GETENV 0
+ #define HAVE_SCHED_GETAFFINITY 0
+ #define HAVE_GETPROCESSAFFINITYMASK 0
+ #define HAVE_STRERROR_RM 0
+@@ -91,7 +94,8 @@
+ #define HAVE_STRUCT_STAT_ST_MTIM_TV_NSEC 0
+ #define HAVE_STRUCT_IP_MREQ_SOURCE 0
+ #define HAVE_STRUCT_GROUP_SOURCE_REQ 0
+-
++#define HAVE_ARC4RANDOM 0
++#define HAVE_BCRYPT 0
+ 
+ /* libdvdcss */
+ #define HAVE_ERRNO_H 1
+diff --color -Naur old/config.mak new/config.mak
+--- old/config.mak	2023-08-30 10:46:15.000000000 +0200
++++ new/config.mak	2023-08-30 12:52:45.944495078 +0200
+@@ -89,6 +89,28 @@
+ EXESUF      =
+ EXESUFS_ALL = .exe
+ 
++#markus missing - to check may be below no???
++CONFIG_DIRAC_PARSE = no
++CONFIG_PIXELUTILS = no
++HAVE_SYSCTL = no
++HAVE_CLOCK_GETTIME = no
++HAVE_NANOSLEEP = no
++HAVE_SLEEP = no
++HAVE_SYSCONF = no
++HAVE_USLEEP = no
++HAVE_ACCESS = no
++HAVE_FCNTL = no
++HAVE_LSTAT = no
++HAVE_SCHED_GETAFFINITY = no
++HAVE_GETPROCESSAFFINITYMASK = no
++HAVE_STRERROR_RM = no
++HAVE_GLOB = no
++HAVE_STRUCT_STAT_ST_MTIM_TV_NSEC = no
++HAVE_STRUCT_IP_MREQ_SOURCE = no
++HAVE_STRUCT_GROUP_SOURCE_REQ = no
++HAVE_ARC4RANDOM = no
++HAVE_BCRYPT = no
++
+ ARCH = ppc
+ !ARCH_X86 = yes
+ !ARCH_IA64 = yes

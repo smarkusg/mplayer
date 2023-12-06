@@ -1,0 +1,345 @@
+diff --color -rupN old/amigaos/MPlayer_catalog.h new/amigaos/MPlayer_catalog.h
+diff --color -rupN old/DOCS/codecs-status.html new/DOCS/codecs-status.html
+diff --color -rupN old/input/input.c new/input/input.c
+--- old/input/input.c	2023-08-07 08:27:10.000000000 +0200
++++ new/input/input.c	2023-08-30 22:53:58.873845397 +0200
+@@ -58,6 +58,18 @@
+ #include <lirc/lircc.h>
+ #endif
+ 
++//markus
++#ifdef __amigaos4__
++#define debug_level 0
++
++#if debug_level > 0
++#define dprintf( ... ) IDOS->Printf( __VA_ARGS__ )
++#else
++#define dprintf(...) 
++#endif
++#include "../amigaos/debug.h"
++#endif //amigaos4
++
+ #include "ar.h"
+ 
+ /// This array defines all known commands.
+@@ -1286,7 +1298,7 @@ static mp_cmd_t *read_events(int time, i
+                 if ((errno != EINTR)&&(errno != 0))
+                 {
+                     mp_msg(MSGT_INPUT, MSGL_ERR, MSGTR_INPUT_INPUT_ErrSelect,    strerror(errno));
+-                        printf("AmigaOS 4.1 Bug select() don't reset or set errno value\n");
++                        dprintf("AmigaOS 4.1 Bug select() don't reset or set errno value\n");
+                         errno = 0;
+                 }
+                 else if ((errno == 0))
+diff --color -rupN old/libmenu/menu_console.c new/libmenu/menu_console.c
+--- old/libmenu/menu_console.c	2023-08-01 08:28:44.000000000 +0200
++++ new/libmenu/menu_console.c	2023-08-31 22:15:45.102445905 +0200
+@@ -316,8 +316,11 @@ static int run_shell_cmd(menu_t* menu, c
+ 
+   out = Open("T:mplayer_cmd_output", MODE_NEWFILE);
+ 
++#if defined(__amigaos4__)
++  SystemTags(cmd, SYS_Output,out? out : Output() ,TAG_DONE);
++#else
+   Execute(cmd, NULL, out ? out : Output());
+-
++#endif
+   if(out)
+   {
+    char line[1024];
+diff --color -rupN old/libvo/vo_comp.c new/libvo/vo_comp.c
+--- old/libvo/vo_comp.c	2023-08-22 13:45:28.000000000 +0200
++++ new/libvo/vo_comp.c	2023-08-30 23:18:13.376723465 +0200
+@@ -31,14 +31,17 @@
+ //#define OLD_DEBUG 
+ //end markus 
+ 
+-/*#define debug_level 0
++//markus
++#ifdef __amigaos4__
++#define debug_level 0
+ 
+ #if debug_level > 0
+-#define dprintf( ... ) Printf( __VA_ARGS__ )
++#define dprintf( ... ) IDOS->Printf( __VA_ARGS__ )
+ #else
+-#define dprintf(...)
+-#endif*/
++#define dprintf(...) 
++#endif
+ #include "../amigaos/debug.h"
++#endif //amigaos4
+ 
+ 
+ #define SYSTEM_PRIVATE
+@@ -1151,7 +1154,7 @@ static void uninit(void)
+ 	{
+ 		gettimeofday(&after,&dontcare);		// To get time after
+ 		microsec = (after.tv_usec - before.tv_usec) +(1000000 * (after.tv_sec - before.tv_sec));
+-		printf("Internal COMP FPS %0.00f\n",(float)  benchmark_frame_cnt / (float) (microsec / 1000 / 1000) );
++		dprintf("Internal COMP FPS %0.00f\n",(float)  benchmark_frame_cnt / (float) (microsec / 1000 / 1000) );
+ 	}
+ 	benchmark_frame_cnt = 0;
+ 
+diff --color -rupN old/libvo/vo_comp_yuv2.c new/libvo/vo_comp_yuv2.c
+--- old/libvo/vo_comp_yuv2.c	2023-08-29 15:33:56.000000000 +0200
++++ new/libvo/vo_comp_yuv2.c	2023-08-30 23:16:07.402238292 +0200
+@@ -58,6 +58,18 @@
+ #define memcpy(des,src,size) IExec->CopyMemQuick(src,dst,size)
+ #endif 
+ 
++//markus
++#ifdef __amigaos4__
++#define debug_level 0
++
++#if debug_level > 0
++#define dprintf( ... ) IDOS->Printf( __VA_ARGS__ )
++#else
++#define dprintf(...) 
++#endif
++#include "../amigaos/debug.h"
++#endif //amigaos4
++
+ // -- benchmark ----
+ static struct timezone dontcare = { 0,0 };
+ static struct timeval before, after;
+@@ -614,14 +626,14 @@ static ULONG Open_Window()
+ 
+ 		if (force_monitor_aspect)
+ 		{
+-			printf("**\nYou are forcing aspect to %0.2f:1\n",force_monitor_aspect );
++			dprintf("**\nYou are forcing aspect to %0.2f:1\n",force_monitor_aspect );
+ 			best_screen_aspect_ratio = force_monitor_aspect;
+-			printf("WARNING: Workbench screen resolution suggests %0.2f:1\n", (float) the_screen -> Width / (float) the_screen -> Height);
++			dprintf("WARNING: Workbench screen resolution suggests %0.2f:1\n", (float) the_screen -> Width / (float) the_screen -> Height);
+ 
+ 		}
+ 		else
+ 		{
+-			printf("Screen %d x %d aspect %0.2f:1\n", the_screen -> Width, the_screen -> Height, (float) the_screen -> Width / (float) the_screen -> Height);
++			dprintf("Screen %d x %d aspect %0.2f:1\n", the_screen -> Width, the_screen -> Height, (float) the_screen -> Width / (float) the_screen -> Height);
+ 			best_screen_aspect_ratio = (float) the_screen -> Width / (float) the_screen -> Height;
+ 		}
+ 
+@@ -1375,7 +1387,7 @@ static void uninit(void)
+ 	{
+ 		gettimeofday(&after,&dontcare);	// To get time after
+ 		microsec = (after.tv_usec - before.tv_usec) +(1000000 * (after.tv_sec - before.tv_sec));
+-		printf("Internal COMP YUV2 - FPS %0.00f\n",(double)  benchmark_frame_cnt /  ( (double) microsec / 1000.0l / 1000.0l) );
++		dprintf("Internal COMP YUV2 - FPS %0.00f\n",(double)  benchmark_frame_cnt /  ( (double) microsec / 1000.0l / 1000.0l) );
+ 	}
+ 	benchmark_frame_cnt = 0;
+ 
+@@ -1453,7 +1465,7 @@ static int control(uint32_t request, voi
+ 		case VOCTRL_GET_IMAGE:
+ 			if (gfx_nodri==1)
+ 			{
+-				printf("** Codec asked, but was not allowed **\n");
++				dprintf("** Codec asked, but was not allowed **\n");
+ 				return VO_FALSE;
+ 			}
+ 			else
+@@ -1465,7 +1477,7 @@ static int control(uint32_t request, voi
+ 	       	case VOCTRL_DRAW_IMAGE:
+ 			if (gfx_nodri==1)
+ 			{
+-				printf("** Codec asked, but was not allowed **\n");
++				dprintf("** Codec asked, but was not allowed **\n");
+ 				return VO_FALSE;
+ 			}
+ 			else
+@@ -1579,7 +1591,7 @@ static uint32_t get_image(mp_image_t * m
+ 			}
+ 			else
+ 			{
+-				printf("** Can lock buffer %d ***\n", buffer_allocated );
++				dprintf("** Can lock buffer %d ***\n", buffer_allocated );
+ 				return VO_FALSE;
+ 			}
+ 
+@@ -1618,11 +1630,11 @@ static uint32_t get_image(mp_image_t * m
+ 			mpi->flags |= MP_IMGFLAG_DIRECT;
+ 			mpi->priv = (void *)(intptr_t) buffer_allocated;
+ 
+-			printf("From %08x to %08x\n",mpi->planes[0], (ULONG) mpi->planes[0] + (ULONG) (mpi->stride[0] * mpi->height) );
+-			printf("From %08x to %08x\n",mpi->planes[1], (ULONG) mpi->planes[1] + (ULONG) (mpi->stride[1] * (mpi->height/2)) );
+-			printf("From %08x to %08x\n",mpi->planes[2], (ULONG) mpi->planes[2] + (ULONG) (mpi->stride[2] * (mpi->height/2)) );
++			dprintf("From %08x to %08x\n",mpi->planes[0], (ULONG) mpi->planes[0] + (ULONG) (mpi->stride[0] * mpi->height) );
++			dprintf("From %08x to %08x\n",mpi->planes[1], (ULONG) mpi->planes[1] + (ULONG) (mpi->stride[1] * (mpi->height/2)) );
++			dprintf("From %08x to %08x\n",mpi->planes[2], (ULONG) mpi->planes[2] + (ULONG) (mpi->stride[2] * (mpi->height/2)) );
+ 
+-			printf("VO: [comp_yuv2] Allocated DR buffer %d\n",buffer_allocated);
++			dprintf("VO: [comp_yuv2] Allocated DR buffer %d\n",buffer_allocated);
+ 			buffer_allocated = (buffer_allocated + 1) % num_buffers;
+ 		}
+ 		else
+diff --color -rupN old/libvo/vo_comp_yuv.c new/libvo/vo_comp_yuv.c
+--- old/libvo/vo_comp_yuv.c	2023-08-07 14:37:50.000000000 +0200
++++ new/libvo/vo_comp_yuv.c	2023-08-30 23:18:53.662873832 +0200
+@@ -250,7 +250,7 @@ static void free_output_buffer()
+ {
+ 	int n;
+ 
+-	printf("%s:%s:%d\n",__FILE__,__FUNCTION__,__LINE__);
++	dprintf("%s:%s:%d\n",__FILE__,__FUNCTION__,__LINE__);
+ 
+ 	for (n=0;n<num_buffers;n++)
+ 	{
+@@ -560,13 +560,13 @@ static int preinit(const char *arg)
+ 		return -1;
+ 	}
+ 
+-	printf("gfx_novsync = %d\n", gfx_novsync);
+-	printf("Benchmark = %d\n", benchmark);
++	dprintf("gfx_novsync = %d\n", gfx_novsync);
++	dprintf("Benchmark = %d\n", benchmark);
+ 
+ 	vsync_is_enabled = ((benchmark == 0) && (gfx_novsync == 0)) ? 1 : 0;
+ 	vo_vsync = vsync_is_enabled;
+ 
+-	printf("Vsync is enabled = %d\n", vsync_is_enabled);
++	dprintf("Vsync is enabled = %d\n", vsync_is_enabled);
+ 
+ 	benchmark_frame_cnt = 0;
+ 	gettimeofday(&before,&dontcare);		// To get time before
+@@ -599,14 +599,14 @@ static ULONG Open_Window()
+ 
+ 		if (force_monitor_aspect)
+ 		{
+-			printf("**\nYou are forcing aspect to %0.2f:1\n",force_monitor_aspect );
++			dprintf("**\nYou are forcing aspect to %0.2f:1\n",force_monitor_aspect );
+ 			best_screen_aspect_ratio = force_monitor_aspect;
+-			printf("WARNING: Workbench screen resolution suggests %0.2f:1\n", (float) the_screen -> Width / (float) the_screen -> Height);
++			dprintf("WARNING: Workbench screen resolution suggests %0.2f:1\n", (float) the_screen -> Width / (float) the_screen -> Height);
+ 
+ 		}
+ 		else
+ 		{
+-			printf("Screen w %d h %d aspect %0.2f:1\n", the_screen -> Width, the_screen -> Height, (float) the_screen -> Width / (float) the_screen -> Height);
++			dprintf("Screen w %d h %d aspect %0.2f:1\n", the_screen -> Width, the_screen -> Height, (float) the_screen -> Width / (float) the_screen -> Height);
+ 			best_screen_aspect_ratio = (float) the_screen -> Width / (float) the_screen -> Height;
+ 		}
+ 
+@@ -732,7 +732,7 @@ static ULONG Open_Window()
+ 	{
+ 		mp_msg(MSGT_VO, MSGL_ERR, "Unable to open a window\n");
+ 
+-		printf("\n*****\nOpen on Workbench if no pubscreen found\n*******\n");
++		dprintf("\n*****\nOpen on Workbench if no pubscreen found\n*******\n");
+ 
+ 		if (gfx_screenname)
+ 		{
+@@ -1092,7 +1092,7 @@ static void copy_I420P_to_yuv420p(uint8_
+ 		copy_plain(y,amiga_image_width, h,image[0],stride[0], yuvInfo.YMemory,yuvInfo.YBytesPerRow);
+ //		copy_plain_i420(y,amiga_image_width, h,image[1],stride[1], yuvInfo.UMemory,yuvInfo.UBytesPerRow);
+ 
+-		printf("%d - %d - %d\n",((uint) yuvInfo.VMemory) - ((uint) yuvInfo.UMemory) , amiga_image_width / 2, stride[1] );
++		dprintf("%d - %d - %d\n",((uint) yuvInfo.VMemory) - ((uint) yuvInfo.UMemory) , amiga_image_width / 2, stride[1] );
+ 
+ //		copy_plain_half(y,amiga_image_width, h,image[1],stride[1], yuvInfo.UMemory,yuvInfo.UBytesPerRow);
+ //		copy_plain_half(y,amiga_image_width, h,image[2],stride[2], yuvInfo.VMemory,yuvInfo.VBytesPerRow);
+@@ -1260,7 +1260,7 @@ static void uninit(void)
+ 	{
+ 		gettimeofday(&after,&dontcare);		// To get time after
+ 		microsec = (after.tv_usec - before.tv_usec) +(1000000 * (after.tv_sec - before.tv_sec));
+-		printf("Internal COMP YUV FPS %0.00f\n",(float)  benchmark_frame_cnt / (float) (microsec / 1000 / 1000) );
++		dprintf("Internal COMP YUV FPS %0.00f\n",(float)  benchmark_frame_cnt / (float) (microsec / 1000 / 1000) );
+ 	}
+ 	benchmark_frame_cnt = 0;
+ 
+@@ -1366,7 +1366,7 @@ static int control(uint32_t request, voi
+ 			return VO_FALSE;
+ 
+ //		default:
+-//			printf("control() wtf is %d\n",request);
++//			dprintf("control() wtf is %d\n",request);
+ 
+ 	}
+   
+@@ -1453,7 +1453,7 @@ static uint32_t get_image(mp_image_t * m
+ 			}
+ 			else
+ 			{
+-				printf("** Can lock buffer %d ***\n", buffer_allocated );
++				dprintf("** Can lock buffer %d ***\n", buffer_allocated );
+ 				return VO_FALSE;
+ 			}
+ 
+@@ -1492,11 +1492,11 @@ static uint32_t get_image(mp_image_t * m
+ 			mpi->flags |= MP_IMGFLAG_DIRECT;
+ 			mpi->priv = (void *)(intptr_t) buffer_allocated;
+ 
+-			printf("From %08x to %08x\n",mpi->planes[0], (ULONG) mpi->planes[0] + (ULONG) (mpi->stride[0] * mpi->height) );
+-			printf("From %08x to %08x\n",mpi->planes[1], (ULONG) mpi->planes[1] + (ULONG) (mpi->stride[1] * (mpi->height/2)) );
+-			printf("From %08x to %08x\n",mpi->planes[2], (ULONG) mpi->planes[2] + (ULONG) (mpi->stride[2] * (mpi->height/2)) );
++			dprintf("From %08x to %08x\n",mpi->planes[0], (ULONG) mpi->planes[0] + (ULONG) (mpi->stride[0] * mpi->height) );
++			dprintf("From %08x to %08x\n",mpi->planes[1], (ULONG) mpi->planes[1] + (ULONG) (mpi->stride[1] * (mpi->height/2)) );
++			dprintf("From %08x to %08x\n",mpi->planes[2], (ULONG) mpi->planes[2] + (ULONG) (mpi->stride[2] * (mpi->height/2)) );
+ 
+-			printf("VO: [comp_yuv] Allocated DR buffer %d\n",buffer_allocated);
++			dprintf("VO: [comp_yuv] Allocated DR buffer %d\n",buffer_allocated);
+ 			buffer_allocated = (buffer_allocated + 1) % num_buffers;
+ 		}
+ 		else
+diff --color -rupN old/libvo/vo_p96pip.c new/libvo/vo_p96pip.c
+--- old/libvo/vo_p96pip.c	2023-08-22 01:23:04.000000000 +0200
++++ new/libvo/vo_p96pip.c	2023-08-30 23:17:00.404445394 +0200
+@@ -79,6 +79,18 @@
+ 
+ #include "cgx_common.h"
+ 
++//markus
++#ifdef __amigaos4__
++#define debug_level 0
++
++#if debug_level > 0
++#define dprintf( ... ) IDOS->Printf( __VA_ARGS__ )
++#else
++#define dprintf(...) 
++#endif
++#include "../amigaos/debug.h"
++#endif //amigaos4
++
+ //#define PUBLIC_SCREEN 0
+ 
+ static vo_info_t info =
+@@ -382,7 +394,7 @@ static int preinit(const char *arg)
+ 	vsync_is_enabled = ((benchmark == 0) && (gfx_novsync == 0)) ? 1 : 0;
+ 	vo_vsync = vsync_is_enabled;
+ 
+-	printf("Vsync is enabled = %d\n", (int) vsync_is_enabled);
++	dprintf("Vsync is enabled = %d\n", (int) vsync_is_enabled);
+ 
+ 	return 0;
+ }
+diff --color -rupN old/libvo/vo_pip.c new/libvo/vo_pip.c
+--- old/libvo/vo_pip.c	2023-08-22 00:25:16.000000000 +0200
++++ new/libvo/vo_pip.c	2023-08-30 23:23:22.411831938 +0200
+@@ -72,6 +72,18 @@
+ #include <libraries/keymap.h>
+ #include <graphics/gfx.h>
+ 
++//markus
++#ifdef __amigaos4__
++#define debug_level 0
++
++#if debug_level > 0
++#define dprintf( ... ) IDOS->Printf( __VA_ARGS__ )
++#else
++#define dprintf(...) 
++#endif
++#include "../amigaos/debug.h"
++#endif //amigaos4
++
+ // --benchmark--
+ static struct timezone dontcare = { 0,0 };
+ static struct timeval before, after;
+@@ -910,7 +922,7 @@ static void uninit(void)
+ 	{
+ 		gettimeofday(&after,&dontcare);	// To get time after
+ 		microsec = (after.tv_usec - before.tv_usec) +(1000000 * (after.tv_sec - before.tv_sec));
+-		printf("Internal COMP YUV FPS %0.00f\n",(float)  benchmark_frame_cnt / (float) (microsec / 1000 / 1000) );
++		dprintf("Internal COMP YUV FPS %0.00f\n",(float)  benchmark_frame_cnt / (float) (microsec / 1000 / 1000) );
+ 	}
+ 
+ #ifdef USE_RGB

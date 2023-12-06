@@ -1,0 +1,17 @@
++++ libvo/vo_gl.c   2023-08-01 17:29:35
+@@ -732,9 +732,12 @@ config(uint32_t width, uint32_t height,
+   if (create_window(d_width, d_height, flags, title) < 0)
+     return -1;
+ //samir
+-  mp_msg(MSGT_VO, MSGL_INFO, "[AMIGAOS4]title: '%s'\n",title);
+-  mp_msg(MSGT_VO, MSGL_INFO, "[AMIGAOS4]window_title: '%s'\n",window_title);
+-  SDL_WM_SetCaption (AMIGA_VERSION " (gl)", window_title);
++#ifdef __AMIGAOS4__
++  //mp_msg(MSGT_VO, MSGL_INFO, "[AMIGAOS4]title: '%s'\n",title);
++  //mp_msg(MSGT_VO, MSGL_INFO, "[AMIGAOS4]window_title: '%s'\n",window_title);
++  //SDL_WM_SetCaption (AMIGA_VERSION " (gl)", window_title);
++  SDL_WM_SetCaption (GetWindowTitle(), title);
++#endif
+ //
+
+   if (vo_config_count)

@@ -1,0 +1,280 @@
+diff --color -rupN old/libvo/vo_sdl_sm502.c new/libvo/vo_sdl_sm502.c
+--- old/libvo/vo_sdl_sm502.c	2023-08-01 08:28:43.000000000 +0200
++++ new/libvo/vo_sdl_sm502.c	2023-08-01 12:05:42.492172225 +0200
+@@ -112,7 +112,6 @@ static const vo_info_t info =
+ const LIBVO_EXTERN(sdl_sm502)
+ 
+ #include "sdl_common.h"
+-//#include <SDL/SDL_syswm.h>
+ 
+ 
+ #ifdef SDL_ENABLE_LOCKS
+@@ -459,12 +458,7 @@ static void set_video_mode(int width, in
+ {
+     struct sdl_priv_s *priv = &sdl_priv;
+     SDL_Surface* newsurface;
+-// markus
+-
+-// printf ("!!!!!!!!!!!!! Set video mode start .old bpp=%d \n",bpp);
+-bpp=16;
+-// printf ("!!!!!!!!!!!!! Set video mode.start  new bpp=%d \n",bpp);
+-// end markus
++    bpp=16;
+ 
+     if(priv->rgbsurface)
+ 	SDL_FreeSurface(priv->rgbsurface);
+@@ -497,34 +491,25 @@ static void set_fullmode (int mode) {
+ 	SDL_Surface *newsurface = NULL;
+  	int screen_surface_w, screen_surface_h;
+ 
+-//		printf ("!!lol212121 \n");
+-
+  	if(priv->rgbsurface)
+ 	        SDL_FreeSurface(priv->rgbsurface);
+  	else if(priv->overlay)
+ 	        SDL_FreeYUVOverlay(priv->overlay);
+ 
+-//		printf ("!!lol212121a \n");
+-
+  	priv->rgbsurface = NULL;
+  	priv->overlay = NULL;
+ 
+-//		printf ("!!lol212121b \n");
+-
+ 	/* if we haven't set a fullmode yet, default to the lowest res fullmode first */
+ 	/* But select a mode where the full video enter */
+ 	if(priv->X && priv->fulltype & VOFLAG_FULLSCREEN) {
+ 		screen_surface_w = vo_screenwidth;
+ 		screen_surface_h = vo_screenheight;
+-//		printf ("!!leweweweol1 \n");
+-
+ 	}
+ 	else {
+ 	if (mode < 0) {
+         int i,j,imax;
+ 		mode = 0; // Default to the biggest mode avaible
+ 		if ( mp_msg_test(MSGT_VO,MSGL_V) ) for(i=0;priv->fullmodes[i];++i)
+-// 	           printf("find petla SDL Mode: %d:  %d x %d\n", i, priv->fullmodes[i]->w, priv->fullmodes[i]->h);
+ 		for(i = findArrayEnd(priv->fullmodes) - 1; i >=0; i--) {
+ 		  if( (priv->fullmodes[i]->w >= priv->dstwidth) &&
+ 		      (priv->fullmodes[i]->h >= priv->dstheight) ) {
+@@ -538,24 +523,14 @@ static void set_fullmode (int mode) {
+ 		      break;
+ 		    }
+ 		  }
+-// markus		mp_msg(MSGT_VO,MSGL_V, "SET SDL Mode: %d:  %d x %d\n", mode, priv->fullmodes[mode]->w, priv->fullmodes[mode]->h);
+-//		printf ("!!lol1 \n");
+-//                printf("SET SDL Mode: %d:  %d x %d\n", mode, priv->fullmodes[mode]->w, priv->fullmodes[mode]->h);
+ 		priv->fullmode = mode;
+ 
+ 	}
+-//		printf ("!!lol212121e \n");
+-
+-// To wywdala ?
+-//	 screen_surface_h = priv->fullmodes[mode]->h;
+-//     screen_surface_w = priv->fullmodes[mode]->w;
+        screen_surface_h = 800;
+        screen_surface_w = 600;
+        }
+-// End wywala
+ 
+ 	aspect_save_screenres(screen_surface_w, screen_surface_h);
+-//		printf ("!!lol212121 f\n");
+ 
+ 	/* calculate new video size/aspect */
+ 	if(priv->mode == YUV && priv->fulltype&VOFLAG_FULLSCREEN)
+@@ -564,12 +539,9 @@ static void set_fullmode (int mode) {
+ 	/* try to change to given fullscreenmode */
+         vo_dwidth  = priv->dstwidth;
+         vo_dheight = screen_surface_h;
+-//		printf ("!!lol32323 \n");
+ 
+         newsurface = sdl_set_mode(priv->bpp, priv->sdlfullflags);
+ 
+-//		printf ("!!lol32323end \n");
+-
+ 	/*
+ 	 * In Mac OS X (and possibly others?) SDL_SetVideoMode() appears to
+ 	 * destroy the datastructure previously retrived, so we need to
+@@ -584,23 +556,16 @@ static void set_fullmode (int mode) {
+ 	/* collect all fullscreen & hardware modes available */
+ 	if (!(priv->fullmodes = SDL_ListModes (vidInfo->vfmt, priv->sdlfullflags))) {
+ 
+-//		printf ("!!dsfjsdlfkhdlfkhsdfhsdel \n");
+-
+ 	    /* non hardware accelerated fullscreen modes */
+ 	    priv->sdlfullflags &= ~SDL_HWSURFACE;
+ 	    priv->fullmodes = SDL_ListModes (vidInfo->vfmt, priv->sdlfullflags);
+-//		printf ("!!dsfjsdlfkhdlfkhsdfhsdel end\n");
+ 
+ 	}
+ 	}
+ 	#endif
+ 
+-//		printf ("!!lol212121dsdsd \n");
+-
+-
+ 	/* if creation of new surface was successful, save it and hide mouse cursor */
+ 	if(newsurface) {
+-//		printf ("!fffff end\n");
+ 		if (priv->surface)
+ 	    	    SDL_FreeSurface(priv->surface);
+ 		priv->surface = newsurface;
+@@ -608,9 +573,7 @@ static void set_fullmode (int mode) {
+         SDL_SRF_LOCK(priv->surface, -1)
+         SDL_FillRect(priv->surface, NULL, 0);
+         SDL_SRF_UNLOCK(priv->surface)
+-//		printf ("wwwww end\n");
+         setup_surfaces();
+-//		printf ("www end\n");
+ 	}
+ }
+ 
+@@ -628,11 +591,8 @@ static void set_fullmode (int mode) {
+ static int
+ config(uint32_t width, uint32_t height, uint32_t d_width, uint32_t d_height, uint32_t flags, char *title, uint32_t format)
+ {
+-	struct sdl_priv_s *priv = &sdl_priv;
+-// markus
+-// printf ("------------------------- wchodze z title %s",title );
+-//
+-    switch(format){
++   struct sdl_priv_s *priv = &sdl_priv;
++     switch(format){
+         case IMGFMT_I420:
+ 		case IMGFMT_YV12:
+ 		case IMGFMT_IYUV:
+@@ -685,9 +645,7 @@ config(uint32_t width, uint32_t height,
+ 
+     if (WinID < 0) {
+ 	/* Set output window title */
+-// rem markus 	SDL_WM_SetCaption (".: MPlayer : F = Fullscreen/Windowed : C = Cycle Fullscreen Resolutions :.", title);
+ 	SDL_WM_SetCaption ( GetWindowTitle() , title);
+-	// SDL_WM_SetCaption (title, title);
+     }
+ 
+ 	priv->windowsize.w = priv->dstwidth;
+@@ -698,8 +656,6 @@ config(uint32_t width, uint32_t height,
+ 	 * bit 2 (0x04) enables software scaling (-zoom)
+ 	 * bit 3 (0x08) enables flipping (-flip)
+ 	 */
+-//    printf("SDL: flags are set to: %i\n", flags);
+-//	printf("SDL: Width: %i Height: %i D_Width %i D_Height: %i\n", width, height, d_width, d_height);
+ 	if(flags&VOFLAG_FLIPPING) {
+ 		mp_msg(MSGT_VO,MSGL_V, "SDL: using flipped video (only with RGB/BGR/packed YUV)\n");
+ 		priv->flip = 1;
+@@ -709,20 +665,13 @@ config(uint32_t width, uint32_t height,
+  		    mp_msg(MSGT_VO,MSGL_INFO, MSGTR_LIBVO_SDL_InfoPleaseUseVmOrZoom);
+ 		priv->fulltype = VOFLAG_FULLSCREEN;
+ 		set_fullmode(priv->fullmode);
+-          	/*if((priv->surface = SDL_SetVideoMode (d_width, d_height, priv->bpp, priv->sdlfullflags)))
+-			SDL_ShowCursor(0);*/
++
+ 	} else
+ 	if(flags&VOFLAG_MODESWITCHING) {
+-// markus 	 	mp_msg(MSGT_VO,MSGL_V, "SDL: Setting zoomed fullscreen with modeswitching\n");
+-//		printf ("!!lol2 \n");
+ 		priv->fulltype = VOFLAG_MODESWITCHING;
+ 		set_fullmode(priv->fullmode);
+-          	/*if((priv->surface = SDL_SetVideoMode (d_width ? d_width : width, d_height ? d_height : height, priv->bpp, priv->sdlfullflags)))
+-			SDL_ShowCursor(0);*/
+ 	} else
+ 	if(flags&VOFLAG_SWSCALE) {
+-// markus		mp_msg(MSGT_VO,MSGL_V, "SDL: Setting zoomed fullscreen with modeswitching\n");
+-//		printf ("!!lol3 \n");
+ 		priv->fulltype = VOFLAG_SWSCALE;
+ 		set_fullmode(priv->fullmode);
+ 	}
+@@ -749,14 +698,8 @@ static int setup_surfaces(void)
+     struct sdl_priv_s *priv = &sdl_priv;
+     float v_scale = ((float) priv->dstheight) / priv->height;
+     int surfwidth, surfheight;
+-// markus
+-//    printf ("!!!!!!!!!!!!!! setup_surfacesolaaaaa init bpp=%d \n", priv->bpp );
+- 
+-// To dzialalo    priv->bpp =32;
+     priv->bpp =16;
+ 
+-//    printf ("!!!!!!!!!!!!!! setup_surfacesnew init zmiana wpisane bpp=%d \n", priv->bpp );
+-// markus    
+     surfwidth = priv->width;
+     surfheight = priv->height + FFMAX(priv->surface->h - priv->dstheight, 0) / v_scale + 1;
+     surfheight&= ~1;
+@@ -805,15 +748,12 @@ static int setup_surfaces(void)
+ 	    break;
+ 	    case IMGFMT_BGR15:
+             priv->rgbsurface = SDL_CreateRGBSurface (SDL_SRCCOLORKEY, surfwidth, surfheight, 15, 31744, 992, 31, 0);
+-// test     priv->rgbsurface = SDL_CreateRGBSurface (SDL_SRCCOLORKEY, surfwidth, surfheight, 32, 0x000000FF, 0x0000FF00, 0x00FF0000, 0/*0xFF000000*/);
+ 	    break;
+ 	    case IMGFMT_RGB16:
+             priv->rgbsurface = SDL_CreateRGBSurface (SDL_SRCCOLORKEY, surfwidth, surfheight, 16, 31, 2016, 63488, 0);
+-// test     priv->rgbsurface = SDL_CreateRGBSurface (SDL_SRCCOLORKEY, surfwidth, surfheight, 32, 0x000000FF, 0x0000FF00, 0x00FF0000, 0/*0xFF000000*/);
+ 	    break;
+ 	    case IMGFMT_BGR16:
+             priv->rgbsurface = SDL_CreateRGBSurface (SDL_SRCCOLORKEY, surfwidth, surfheight, 16, 63488, 2016, 31, 0);
+-// test     priv->rgbsurface = SDL_CreateRGBSurface (SDL_SRCCOLORKEY, surfwidth, surfheight, 32, 0x000000FF, 0x0000FF00, 0x00FF0000, 0/*0xFF000000*/);
+ 	    break;
+ 	    case IMGFMT_RGB24:
+             priv->rgbsurface = SDL_CreateRGBSurface (SDL_SRCCOLORKEY, surfwidth, surfheight, 24, 0x0000FF, 0x00FF00, 0xFF0000, 0);
+@@ -1004,8 +944,6 @@ static void check_events (void)
+ 			/* graphics mode selection shortcuts */
+ 			case SDL_KEYDOWN:
+ 				keypressed = event.key.keysym.sym;
+-// markus 				mp_msg(MSGT_VO,MSGL_DBG2, "SDL: Key pressed: '%i'\n", keypressed);
+-//		printf ("!!lol4 \n");
+ 
+ 				/* c key pressed. c cycles through available fullscreenmodes, if we have some */
+ 				if ( ((keypressed == SDLK_c)) && (priv->fullmodes) ) {
+@@ -1013,25 +951,18 @@ static void check_events (void)
+ 					priv->fullmode++;
+ 					if (priv->fullmode > (findArrayEnd(priv->fullmodes) - 1)) priv->fullmode = 0;
+ 					set_fullmode(priv->fullmode);
+-//		printf ("!!lol4a \n");
+ 
+  					mp_msg(MSGT_VO,MSGL_DBG2, "SDL: Set next available fullscreen mode.\n");
+ 				}
+-//
+-//				else if ( ((keypressed == SDLK_c)) && (! priv->fullmodes) ) 		printf ("!!lol4a dupa\n");
+-
+ 
+-//
+ 				else if ( keypressed == SDLK_n ) {
+ #ifdef CONFIG_X11
+ 					aspect(&priv->dstwidth, &priv->dstheight,A_NOZOOM);
+ #endif
+-//		printf ("!!lol4b1 \n");
+ 					if (priv->surface->w != priv->dstwidth || priv->surface->h != priv->dstheight) {
+                         set_video_mode(priv->dstwidth, priv->dstheight, priv->bpp, priv->sdlflags);
+ 					    	priv->windowsize.w = priv->surface->w;
+ 						priv->windowsize.h = priv->surface->h;
+-//		printf ("!!lol4b2 \n");
+  						mp_msg(MSGT_VO,MSGL_DBG2, "SDL: Normal size\n");
+ 					} else
+ 					if (priv->surface->w != priv->dstwidth * 2 || priv->surface->h != priv->dstheight * 2) {
+@@ -1335,9 +1266,6 @@ static int preinit(const char *arg)
+     priv->fullmode = -2;
+ 
+     priv->fullmodes = NULL;
+-//
+-//  priv->bpp = 0;
+-//  printf ("qqqqqqqqq bpp bylo 0 \n");
+     priv->bpp = 32;
+ 
+     /* Initialize the SDL Video system */
+@@ -1424,16 +1352,10 @@ static int control(uint32_t request, voi
+     return priv->X ? VO_TRUE : VO_FALSE;
+   case VOCTRL_FULLSCREEN:
+     if (priv->surface->flags & SDL_FULLSCREEN) {
+-// markus add
+-//    printf ("1111111111111111loleeeeeee \n");      
+-//	
+       set_video_mode(priv->windowsize.w, priv->windowsize.h, priv->bpp, priv->sdlflags);
+       SDL_ShowCursor(1);
+       mp_msg(MSGT_VO,MSGL_DBG2, "SDL: Windowed mode\n");
+     } else if (priv->fullmodes) {
+-// markus add
+-//    printf ("222222oleeeeeee \n");      
+-//	
+       set_fullmode(priv->fullmode);
+       mp_msg(MSGT_VO,MSGL_DBG2, "SDL: Set fullscreen mode\n");
+     }

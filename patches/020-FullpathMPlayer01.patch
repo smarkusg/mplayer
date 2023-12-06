@@ -1,0 +1,150 @@
+diff --color -rupN org/amigaos/amigaos_stuff.c new/amigaos/amigaos_stuff.c
+--- org/amigaos/amigaos_stuff.c	2023-08-07 14:32:42.434375829 +0200
++++ new/amigaos/amigaos_stuff.c	2023-08-09 10:34:07.149874141 +0200
+@@ -108,6 +108,9 @@ const char STACK[] __attribute((used))
+ char *SCREENSHOTDIR = NULL;
+ char *EXTPATTERN = NULL;
+ char *SUBEXTPAT = NULL;
++char *TOOL_MPGUI = NULL;
++
++char fullpath_mplayer[1024];
+ 
+ static unsigned char ApplicationName[100];
+ 
+@@ -115,7 +118,7 @@ BOOL AISS_MENU			= TRUE ;	// zzd10h
+ BOOL AISS_MENU_TO_SCALE		= FALSE ;	// zzd10h
+ int AISS_MENU_SIZE		= 24 ;	// zzd10h Setted by MenuImageSize env variable
+ BOOL MENUCLASS_SUPPORT		= TRUE ;	// TRUE if MenuClass menu is supported (OS4 FE with intuition.library >= 54.6)
+-BOOL INFOWINDOWCLASS_SUPPORT	= FALSE ;	// Check if AEon Infowindow class is available
++//BOOL INFOWINDOWCLASS_SUPPORT	= FALSE ;	// Check if AEon Infowindow class is available
+ BOOL BANNER_DISPLAY		= TRUE ;	// Display banner ? SETENV SAVE Disable_Banner_Images 1 to disable them
+ extern struct Catalog *catalog ;
+ //javier 
+@@ -298,13 +301,13 @@ VARARGS68K VOID EasyRequester(CONST_STRP
+ void AmigaOS_ParseArg(int argc, char *argv[], int *new_argc, char ***new_argv)
+ {
+ 	struct WBStartup *WBStartup = NULL;
+-	static TEXT progname[512];
+-	BOOL gotprogname = FALSE;
++	TEXT progname[512];
++	//BOOL gotprogname = FALSE;
+ 	struct DiskObject *icon = NULL;
+ 
+ /* Summer Edition Reloaded */
+ 	/* Check for AltiVec... in case an AltiVec version is loaded on SAM or on a AmigaOne G3... */
+-	#if HAVE_ALTIVEC_H == 1
++#if HAVE_ALTIVEC_H == 1
+ 	ULONG result = 0;
+ 
+ 	GetCPUInfoTags(GCIT_VectorUnit, &result, TAG_DONE);
+@@ -319,7 +322,7 @@ void AmigaOS_ParseArg(int argc, char *ar
+ 		AmigaOS_Close();
+ 		return;
+ 	}
+-	#endif
++#endif
+ 
+ 	/* End Check */
+ /* Summer Edition Reloaded */
+@@ -330,6 +333,10 @@ void AmigaOS_ParseArg(int argc, char *ar
+ 	// Ok is launch from cmd line, just do nothing
+ 	if (argc)
+ 	{
++		NameFromLock( GetProgramDir(), fullpath_mplayer, sizeof(fullpath_mplayer) );
++		GetCliProgramName( progname, sizeof(progname) );
++		AddPart( fullpath_mplayer, progname, sizeof(fullpath_mplayer) );
++//DBUG("'%s'\n",fullpath_mplayer);
+ 		return;
+ 	}
+ 	// Ok, ran from WB, we have to handle some funny thing now
+@@ -338,7 +345,7 @@ void AmigaOS_ParseArg(int argc, char *ar
+ 
+ 	// 1. WBStartup
+ 	WBStartup = (struct WBStartup *) argv;
+-	if (!WBStartup)
++	/*if (!WBStartup)
+ 	{
+ 		return ; // We never know !
+ 	}
+@@ -358,9 +365,14 @@ void AmigaOS_ParseArg(int argc, char *ar
+ 	{
+ 		strlcpy(progname, FindTask(NULL)->tc_Node.ln_Name, sizeof(progname));
+ 		gotprogname = TRUE;
+-	}
++	}*/
++	NameFromLock( WBStartup->sm_ArgList->wa_Lock, fullpath_mplayer, sizeof(fullpath_mplayer) );
++	strlcpy( progname, WBStartup->sm_ArgList->wa_Name, sizeof(progname) );
++	AddPart( fullpath_mplayer, progname, sizeof(fullpath_mplayer) );
++//DBUG("'%s'\n",fullpath_mplayer);
+ 
+-	icon = gotprogname ? GetDiskObject(progname) : NULL;
++//	icon = gotprogname ? GetDiskObject(progname) : NULL;
++	icon = GetDiskObject(progname);
+ 	if (icon)
+ 	{
+ 		STRPTR found;
+@@ -377,6 +389,18 @@ void AmigaOS_ParseArg(int argc, char *ar
+ 			EXTPATTERN = strdup(found);
+ 		}
+ 
++		found = FindToolType(icon->do_ToolTypes, "SUBEXTPATTERN");
++		if (found)
++		{
++			SUBEXTPAT = strdup(found);
++		}
++
++		found = FindToolType(icon->do_ToolTypes, "MPLAYERGUI");
++		if (found)
++		{
++			TOOL_MPGUI = strdup(found);
++		}
++
+ 		FreeDiskObject(icon);
+ 	}
+ 
+@@ -520,6 +544,18 @@ void AmigaOS_Close(void)
+ 		SUBEXTPAT = NULL;
+ 	}
+ 
++	if (!SUBEXTPAT)
++	{
++		free(SUBEXTPAT);
++		SUBEXTPAT = NULL;
++	}
++
++	if (!TOOL_MPGUI)
++	{
++		free(TOOL_MPGUI);
++		TOOL_MPGUI = NULL;
++	}
++
+ 	Forbid();
+ 	current_task = FindTask(NULL);
+ 	((struct Process *) current_task) -> pr_WindowPtr = pr_WindowPtr;	// enable insert disk.
+@@ -767,8 +803,8 @@ int AmigaOS_Open(int argc, char *argv[])
+ 
+ 	// To simulate AmigaOS 4.1.6
+ 	//	MENUCLASS_SUPPORT = FALSE ;
+- 	if ( (InfoWindowBase = OpenClass("infowindow.class", 53, &InfoWindowClass)) )
+- 		INFOWINDOWCLASS_SUPPORT = TRUE ;
++// 	if ( (InfoWindowBase = OpenClass("infowindow.class", 53, &InfoWindowClass)) )
++// 		INFOWINDOWCLASS_SUPPORT = TRUE ;
+ 
+ 	// INFOWINDOWCLASS_SUPPORT = FALSE ;
+ 	// MENUCLASS_SUPPORT = FALSE ;
+@@ -829,6 +865,15 @@ int AmigaOS_Open(int argc, char *argv[])
+ 		SUBEXTPAT = strdup("#?.(aqt|ass|js|jss|rt|smi|srt|ssa|stl|sub|ttml|txt|utf|utf8|utf-8|vob|vtt)");
+ 	}
+ 
++	if (!SUBEXTPAT)
++	{
++		SUBEXTPAT = strdup("#?.(aqt|ass|js|jss|rt|smi|srt|ssa|sub|txt|utf|utf8|utf-8|vob)");
++	}
++
++	if(!TOOL_MPGUI)
++	{
++		TOOL_MPGUI = strdup("APPDIR:MPlayer-GUI");
++	}
+ 
+ #if HAVE_AREXX
+         StartArexx();

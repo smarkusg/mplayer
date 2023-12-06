@@ -1,0 +1,33 @@
+From c5039e158d20e85d4d8a2dee3160533d627b839a Mon Sep 17 00:00:00 2001
+From: Timo Rothenpieler <timo@rothenpieler.org>
+Date: Tue, 10 Oct 2023 17:34:47 +0200
+Subject: [PATCH 10/10] avcodec/nvdec_hevc: fail to initialize on unsupported
+ profiles
+
+---
+ libavcodec/nvdec_hevc.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/libavcodec/nvdec_hevc.c b/libavcodec/nvdec_hevc.c
+index cd549d2ef6..1ab1c39d75 100644
+--- a/libavcodec/nvdec_hevc.c
++++ b/libavcodec/nvdec_hevc.c
+@@ -305,6 +305,15 @@ static int nvdec_hevc_frame_params(AVCodecContext *avctx,
+ static int nvdec_hevc_decode_init(AVCodecContext *avctx) {
+     NVDECContext *ctx = avctx->internal->hwaccel_priv_data;
+     ctx->supports_444 = 1;
++
++    if (avctx->profile != FF_PROFILE_HEVC_MAIN &&
++        avctx->profile != FF_PROFILE_HEVC_MAIN_10 &&
++        avctx->profile != FF_PROFILE_HEVC_MAIN_STILL_PICTURE &&
++        avctx->profile != FF_PROFILE_HEVC_REXT) {
++        av_log(avctx, AV_LOG_ERROR, "Unsupported HEVC profile: %d\n", avctx->profile);
++        return AVERROR(ENOTSUP);
++    }
++
+     return ff_nvdec_decode_init(avctx);
+ }
+ 
+-- 
+2.25.1
+

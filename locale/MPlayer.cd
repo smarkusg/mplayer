@@ -1,0 +1,257 @@
+; $VER: MPlayer.catalog 1.5.0 (dd.mm.2023)
+; MPlayer.cd
+;
+MSG_Menu_Project (//62)
+Project
+;
+MSG_Menu_Project_OpenFile (//62)
+Open file...
+;
+MSG_Menu_Project_OpenDVD (//62)
+Open DVD...
+;
+MSG_Menu_Project_OpenDVDNAV (//62)
+Open DVDNAV...
+;
+MSG_Menu_Project_OpenVCD (//62)
+Open VCD...
+;
+MSG_Menu_Project_OpenNetwork (//62)
+Open stream...
+;
+MSG_Menu_Project_Iconify (//62)
+Iconify
+;
+MSG_Menu_Project_About (//62)
+About...
+;
+MSG_Menu_Project_Quit (//62)
+Quit
+;
+MSG_Menu_Play (//62)
+Play
+;
+MSG_Menu_Play_PlayPause (//62)
+Play/Pause
+;
+MSG_Menu_Play_Stop (//62)
+Stop
+;
+MSG_Menu_Play_Record (//62)
+Record stream
+;
+MSG_Menu_Play_Loop (//62)
+Loop
+;
+MSG_Menu_Play_PrevFile (//62)
+Prev file
+;
+MSG_Menu_Play_NextFile (//62)
+Next file
+;
+MSG_Menu_Play_Properties (//62)
+Properties...
+;
+MSG_Menu_OptionsVideo (//62)
+Video options
+;
+MSG_Menu_OptionsVideo_StayOnTop (//62)
+Stay on top
+;
+MSG_Menu_OptionsVideo_Fullscreen (//62)
+Toggle fullscreen
+;
+MSG_Menu_OptionsVideo_Screenshot (//62)
+Screenshot
+;
+MSG_Menu_OptionsVideo_OpenSubtitles (//62)
+Open subtitles...
+;
+MSG_Menu_OptionsVideo_CycleSubtitles (//62)
+Cycle subtitles
+;
+MSG_Menu_OptionsVideo_UnloadSubtitles (//62)
+Unload subtitles
+;
+MSG_Menu_OptionsVideo_SubtitlesSize (//62)
+Subtitles size
+;
+MSG_Menu_OptionsVideo_SubtitlesBig (//62)
+Bigger
+;
+MSG_Menu_OptionsVideo_SubtitlesSmall (//62)
+Smaller
+;
+MSG_Menu_OptionsVideo_AspectRatio (//62)
+Aspect Ratio
+;
+MSG_Menu_OptionsVideo_AR_Original (//62)
+Original
+;
+MSG_Menu_OptionsAudio (//62)
+Audio options
+;
+MSG_Menu_OptionsAudio_Mute (//62)
+Mute
+;
+MSG_Menu_OptionsAudio_VolumeUp (//62)
+Volume Up
+;
+MSG_Menu_OptionsAudio_VolumeDown (//62)
+Volume Down
+;
+MSG_Menu_Settings (//62)
+Settings
+;
+MSG_Menu_Settings_MPlayerGUI (//62)
+MPlayer-GUI...
+;
+MSG_About_About (//)
+About
+;
+MSG_About_Licence (//)
+Licence
+;
+MSG_About_Built (//)
+Built against MPlayer version:
+;
+MSG_About_AmigaVersion (//)
+Amiga version:
+;
+MSG_About_FFmpegVersion (//)
+FFmpeg version:
+;
+MSG_About_Copyright (//)
+Copyright (C)
+;
+MSG_About_MPlayer_Team (//)
+MPlayer Team
+;
+MSG_About_AmigaOS4Version (//)
+AmigaOS4 release:
+;
+MSG_About_GCCVersion (//)
+GCC version:
+;
+MSG_About_ARexxPort (//)
+ARexx Port:
+;
+MSG_About_Translation (//)
+Translation:
+;
+; translator: change to your name/nick/...
+;
+MSG_About_Translator (//)
+(using built-in strings)
+;
+MSG_About_VideoDriver (//)
+Video driver in use:
+;
+MSG_Requester_OK (//)
+_Ok
+;
+MSG_Requester_Title (//)
+MPlayer for AmigaOS4
+;
+MSG_Requester_Network_Title (//)
+Open stream
+;
+MSG_Requester_Network_Body (//)
+Enter URL to open:
+;
+MSG_Requester_Network_Gadget (//)
+_Load|_Cancel
+;
+MSG_Requester_DVD_Title (//)
+Load DVD
+;
+MSG_Requester_DVD_Body (//)
+Enter Chapter to open:
+;
+MSG_Requester_DVD_Gadget (//)
+_Open|_Cancel
+;
+MSG_Requester_DVD_Error (//)
+Enter valid DVD protocol:
+;
+MSG_Requester_DVDNAV_Title (//)
+Load DVDNAV
+;
+MSG_Requester_DVDNAV_Error (//)
+To use DVDNAV, you must comment out cache in the config file
+;
+MSG_Requester_VCD_Title (//)
+Load VCD
+;
+MSG_Requester_VCD_Body (//)
+Enter Chapter to open:
+;
+MSG_Requester_VCD_Gadget (//)
+_Open|_Cancel
+;
+MSG_Requester_VCD_Error (//)
+Enter valid VCD protocol:
+;
+MSG_Requester_OpenFile_Video (//)
+Choose video
+;
+MSG_Requester_OpenFile_SubTitles (//)
+Choose subtitles
+;
+MSG_Requester_Title_About (//)
+About MPlayer
+;
+MSG_Requester_Title_Warning (//)
+MPlayer: WARNING!
+;
+MSG_Requester_Title_Error (//)
+MPlayer: ERROR!
+;
+MSG_Warning_AltiVec (//)
+Sorry, this version is only for\nAltiVec capable machine!
+;
+MSG_Warning_Button_OK (//)
+Ok
+;
+MSG_Warning_Button_Cancel (//)
+Cancel
+;
+MSG_Properties_Video (//)
+\033bCodec: \033n%s \n\033bBitrate: \033n%d kbps \n\033bResolution: \033n%d x %d \n\033bFrames/sec.: \033n%5.2f \0
+;
+MSG_Properties_Audio (//)
+\033bCodec: \033n%s \n\033bBitrate: \033n%d kbps \n\033bRate: \033n%d Hz \n\033bChannels: \033n%d \0
+;
+MSG_Properties_Clip (//)
+\033bTitle: \033n%s \n\033bArtist: \033n%s \n\033bAlbum: \033n%s \n\033bYear: \033n%s \n\033bComment: \033n%s \n\033bGenre: \033n%s \0
+;
+MSG_Properties_Title (//)
+MPlayer: Properties
+;
+MSG_Properties_Prop (//)
+\033b VIDEO \033n\n%s\n\n\033b AUDIO \033n\n%s\n\n\033b CLIP \033n\n%s\n
+;
+MSG_Properties_IW_Video (//)
+Video
+;
+MSG_Properties_IW_Audio (//)
+Audio
+;
+MSG_Properties_IW_Clip (//)
+Clip
+;
+MSG_Warning_Cant_Iconify (//)
+Can't iconify!\nTrying to get icon from wrong path.
+;
+MSG_RegisterAppID_Description (//)
+The Movie Player
+;
+MSG_OSD_Added_Files (//)
+Added %d file(s)
+;
+MSG_Notify_Added_File (//)
+Added: '%s'
+;
+MSG_MPlayer_ScreenTitle (//)
+MPlayer Screen
+;

@@ -1,0 +1,12 @@
+diff --color -rupN org/libvo/cgx_common.c new/libvo/cgx_common.c
+--- org/libvo/cgx_common.c	2023-08-01 08:28:43.000000000 +0200
++++ new/libvo/cgx_common.c	2023-08-09 08:52:23.571455781 +0200
+@@ -697,7 +697,7 @@ bool is_uniconified()
+ 
+ bool enable_Iconify()
+ {
+-	const char *files[]={"progdir:MPlayer","progdir:mplayer","progdir:mplayer-nonaltivec","progdir:mplayer-altivec","envarc:sys/def_video", "envarc:sys/def_tool",NULL};
++	const char *files[]={"progdir:MPlayer","progdir:MPlayer-AltiVec","progdir:mplayer","progdir:mplayer-altivec","progdir:mplayer-nonaltivec","envarc:sys/def_video", "envarc:sys/def_tool",NULL};
+ 	int n;
+ 
+ 	for (n=0;files[n];n++)

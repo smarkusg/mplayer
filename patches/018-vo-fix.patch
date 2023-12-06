@@ -1,0 +1,283 @@
+diff --color -rupN old/libvo/vo_cgx_wpa.c new/libvo/vo_cgx_wpa.c
+--- old/libvo/vo_cgx_wpa.c	2023-08-01 08:28:43.000000000 +0200
++++ new/libvo/vo_cgx_wpa.c	2023-08-07 15:39:53.305728369 +0200
+@@ -316,7 +316,11 @@ static ULONG Open_Window()
+ 		{
+ 			case NOBORDER:
+ 				My_Window = OpenWindowTags( NULL,
++#ifdef PUBLIC_SCREEN
++					WA_PubScreen,	(ULONG) My_Screen,
++#else
+ 					WA_CustomScreen,	(ULONG) My_Screen,
++#endif
+ 					WA_Left,		win_left,
+ 					WA_Top,		win_top,
+ 					WA_InnerWidth,	window_width,
+@@ -338,7 +342,11 @@ static ULONG Open_Window()
+ 
+ 			case TINYBORDER:
+ 				My_Window = OpenWindowTags( NULL,
++#ifdef PUBLIC_SCREEN
++					WA_PubScreen,	(ULONG) My_Screen,
++#else
+ 					WA_CustomScreen,	(ULONG) My_Screen,
++#endif
+ 					WA_Left,		win_left,
+ 					WA_Top,		win_top,
+ 					WA_InnerWidth,	window_width,
+@@ -360,7 +368,11 @@ static ULONG Open_Window()
+ 
+ 			default:
+ 				My_Window = OpenWindowTags( NULL,
++#ifdef PUBLIC_SCREEN
++					WA_PubScreen,	(ULONG) My_Screen,
++#else
+ 					WA_CustomScreen,	(ULONG) My_Screen,
++#endif
+ 				// 	WA_ScreenTitle,(ULONG) gfx_common_screenname,
+ 				// #ifdef __morphos__
+ 				//	WA_Title,		(ULONG) filename ? MorphOS_GetWindowTitle() : "MPlayer for MorphOS",
+@@ -484,12 +496,12 @@ static ULONG Open_FullScreen()
+ 
+ 		My_Screen = OpenScreenTags ( NULL,
+ 			SA_DisplayID,  ModeID,
+-	#ifdef PUBLIC_SCREEN
++#ifdef PUBLIC_SCREEN
+ 				SA_Type, PUBLICSCREEN,
+ 				SA_PubName, "MPlayer Screen",
+-	#else
++#else
+ 				SA_Type, CUSTOMSCREEN,
+-	#endif
++#endif
+ 			SA_Title, "MPlayer Screen",
+ 			SA_ShowTitle, FALSE,
+ 			SA_Quiet, 	TRUE,
+@@ -504,9 +516,9 @@ static ULONG Open_FullScreen()
+ 	  return INVALID_ID;
+ 	}
+ 
+-	#if PUBLIC_SCREEN
++#if PUBLIC_SCREEN
+ 		PubScreenStatus( My_Screen, 0 );
+-	#endif
++#endif
+ 
+ 	screen_width = My_Screen->Width;
+ 	screen_height = My_Screen->Height;
+@@ -537,12 +549,11 @@ static ULONG Open_FullScreen()
+ 	}
+ 
+ 	My_Window = OpenWindowTags( NULL,
+-		#if PUBLIC_SCREEN
++#if PUBLIC_SCREEN
+ 			WA_PubScreen,	(ULONG) My_Screen,
+-			#else
++#else
+ 			WA_CustomScreen,  (ULONG) My_Screen,
+-			#endif
+-			WA_PubScreen,	(ULONG) My_Screen,
++#endif
+ 			WA_Top,		0,
+ 			WA_Left,		0,
+ 			WA_Height,		screen_height,
+diff --color -rupN old/libvo/vo_comp.c new/libvo/vo_comp.c
+--- old/libvo/vo_comp.c	2023-08-01 08:28:43.000000000 +0200
++++ new/libvo/vo_comp.c	2023-08-07 15:35:14.842396163 +0200
+@@ -533,7 +533,11 @@ static ULONG Open_Window()
+ 		{
+ 			case NOBORDER:
+ 				My_Window = OpenWindowTags( NULL,
++#ifdef PUBLIC_SCREEN
++					WA_PubScreen,	(ULONG) My_Screen,
++#else
+ 					WA_CustomScreen,	(ULONG) My_Screen,
++#endif
+ 					WA_Left,		win_left,
+ 					WA_Top,		win_top,
+ 					WA_InnerWidth,	window_width,
+@@ -555,7 +559,11 @@ static ULONG Open_Window()
+ 
+ 			case TINYBORDER:
+ 				My_Window = OpenWindowTags( NULL,
++#ifdef PUBLIC_SCREEN
++					WA_PubScreen,	(ULONG) My_Screen,
++#else
+ 					WA_CustomScreen,	(ULONG) My_Screen,
++#endif
+ 					WA_Left,		win_left,
+ 					WA_Top,		win_top,
+ 					WA_InnerWidth,	window_width,
+@@ -577,7 +585,11 @@ static ULONG Open_Window()
+ 
+ 			default:
+ 				My_Window = OpenWindowTags( NULL,
++#ifdef PUBLIC_SCREEN
++					WA_PubScreen,	(ULONG) My_Screen,
++#else
+ 					WA_CustomScreen,	(ULONG) My_Screen,
++#endif
+ // rem markus			WA_ScreenTitle,	(ULONG) gfx_common_screenname,
+ //					WA_ScreenTitle,	(ULONG) GetWindowTitle(),
+ // #ifdef __morphos__
+diff --color -rupN old/libvo/vo_comp_yuv2.c new/libvo/vo_comp_yuv2.c
+--- old/libvo/vo_comp_yuv2.c	2023-08-01 20:41:04.000000000 +0200
++++ new/libvo/vo_comp_yuv2.c	2023-08-07 15:42:30.359102640 +0200
+@@ -635,7 +635,11 @@ static ULONG Open_Window()
+ 		{
+ 			case NOBORDER:
+ 				My_Window = IIntuition->OpenWindowTags( NULL,
+-					WA_CustomScreen,	(ULONG) the_screen,
++#ifdef PUBLIC_SCREEN
++					WA_PubScreen,	(ULONG) the_screen,
++#else
++					WA_CustomScreen,	(ULONG) the_screen,//My_Screen,
++#endif
+ 					WA_Left,		win_left,
+ 					WA_Top,		win_top,
+ 					WA_InnerWidth,	window_width,
+@@ -657,7 +661,11 @@ static ULONG Open_Window()
+ 
+ 			case TINYBORDER:
+ 				My_Window = IIntuition->OpenWindowTags( NULL,
+-					WA_CustomScreen,	(ULONG) the_screen,
++#ifdef PUBLIC_SCREEN
++					WA_PubScreen,	(ULONG) the_screen,
++#else
++					WA_CustomScreen,	(ULONG) the_screen,//My_Screen,
++#endif
+ 					WA_Left,		win_left,
+ 					WA_Top,		win_top,
+ 					WA_InnerWidth,	window_width,
+@@ -688,7 +696,11 @@ static ULONG Open_Window()
+ 					// WA_Title,	"MPlayer " VERSION " (comp_yuv2)",
+ 					// #endif
+                         	WA_ScreenTitle,	AMIGA_VERSION " (comp_yuv2)",
+-					WA_Title,		(ULONG) GetWindowTitle(),
++#ifdef PUBLIC_SCREEN
++					WA_PubScreen,	(ULONG) the_screen,
++#else
++					WA_CustomScreen,	(ULONG) the_screen,//My_Screen,
++#endif
+ 					WA_Left,		win_left,
+ 					WA_Top,		win_top,
+ 					WA_InnerWidth,	window_width,
+@@ -813,12 +825,12 @@ static ULONG Open_FullScreen()
+ 	{
+ 		the_screen = IIntuition ->OpenScreenTags ( NULL,
+ 			SA_DisplayID,	ModeID,
+-			#ifdef PUBLIC_SCREEN
++#ifdef PUBLIC_SCREEN
+ 			SA_Type,		PUBLICSCREEN,
+ 			SA_PubName,		"MPlayer Screen",
+-			#else
++#else
+ 			SA_Type,		CUSTOMSCREEN,
+-			#endif
++#endif
+ 			SA_Title,		"MPlayer Screen",
+ 			SA_ShowTitle,	FALSE,
+ 			SA_Quiet,		TRUE,
+diff --color -rupN old/libvo/vo_comp_yuv.c new/libvo/vo_comp_yuv.c
+--- old/libvo/vo_comp_yuv.c	2023-08-01 08:28:43.000000000 +0200
++++ new/libvo/vo_comp_yuv.c	2023-08-07 15:37:50.261376726 +0200
+@@ -621,7 +621,11 @@ static ULONG Open_Window()
+ 		{
+ 			case NOBORDER:
+ 				My_Window = IIntuition->OpenWindowTags( NULL,
++#ifdef PUBLIC_SCREEN
++					WA_PubScreen,	(ULONG) the_screen,
++#else
+ 					WA_CustomScreen,    (ULONG) the_screen,
++#endif
+ 					WA_Left,            win_left,
+ 					WA_Top,             win_top,
+ 					WA_InnerWidth,      window_width,
+@@ -643,7 +647,11 @@ static ULONG Open_Window()
+ 
+ 			case TINYBORDER:
+ 				My_Window = IIntuition->OpenWindowTags( NULL,
++#ifdef PUBLIC_SCREEN
++					WA_PubScreen,	(ULONG) the_screen,
++#else
+ 					WA_CustomScreen,    (ULONG) the_screen,
++#endif
+ 					WA_Left,            win_left,
+ 					WA_Top,             win_top,
+ 					WA_InnerWidth,      window_width,
+@@ -804,12 +812,12 @@ static ULONG Open_FullScreen()
+ 	{
+ 		the_screen = IIntuition ->OpenScreenTags ( NULL,
+ 			SA_DisplayID,	ModeID,
+-			#ifdef PUBLIC_SCREEN
++#ifdef PUBLIC_SCREEN
+ 			SA_Type,		PUBLICSCREEN,
+ 			SA_PubName,		"MPlayer Screen",
+-			#else
++#else
+ 			SA_Type,		CUSTOMSCREEN,
+-			#endif
++#endif
+ 			SA_Title,		"MPlayer Screen",
+ 			SA_ShowTitle,	FALSE,
+ 			SA_Quiet,		TRUE,
+@@ -827,7 +835,7 @@ static ULONG Open_FullScreen()
+ 	is_my_screen = TRUE;
+ 
+ #ifdef PUBLIC_SCREEN
+-	PubScreenStatus( the_screen, 0 );
++	IIntuition->PubScreenStatus( the_screen, 0 );
+ #endif
+ 
+ 	vo_screenwidth = the_screen -> Width;
+diff --color -rupN old/libvo/vo_p96pip.c new/libvo/vo_p96pip.c
+--- old/libvo/vo_p96pip.c	2023-08-01 08:28:43.000000000 +0200
++++ new/libvo/vo_p96pip.c	2023-08-07 15:44:52.271228566 +0200
+@@ -79,7 +79,7 @@
+ 
+ #include "cgx_common.h"
+ 
+-#define PUBLIC_SCREEN 0
++//#define PUBLIC_SCREEN 0
+ 
+ static vo_info_t info =
+ {
+@@ -419,7 +419,11 @@ static ULONG Open_PIPWindow(void)
+ #endif
+ 			P96PIP_ColorKeyPen, 	0,
+ 
++#ifdef PUBLIC_SCREEN
++			WA_PubScreen,	(ULONG) the_screen,
++#else
+ 			WA_CustomScreen,	(ULONG) the_screen,
++#endif
+ 			// rem markus WA_ScreenTitle,	(ULONG) gfx_common_screenname,
+ 			// old
+ 			// WA_ScreenTitle,	(ULONG) GetWindowTitle(),
+@@ -564,7 +568,11 @@ static ULONG GoFullScreen(void)
+ 				P96PIP_SourceHeight, amiga_image_height,
+ 				P96PIP_NumberOfBuffers, numbuffers,
+ 
++#ifdef PUBLIC_SCREEN
++                      	WA_PubScreen,	(ULONG) the_screen,
++#else
+                       	WA_CustomScreen,		(ULONG) the_screen,
++#endif
+                       	WA_ScreenTitle,		(ULONG) "MPlayer ",
+                       	WA_SmartRefresh,		TRUE,
+                       	WA_CloseGadget,		FALSE,
+diff --color -rupN old/libvo/vo_pip.c new/libvo/vo_pip.c
+--- old/libvo/vo_pip.c	2023-08-01 08:28:43.000000000 +0200
++++ new/libvo/vo_pip.c	2023-08-07 15:45:48.329537314 +0200
+@@ -224,7 +224,11 @@ static uint32 Open_Window(uint32 hidden)
+                         P96PIP_SourceHeight, sourceheight,
+                         P96PIP_NumberOfBuffers, 3,
+ 
++#ifdef PUBLIC_SCREEN
++                        WA_PubScreen,	(ULONG) My_Screen,
++#else
+                         WA_CustomScreen,		(uint32) My_Screen,
++#endif
+ 								ALWAYSBORDER == BorderMode ? WA_Title : WA_WindowName, GetWindowTitle(),
+                         WA_ScreenTitle,		AMIGA_VERSION " (pip)",
+                         WA_Title,			(ULONG) GetWindowTitle(),

@@ -1,0 +1,341 @@
+Binarne pliki old/locale/italian/MPlayer.catalog i new/locale/italian/MPlayer.catalog różnią się
+diff --color -rupN old/locale/italian/MPlayer.ct new/locale/italian/MPlayer.ct
+--- old/locale/italian/MPlayer.ct	2023-08-02 08:23:23.396490112 +0200
++++ new/locale/italian/MPlayer.ct	2023-08-02 02:17:00.000000000 +0200
+@@ -1,4 +1,4 @@
+-## version $VER: MPlayer.catalog 1.5.0 (31.07.2023)
++## version $VER: MPlayer.catalog 1.5.0 (2.08.2023)
+ ## codeset 0
+ ## language italiano
+ ## chunk AUTH Translated by Samir Hawamdeh (http://www.betatesting.it/backforthefuture)
+@@ -87,6 +87,10 @@ MSG_Menu_OptionsVideo_StayOnTop
+ In primo piano
+ ; Stay on top
+ ;
++MSG_Menu_OptionsVideo_OpenSubtitles
++Apri sottotitoli...
++; Open subtitles...
++;
+ MSG_Menu_OptionsVideo_CycleSubtitles
+ Cicla sottotitoli
+ ; Cycle subtitles
+@@ -116,32 +120,36 @@ Volume -
+ ; Volume Down
+ ;
+ MSG_About_Built
+-\nBasato su MPlayer versione:
+-; \nBuilt against MPlayer version:
++Basato su MPlayer versione:
++; Built against MPlayer version:
+ ;
+ MSG_About_AmigaVersion
+-\nVersione AmigaOS4:
+-; \nAmiga version:
++Versione AmigaOS4:
++; Amiga version:
+ ;
+ MSG_About_FFmpegVersion
+-\nCompatibile con FFmpeg:
+-; \nFFmpeg version:
++Compatibile con FFmpeg:
++; FFmpeg version:
+ ;
+ MSG_About_Copyright
+-\n\nCopyright (C)
+-; \n\nCopyright (C)
++Copyright (C)
++; Copyright (C)
+ ;
+ MSG_About_MPlayer_Team
+ Team di MPlayer
+ ; MPlayer Team
+ ;
+ MSG_About_AmigaOS4Version
+-\n\nVersione AmigaOS4 a cura di:\n
+-; \n\nAmigaOS4 Version:
++Versione AmigaOS4 a cura di:\n
++; AmigaOS4 Version:
+ ;
+ MSG_About_GCCVersion
+-\nCompilato con GCC:
+-; \nGCC version:
++Compilato con GCC:
++; GCC version:
++;
++MSG_About_ARexxPort
++Porta ARexx:
++; ARexx port:
+ ;
+ MSG_Requester_OK	
+ _Ok
+@@ -207,14 +215,11 @@ MSG_Requester_OpenFile_Title
+ Seleziona un video
+ ; Choose a video
+ ;
+-MSG_Requester_OpenFile_SubTitle
++MSG_Requester_Subtitles_Title
+ Seleziona sottotitoli
+-; Select a subtitle
++; Choose subtitles
+ ;
+ MSG_Requester_Title_About
+ Informazioni su MPlayer
+ ; About MPlayer
+-;
+-MSG_About_ARexxPort
+-;
+ ;
+\ Brak znaku nowej linii na końcu pliku
+diff --color -rupN old/locale/MPlayer.cd new/locale/MPlayer.cd
+--- old/locale/MPlayer.cd	2023-07-31 14:34:18.310442975 +0200
++++ new/locale/MPlayer.cd	2023-08-02 02:16:00.000000000 +0200
+@@ -1,4 +1,4 @@
+-; $VER: MPlayer.catalog 1.5.0 (25.07.2023)
++; $VER: MPlayer.catalog 1.5.0 (28.07.2023)
+ ; MPlayer.cd
+ ;
+ MSG_About_About (//)
+@@ -7,101 +7,104 @@ About
+ MSG_About_Licence (//)
+ Licence
+ ;
+-MSG_Menu_MPlayer (//)
++MSG_Menu_MPlayer (//62)
+ MPlayer
+ ;
+-MSG_Menu_MPlayer_LoadFile (//)
++MSG_Menu_MPlayer_LoadFile (//62)
+ Load file...
+ ;
+-MSG_Menu_MPlayer_OpenDVD (//)
++MSG_Menu_MPlayer_OpenDVD (//62)
+ Open DVD...
+ ;
+-MSG_Menu_MPlayer_OpenDVDNAV (//)
++MSG_Menu_MPlayer_OpenDVDNAV (//62)
+ Open DVDNAV...
+ ;
+-MSG_Menu_MPlayer_OpenVCD (//)
++MSG_Menu_MPlayer_OpenVCD (//62)
+ Open VCD...
+ ;
+-MSG_Menu_MPlayer_OpenNetwork (//)
++MSG_Menu_MPlayer_OpenNetwork (//62)
+ Open a stream...
+ ;
+-MSG_Menu_MPlayer_About (//)
+-About...
+-;
+-MSG_Menu_MPlayer_Iconify (//)
++MSG_Menu_MPlayer_Iconify (//62)
+ Iconify
+ ;
+-MSG_Menu_MPlayer_Quit (//)
++MSG_Menu_MPlayer_About (//62)
++About...
++;
++MSG_Menu_MPlayer_Quit (//62)
+ Quit
+ ;
+-MSG_Menu_Play (//)
++MSG_Menu_Play (//62)
+ Play
+ ;
+-MSG_Menu_Play_PlayPause (//)
++MSG_Menu_Play_PlayPause (//62)
+ Play/Pause
+ ;
+-MSG_Menu_Play_Stop (//)
++MSG_Menu_Play_Stop (//62)
+ Stop
+ ;
+-MSG_Menu_Play_Loop (//)
++MSG_Menu_Play_Loop (//62)
+ Loop
+ ;
+-MSG_Menu_Play_PrevFilm (//)
++MSG_Menu_Play_PrevFilm (//62)
+ Prev film
+ ;
+-MSG_Menu_Play_NextFilm (//)
++MSG_Menu_Play_NextFilm (//62)
+ Next film
+ ;
+-MSG_Menu_OptionsVideo (//)
++MSG_Menu_OptionsVideo (//62)
+ Video options
+ ;
+-MSG_Menu_OptionsVideo_StayOnTop (//)
++MSG_Menu_OptionsVideo_StayOnTop (//62)
+ Stay on top
+ ;
+-MSG_Menu_OptionsVideo_OpenSubtitles (//)
++MSG_Menu_OptionsVideo_OpenSubtitles (//62)
+ Open subtitles...
+ ;
+-MSG_Menu_OptionsVideo_CycleSubtitles (//)
++MSG_Menu_OptionsVideo_CycleSubtitles (//62)
+ Cycle subtitles
+ ;
+-MSG_Menu_OptionsVideo_Fullscreen (//)
++MSG_Menu_OptionsVideo_Fullscreen (//62)
+ Fullscreen
+ ;
+-MSG_Menu_OptionsVideo_Screenshot (//)
++MSG_Menu_OptionsVideo_Screenshot (//62)
+ Screenshot
+ ;
+-MSG_Menu_OptionsAudio (//)
++MSG_Menu_OptionsAudio (//62)
+ Audio options
+ ;
+-MSG_Menu_OptionsAudio_Mute (//)
++MSG_Menu_OptionsAudio_Mute (//62)
+ Mute
+ ;
+-MSG_Menu_OptionsAudio_VolumeUp (//)
++MSG_Menu_OptionsAudio_VolumeUp (//62)
+ Volume Up
+ ;
+-MSG_Menu_OptionsAudio_VolumeDown (//)
++MSG_Menu_OptionsAudio_VolumeDown (//62)
+ Volume Down
+ ;
+ MSG_About_Built (//)
+-\nBuilt against MPlayer version:
++Built against MPlayer version:
+ ;
+ MSG_About_AmigaVersion (//)
+-\nAmiga version:
++Amiga version:
+ ;
+ MSG_About_FFmpegVersion (//)
+-\nFFmpeg version:
++FFmpeg version:
+ ;
+ MSG_About_Copyright (//)
+-\n\nCopyright (C)
++Copyright (C)
+ ;
+ MSG_About_MPlayer_Team (//)
+ MPlayer Team
+ ;
+ MSG_About_AmigaOS4Version (//)
+-\n\nAmigaOS4 version:
++AmigaOS4 version:
+ ;
+ MSG_About_GCCVersion (//)
+-\nGCC version:
++GCC version:
++;
++MSG_About_ARexxPort (//)
++ARexx port:
+ ;
+ MSG_Requester_OK	 (//)
+ _Ok
+@@ -151,11 +154,9 @@ Enter a valid VCD protocol
+ MSG_Requester_OpenFile_Title (//)
+ Choose a video
+ ;
+-MSG_Requester_OpenFile_SubTitle (//)
+-Select a subtitle
++MSG_Requester_Subtitles_Title (//)
++Choose subtitles
+ ;
+ MSG_Requester_Title_About (//)
+ About MPlayer
+-;
+-MSG_About_ARexxPort (//)
+ ;
+\ Brak znaku nowej linii na końcu pliku
+diff --color -rupN old/locale/MPlayer.ct new/locale/MPlayer.ct
+--- old/locale/MPlayer.ct	2023-08-02 08:23:23.398490164 +0200
++++ new/locale/MPlayer.ct	2023-08-02 02:11:00.000000000 +0200
+@@ -2,7 +2,7 @@
+ ## codeset 0
+ ## language xxx
+ ;
+-; $VER: MPlayer.catalog 1.5.0 (30.06.2023)
++; $VER: MPlayer.catalog 1.5.0 (28.07.2023)
+ ; MPlayer.ct
+ ;
+ MSG_About_About
+@@ -37,14 +37,14 @@ MSG_Menu_MPlayer_OpenNetwork
+ 
+ ; Open a stream...
+ ;
+-MSG_Menu_MPlayer_About
+-
+-; About...
+-;
+ MSG_Menu_MPlayer_Iconify
+ 
+ ; Iconify
+ ;
++MSG_Menu_MPlayer_About
++
++; About...
++;
+ MSG_Menu_MPlayer_Quit
+ 
+ ; Quit
+@@ -115,19 +115,19 @@ MSG_Menu_OptionsAudio_VolumeDown
+ ;
+ MSG_About_Built
+ 
+-; \nBuilt against MPlayer version:
++; Built against MPlayer version:
+ ;
+ MSG_About_AmigaVersion
+ 
+-; \nAmiga version:
++; Amiga version:
+ ;
+ MSG_About_FFmpegVersion
+ 
+-; \nFFmpeg version:
++; FFmpeg version:
+ ;
+ MSG_About_Copyright
+ 
+-; \n\nCopyright (C)
++; Copyright (C)
+ ;
+ MSG_About_MPlayer_Team
+ 
+@@ -135,11 +135,15 @@ MSG_About_MPlayer_Team
+ ;
+ MSG_About_AmigaOS4Version
+ 
+-; \n\nAmigaOS4 version:
++; AmigaOS4 Version:
+ ;
+ MSG_About_GCCVersion
+ 
+-; \nGCC version:
++; GCC version:
++;
++MSG_About_ARexxPort
++
++; ARexx port:
+ ;
+ MSG_Requester_OK	
+ 
+@@ -205,14 +209,11 @@ MSG_Requester_OpenFile_Title
+ 
+ ; Choose a video
+ ;
+-MSG_Requester_OpenFile_SubTitle
++MSG_Requester_Subtitles_Title
+ 
+-; Select a subtitle
++; Choose subtitles
+ ;
+ MSG_Requester_Title_About
+ 
+ ; About MPlayer
+-;
+-MSG_About_ARexxPort
+-;
+ ;
+\ Brak znaku nowej linii na końcu pliku

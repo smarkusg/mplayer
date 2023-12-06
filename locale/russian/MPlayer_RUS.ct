@@ -1,0 +1,345 @@
+## version $VER: MPlayer.catalog 1.5.0 (10.11.2023) (Amiga-1251)
+## codeset 2104
+## language russian
+;
+; $VER: MPlayer.catalog 1.5.0 (11.09.2023)
+; MPlayer.ct
+;
+MSG_Menu_Project
+Проект
+; Project
+;
+MSG_Menu_Project_OpenFile
+Открыть файл...
+; Open file...
+;
+MSG_Menu_Project_OpenDVD
+Открыть DVD...
+; Open DVD...
+;
+MSG_Menu_Project_OpenDVDNAV
+Открыть DVDNAV...
+; Open DVDNAV...
+;
+MSG_Menu_Project_OpenVCD
+Открыть VCD...
+; Open VCD...
+;
+MSG_Menu_Project_OpenNetwork
+Открыть трансляцию...
+; Open stream...
+;
+MSG_Menu_Project_Iconify
+Иконизировать
+; Iconify
+;
+MSG_Menu_Project_About
+О программе...
+; About...
+;
+MSG_Menu_Project_Quit
+Покидать
+; Quit
+;
+MSG_Menu_Play
+Играть
+; Play
+;
+MSG_Menu_Play_PlayPause
+Играть/Пауза
+; Play/Pause
+;
+MSG_Menu_Play_Stop
+Стоп
+; Stop
+;
+MSG_Menu_Play_Record
+Запись потока
+; Record stream
+;
+MSG_Menu_Play_Loop
+Петля
+; Loop
+;
+MSG_Menu_Play_PrevFile
+Предыдущий файл
+; Prev file
+;
+MSG_Menu_Play_NextFile
+Следующий файл
+; Next file
+;
+MSG_Menu_Play_Properties
+Характеристики...
+; Properties...
+;
+MSG_Menu_OptionsVideo
+Параметры видео
+; Video options
+;
+MSG_Menu_OptionsVideo_StayOnTop
+Оставайтесь на высоте
+; Stay on top
+;
+MSG_Menu_OptionsVideo_Fullscreen
+Включить полноэкранный
+; Toggle fullscreen
+;
+MSG_Menu_OptionsVideo_Screenshot
+Скриншот
+; Screenshot
+;
+MSG_Menu_OptionsVideo_OpenSubtitles
+Открыть субтитры...
+; Open subtitles...
+;
+MSG_Menu_OptionsVideo_CycleSubtitles
+Цикл субтитров
+; Cycle subtitles
+;
+MSG_Menu_OptionsVideo_UnloadSubtitles
+Выгрузить субтитры
+; Unload subtitles
+;
+MSG_Menu_OptionsVideo_SubtitlesSize
+Размер субтитров
+; Subtitles size
+;
+MSG_Menu_OptionsVideo_SubtitlesBig
+Больше
+; Bigger
+;
+MSG_Menu_OptionsVideo_SubtitlesSmall
+Меньший
+; Smaller
+;
+MSG_Menu_OptionsVideo_AspectRatio
+Соотношение Сторон
+; Aspect Ratio
+;
+MSG_Menu_OptionsVideo_AR_Original
+Оригинал
+; Original
+;
+MSG_Menu_OptionsAudio
+Параметры аудио
+; Audio options
+;
+MSG_Menu_OptionsAudio_Mute
+Немой
+; Mute
+;
+MSG_Menu_OptionsAudio_VolumeUp
+Увеличение громкость
+; Volume Up
+;
+MSG_Menu_OptionsAudio_VolumeDown
+Уменьшите громкость
+; Volume Down
+;
+MSG_Menu_Settings
+Настройки
+; Settings
+;
+MSG_Menu_Settings_MPlayerGUI
+MPlayer-GUI...
+; MPlayer-GUI...
+;
+MSG_About_About
+О программе
+; About
+;
+MSG_About_Licence
+Лицензия
+; Licence
+;
+MSG_About_Built
+Создано на основе версии MPlayer:
+; Built against MPlayer version:
+;
+MSG_About_AmigaVersion
+Версия Amiga:
+; Amiga version:
+;
+MSG_About_FFmpegVersion
+Версия FFmpeg:
+; FFmpeg version:
+;
+MSG_About_Copyright
+Авторское право (С)
+; Copyright (C)
+;
+MSG_About_MPlayer_Team
+Команда MPlayer
+; MPlayer Team
+;
+MSG_About_AmigaOS4Version
+Релиз AmigaOS4:
+; AmigaOS4 release:
+;
+MSG_About_GCCVersion
+Версия GCC:
+; GCC version:
+;
+MSG_About_ARexxPort
+Порт ARexx:
+; ARexx Port:
+;
+MSG_About_Translation
+Перевод:
+; Translation:
+;
+; translator: change to your name/nick/...
+;
+MSG_About_Translator
+Samir Hawamdeh
+; (using built-in strings)
+;
+MSG_About_VideoDriver
+Видеодрайвер используется:
+; Video driver in use:
+;
+MSG_Requester_OK
+_Хорошо
+; _Ok
+;
+MSG_Requester_Title
+MPlayer для AmigaOS4
+; MPlayer for AmigaOS4
+;
+MSG_Requester_Network_Title
+Открыть поток
+; Open a stream
+;
+MSG_Requester_Network_Body
+Введите URL чтобы открыть:
+; Enter URL to open:
+;
+MSG_Requester_Network_Gadget
+_Загрузить|_Отменить
+; _Load|_Cancel
+;
+MSG_Requester_DVD_Title
+Загрузить DVD
+; Load DVD
+;
+MSG_Requester_DVD_Body
+Введите главу чтобы открыть:
+; Enter Chapter to Open:
+;
+MSG_Requester_DVD_Gadget
+_Открыть|О_тменить
+; _Open|_Cancel
+;
+MSG_Requester_DVD_Error
+Введите действительный протокол DVD:
+; Enter valid DVD protocol:
+;
+MSG_Requester_DVDNAV_Title
+Загрузить DVDNAV
+; Load DVDNAV
+;
+MSG_Requester_DVDNAV_Error
+Чтобы использовать DVDNAV, вы должны закомментировать кеш в файле конфигурации
+; To use DVDNAV, you must comment out cache in the config file
+;
+MSG_Requester_VCD_Title
+Загрузить VCD
+; Load VCD
+;
+MSG_Requester_VCD_Body
+Введите главу чтобы открыть:
+; Enter Chapter to Open:
+;
+MSG_Requester_VCD_Gadget
+_Открыть|О_тменить
+; _Open|_Cancel
+;
+MSG_Requester_VCD_Error
+Введите действительный протокол VCD:
+; Enter valid VCD protocol:
+;
+MSG_Requester_OpenFile_Video
+Выбрать видео
+; Choose video
+;
+MSG_Requester_OpenFile_SubTitles
+Выберите субтитры
+; Choose subtitles
+;
+MSG_Requester_Title_About
+О MPlayer
+; About MPlayer
+;
+MSG_Requester_Title_Warning
+MPlayer: ВНИМАНИЕ!
+; MPlayer: WARNING!
+;
+MSG_Requester_Title_Error
+MPlayer: ОШИБКА!
+; MPlayer: ERROR!
+;
+MSG_Warning_AltiVec
+Извините, эта версия предназначена только для\nмашин с поддержкой AltiVec!
+; Sorry, this version is only for\nAltiVec capable machine!
+;
+MSG_Warning_Button_OK
+Хорошо
+; Ok
+;
+MSG_Warning_Button_Cancel
+Отмена
+; Cancel
+;
+MSG_Properties_Video
+\033bКодек: \033n%s \n\033bБитрейт: \033n%d кбит/с \n\033bРазрешение: \033n%d x %d \n\033bКадров/сек.: \033n%5.2f \0
+; \033bCodec: \033n%s \n\033bBitrate: \033n%d kbps \n\033bResolution: \033n%d x %d \n\033bFrames/sec.: \033n%5.2f \0
+;
+MSG_Properties_Audio
+\033bКодек: \033n%s \n\033bБитрейт: \033n%d кбит/с \n\033bСкорость: \033n%d Гц \n\033bКаналы: \033n%d \0
+; \033bCodec: \033n%s \n\033bBitrate: \033n%d kbps \n\033bRate: \033n%d Hz \n\033bChannels: \033n%d \0
+;
+MSG_Properties_Clip
+\033bНазвание: \033n%s \n\033bИсполнитель: \033n%s \n\033bАльбом: \033n%s \n\033bГод: \033n%s \n\033bКомментарий: \033n%s \n\033bЖанр: \033n  %s \0
+; \033bTitle: \033n%s \n\033bArtist: \033n%s \n\033bAlbum: \033n%s \n\033bYear: \033n%s \n\033bComment: \033n%s \n\033bGenre: \033n%s \0
+;
+MSG_Properties_Title
+MPlayer: Свойства
+; MPlayer: Properties
+;
+MSG_Properties_Prop
+\033b ВИДЕО \033n\n%s\n\n\033b АУДИО \033n\n%s\n\n\033b КЛИП \033n\n%s\n
+; \033b VIDEO \033n\n%s\n\n\033b AUDIO \033n\n%s\n\n\033b CLIP \033n\n%s\n
+;
+MSG_Properties_IW_Video
+Видео
+; Video
+;
+MSG_Properties_IW_Audio
+Аудио
+; Audio
+;
+MSG_Properties_IW_Clip
+Клип
+; Clip
+;
+MSG_Warning_Cant_Iconify
+Невозможно создать иконку!\nПытаюсь получить иконку по неправильному пути
+; Can't iconify!\nTrying to get icon from wrong path.
+;
+MSG_RegisterAppID_Description
+Киноплеер
+; The Movie Player
+;
+MSG_OSD_Added_Files
+Добавлен %d файл(ы)
+; Added %d file(s)
+;
+MSG_Notify_Added_File
+Добавлен: '%s'
+; Added: '%s'
+;
+MSG_MPlayer_ScreenTitle
+Экран MPlayer
+; MPlayer Screen
+;

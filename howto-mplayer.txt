@@ -1,0 +1,482 @@
+avformat reconnect_streamed http.c is the fix for audio stopping yt.rexx dualplay
+
+
+
+1.2 changes:
+
+- Based on MPlayer 1.4 (ffmpeg 4.1)
+- comp_yuv(2): Allow driver to be used with RadeonRX.chip
+- p96_pip: Properly fix distorted videos with some resolutions.
+- Added missing VCD amigaos specific support from older port.
+
+- Stay paused if using MPlayer-GUI and paused outside of it.
+^ Yet to be added in
+
+
+Modifications by zzd10h:
+
+- Added MenuClass support if available (OS4.1 FE required)
+- Added AISS images to MenuClass if available (TBIMAGES: assign required)
+- Use of MenuImageSize environment variable to specify AISS picture size (SETENV SAVE MenuImageSize 16)
+- Use of AEon InfoWindow class for About window if available
+- Use of environment variable Disable_Banner_Images to disable About window banner (SETENV SAVE Disable_Banner_Images 1)
+- Catalog support
+
+
+--enable-openssl-nondistributable
+
+Check if 2glob was needed: yes
+
+
+codec2.c memory.h
+
+
+
+
+
+Compiling MPlayer 1.4 for AmigaOS4 & SDL
+========================================
+
+tar -xJvf MPlayer-1.4.tar.xz
+
+Edit configure script:
+
+Change WARN_CFLAGS="-Werror-implicit-function-declaration" to WARN_CFLAGS="" (enable networking support)
+Change glob.h to 2glob.h and glob_win=yes to glob_win=no and glob=yes to glob=no (quick way to disable GLOB and GLOB_WIN)
+Remove GLOB_WIN from Makefile (permanent because configure does not generate Makefile)
+
+According to http://amigaworld.net/modules/newbb/viewtopic.php?mode=viewtopic&topic_id=34455&forum=32&start=220&viewmode=flat&order=0#635586
+Change -O4 to -O2 where seen, to fix 100% cpu loading.
+
+Use ld_tmp="-lfontconfig -lexpat -lfreetype -lpthread $ld_tmp" to make it detect libfontconfig.
+Put -lpthread after -lopenal to make to detect OpenAL
+
+Remove these two lines in amigaos section:
+  _stream_cache=no
+  def_stream_cache="#undef CONFIG_STREAM_CACHE"
+
+and add
+
+  def_pthread_cache="#define PTHREAD_CACHE 1"
+
+
+Configure with:
+
+PKG_CONFIG_PATH=/SDK/local/newlib/lib/pkgconfig ./configure --prefix=/SDK/local/newlib --datadir=/PROGDIR --confdir=/PROGDIR --with-freetype-config=/SDK/local/newlib/bin/freetype-config --enable-cross-compile --cc=ppc-amigaos-gcc --as=ppc-amigaos-as --nm=ppc-amigaos-nm --ar=ppc-amigaos-ar --ranlib=ppc-amigaos-ranlib --target=ppc-amigaos --disable-altivec --disable-termios --disable-unrarexec --enable-menu --enable-openssl-nondistributable --extra-libs="-lunix" --extra-libs-mplayer="-lauto"
+
+
+command.c (around line 3373):
+#if !defined(__MINGW32__) && !defined(__AMIGAOS4__)
+
+osdep/getch2.c (around line 27):
+#if !defined(__OS2__) && !defined(__MORPHOS__) && !defined(__AMIGAOS4__)
+
+osdep/shmem.c (this code isn't actually used at all):
+Find and change to look like these:
+
+  case 1:  // ========= MAP_SHARED + /dev/zero ==========
+#ifndef __amigaos4__
+    if (devzero == -1 && (devzero = open("/dev/zero", O_RDWR, 0)) == -1) break;
+    p=mmap(0,size,PROT_READ|PROT_WRITE,MAP_SHARED,devzero,0);
+    if(p==MAP_FAILED) break; // failed
+#else
+    p=malloc(size);
+    if(p=NULL) break; // failed
+#endif
+    mp_dbg(MSGT_OSDEP, MSGL_DBG2, "shmem: %"PRId64" bytes allocated using mmap /dev/zero (%p)\n",size,p);
+    return p;
+
+
+    case 1:
+#ifndef __amigaos4__
+      if(munmap(p,size)) {
+		mp_msg(MSGT_OSDEP, MSGL_ERR, "munmap failed on %p %"PRId64" bytes: %s\n",
+		    p,size,strerror(errno));
+	    }
+#else
+      if (p) free(p);
+#endif
+      break;
+
+
+
+
+libmpeg2/cpu_state.c
+remove altivec code if building for generic
+lines 46 and 123 change to #if 0 // ARCH_PPC
+
+
+
+mplayer.c (around lines 768 and 3046):
+#if !defined(__MINGW32__) && !defined(__AMIGAOS4__)
+
+
+
+input/input.c:
+#ifdef __amigaos4__
+            if (select(max_fd + 1, &fds, NULL, NULL, time_val) == -1) {
+                if ((errno != EINTR)&&(errno != 0))
+                {
+                    mp_msg(MSGT_INPUT, MSGL_ERR, MSGTR_INPUT_INPUT_ErrSelect,    strerror(errno));
+                        printf("AmigaOS4.1 Bug select() don't reset or set errno value\n");
+                        errno = 0;
+                }
+                else if ((errno == 0))
+                {
+                        mp_msg(MSGT_INPUT, "Select() returns with out setting errno\n",0);
+                }
+                FD_ZERO(&fds);
+            }
+#else
+            if (select(max_fd + 1, &fds, NULL, NULL, time_val) < 0) {
+                if (errno != EINTR)
+                    mp_msg(MSGT_INPUT, MSGL_ERR, MSGTR_INPUT_INPUT_ErrSelect,
+                            strerror(errno));
+                FD_ZERO(&fds);
+            }
+#endif
+
+
+
+libmpcodecs/ad_mpg123.c
+Right at top of the file:
+#undef _FILE_OFFSET_BITS
+
+
+mpcommon.c:
+Remove these lines:
+
+<             char *desc_path = get_path("font/font.desc");
+<             vo_font = read_font_desc(desc_path, font_factor, verbose>1);
+<             free(desc_path);
+<             if (!vo_font)
+
+
+
+libao2/ao_sdl.c:
+
+>                 aspec.format = AUDIO_S16MSB;
+>                 ao_data.format = AF_FORMAT_S16_BE;
+
+also change in "case AF_FORMAT_S16_LE" to AUDIO_S16MSB to make .wav play properly.
+
+
+
+libvo/vo_sdl.c:
+Remove a bunch of code, make it look like this:
+
+	if(flags&VOFLAG_SWSCALE) {
+		mp_msg(MSGT_VO,MSGL_V, "SDL: setting zoomed fullscreen with modeswitching\n");
+		priv->fulltype = VOFLAG_SWSCALE;
+		set_fullmode(priv->fullmode);
+	}
+        else {
+ 			mp_msg(MSGT_VO,MSGL_V, "SDL: setting windowed mode\n");
+            set_video_mode(priv->dstwidth, priv->dstheight, priv->bpp, priv->sdlflags);
+	}
+        if(!priv->surface) { // cannot SetVideoMode
+ 		mp_msg(MSGT_VO,MSGL_WARN, MSGTR_LIBVO_SDL_FailedToSetVideoMode, SDL_GetError());
+		return -1;
+	}
+
+
+
+ffmpeg/libavformat/os_support.h (around line 79):
+#if defined(__OS2__) || defined(__Plan9__) || defined(__AMIGAOS4__)
+
+
+
+ffmpeg/libavformat/udp.c:
+
+struct timespec { time_t tv_secs; int tv_nansecs; };
+const struct timespec tv = { .tv_secs  =  t / 1000000, .tv_nansecs = (t % 1000000) * 1000 };
+
+
+
+ffmpeg/libavutil/thread.h:
+
+#if defined(__amigaos4__)
+ #define TRUE 1
+ #define FALSE 0
+#endif
+
+
+
+ffmpeg/libavcodec/hapdec.c:
+
+#ifndef __amigaos4__
+ #include "memory.h"
+#endif
+
+
+ffmpeg/libavformat/ftp.c:
+
+#if defined(__amigaos4__)
+            next->filemode = strtoul(value, NULL, 8);
+#else
+            next->filemode = strtoumax(value, NULL, 8);
+#endif
+        } else if (!av_strcasecmp(fact, "UNIX.uid") || !av_strcasecmp(fact, "UNIX.owner"))
+#if defined(__amigaos4__)
+            next->user_id = strtoul(value, NULL, 10);
+#else
+            next->user_id = strtoumax(value, NULL, 10);
+#endif
+        else if (!av_strcasecmp(fact, "UNIX.gid") || !av_strcasecmp(fact, "UNIX.group"))
+#if defined(__amigaos4__)
+            next->group_id = strtoul(value, NULL, 10);
+#else
+            next->group_id = strtoumax(value, NULL, 10);
+#endif
+
+
+Edit config.h:
+
+#if defined(__amigaos4__) && !defined(OS4COMPAT)
+#  include <limits.h>
+#  if 1 // HAVE_UNISTD_H
+#    include <unistd.h>
+#  endif
+#  ifdef lseek
+#   undef lseek
+#  endif
+#  define lseek(f,p,w) lseek64((f), (p), (w))
+#  include <fcntl.h>
+#  ifdef stat
+#   undef stat
+#  endif
+#  define stat stat64
+#  ifdef fstat
+#   undef fstat
+#  endif
+#  define fstat(f,s) fstat64((f), (s))
+#  undef seek
+#  define seek seek64
+#  undef off_t
+#  define off_t int64_t
+#endif
+
+
+libmpcodecs/vf_fixpts.c:
+libavcodec/ppc/fft_altivec.S:
+
+#define OS4COMPAT 1
+#include "config.h"
+
+
+To enable SSL:
+
+config.h (and .mak)
+
+#define CONFIG_OPENSSL 1
+#define CONFIG_TLS_OPENSSL_PROTOCOL 1
+#define CONFIG_HTTPS_PROTOCOL 1
+
+
+
+List of changed files:
+command.c
+configure
+cpudetect.c
+Makefile
+mplayer.c
+path.c (unused)
+version.sh
+ffmpeg/libavcodec/mpegpicture.c
+ffmpeg/libavcodec/ppc/fft_altivec.S
+ffmpeg/libavformat/codec2.c
+ffmpeg/libavformat/ftp.c
+ffmpeg/libavformat/http.c
+ffmpeg/libavformat/udp.c
+ffmpeg/libavutil/thread.h
+ffmpeg/libavutil/ppc/cpu.c
+input/input.c
+libao2/ao_sdl.c
+libao2/audio_out.c
+libmenu/menu_console.c
+libmpcodecs/vf_fixpts.c
+libmpcodecs/vf_screenshot.c
+libmpcodecs/ad_mpg123.c
+libmpdemux/demuxer.c
+libmpeg2/cpu_state.c
+libvo/vo_sdl.c
+libvo/video_out.c
+osdep/getch2.c
+osdep/shmem.c
+stream/cache2.c
+
+List of added files:
+amigaos/amigaos_stuff.c
+amigaos/amigaos_stuff.h
+amigaos/appwindow.c
+amigaos/arexx.c
+amigaos/arexx.h
+amigaos/asm.c
+amigaos/asm.h
+amigaos/menu.c
+amigaos/menu.h
+amigaos/workaround_snapshot.c
+amigaos/path.c
+libao2/ao_ahi_dev.c (unused)
+libao2/ao_ahi_dev2.c
+libvo/cgx_common.c
+libvo/cgx_common.h
+libvo/memcpy.c
+libvo/vo_cgx_wpa.c
+libvo/vo_comp.c
+libvo/vo_comp_yuv.c
+libvo/vo_comp_yuv2.c
+libvo/vo_p96pip.c
+libvo/vo_pip.c (unused)
+osdep/glob-aos.c (unused)
+osdep/glob-aos.h (unused)
+libdvdcss/*
+libdvdnav/*
+libdvdread4/*
+stream/vcd_read_amiga.h
+stream/stream_vcd_amigaos.c
+
+Auto-generated files (some modified):
+config.h
+config.log (remove)
+config.mak
+DOCS/HTML
+DOCS/xml/en/main.xml
+DOCS/xml/html-chunk.xsl
+DOCS/xml/html-single.xsl
+ffmpeg/.config
+ffmpeg/.version
+ffmpeg/config.h
+ffmpeg/config.mak
+ffmpeg/ffbuild/config.mak
+ffmpeg/libavcodec/bsf_list.c
+ffmpeg/libavcodec/codec_list.c
+ffmpeg/libavcodec/parser_list.c
+ffmpeg/libavdevice/indev_list.c
+ffmpeg/libavdevice/outdev_list.c
+ffmpeg/libavfilter/filter_list.c
+ffmpeg/libavformat/demuxer_list.c
+ffmpeg/libavformat/muxer_list.c
+ffmpeg/libavformat/protocol_list.c
+ffmpeg/libavutil/avconfig.h
+ffmpeg/libavutil/ffversion.h
+
+MenuClass (zzd10h):
+amigaos/about_banner.c
+amigaos/amigaos_stuff.c
+amigaos/arexx.c
+amigaos/menu.c
+
+
+
+
+List of dependencies used:
+libass
+libbz2
+libcrypto
+libdvdcss
+libdvdnav
+libdvdread
+libexpat
+libfaac
+libfaad2
+libfreetype
+libfontconfig
+libfribidi
+libgif
+libgsm
+libjpeg
+liblcms
+liblzo2
+libmad
+libmpeg2
+libmng
+libmpg123
+libmp3lame
+libopenal
+libnut
+libogg
+libopencore_amr
+openjpeg
+libopus
+libpng
+libpthread
+librtmp
+libspeex
+libsdl
+libssl
+libtheora
+libvorbis
+libvpx
+libx264
+libxml2
+libxvidcore
+libz
+
+
+
+Extremely important code to remember to make mplayer run from Workbench, and initialization code to avoid DSI:
+
+at top:
+
+#ifdef __amigaos4__
+#include "amigaos/amigaos_stuff.h"
+#endif
+
+bottom of exit_player_with_rc:
+
+#ifdef __amigaos4__
+  AmigaOS_Close();
+#endif
+
+    exit(rc);
+}
+
+
+in main:
+
+#ifdef __amigaos4__
+  if (AmigaOS_Open(argc, argv) < 0) exit_player_with_rc(EXIT_QUIT,1);
+#endif
+    common_preinit(&argc, &argv);
+
+
+also in main:
+
+#ifdef __amigaos4__
+  {
+        int new_argc;
+        char **new_argv;
+
+        AmigaOS_ParseArg(argc, argv, &new_argc, &new_argv);
+        if (new_argc<=0)
+        {
+                opt_exit=1;
+                exit_player_with_rc(EXIT_QUIT,1);
+        }
+        mpctx->playtree = m_config_parse_mp_command_line(mconfig, new_argc, new_argv);
+  }
+#else
+    mpctx->playtree = m_config_parse_mp_command_line(mconfig, argc, argv);
+#endif
+
+
+
+Changes for altivec (.h/.mak):
+
+#define HAVE_ALTIVEC 1
+#define HAVE_ALTIVEC_H 1
+
+
+add -maltivec -mabi=altivec   to CFLAGS/CXXFLAGS
+change libmpeg2/cpu_state.c if needed
+swap libx264 lib
+
+
+Fixed spelling mistakes:
+windon
+Libraty
+readeon
+BitMop
+.asf|asf
+_amigaos4_)   in dvd_reader.c

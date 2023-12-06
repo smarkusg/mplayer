@@ -1,0 +1,11 @@
+#find . -type f -name "*.ko" -exec strip --strip-debug {} +  
+STRIP="/opt/ppc-amigaos/ppc-amigaos/bin/strip"
+
+export CPPFLAGS="-I/opt/ppc-amigaos/usr/include"
+export LDFLAGS="-L/opt/ppc-amigaos/usr/lib -L/opt/ppc-amigaos/ppc-amigaos/SDK/clib2/lib -fcommon -Wno-error=implicit-function-declaration -Wno-unused-variable -Wno-format"
+#export CFLAGS="-mcrt=newlib -O3 -fcommon -I/opt/ppc-amigaos/usr/include -lamiga -D__use_inline__ -Wno-error=implicit-function-declaration"
+export CFLAGS="-mcrt=newlib -O3 -fcommon -I/opt/ppc-amigaos/usr/include -D__use_inline__ -Wno-error=implicit-function-declaration"
+ 
+export CXXFLAGS="-mcrt=newlib -O3 -fcommon -I/opt/ppc-amigaos/usr/include -D__use_inline__ -Wno-error=implicit-function-declaration"
+ 
+

@@ -1,0 +1,370 @@
+diff --color -rupN old/mplayer-src-1082023/config.h new/mplayer-src-1082023/config.h
+--- old/mplayer-src-1082023/config.h	2023-08-01 08:28:44.000000000 +0200
++++ new/mplayer-src-1082023/config.h	2023-08-30 11:32:00.679747370 +0200
+@@ -70,27 +70,34 @@
+ /* definitions needed by included libraries */
+ /* libmpeg2 */
+ 
+-/* markus */ 
++/* markus missing */ 
+ #define CONFIG_OPENAL 1
+ 
++#define HAVE_DIRENT_H 0
++#define HAVE_UDPLITE_H 0
++#define HAVE_SYS_TIME_H 0
++#define HAVE_SYSCTL 0
++#define HAVE_CLOCK_GETTIME 0
++#define HAVE_NANOSLEEP 0
++#define HAVE_USLEEP 0
++#define HAVE_ACCESS 0
++#define HAVE_FCNTL 0
++#define HAVE_LSTAT 0
++#define HAVE_GETENV 0
++#define HAVE_SCHED_GETAFFINITY 0
++#define HAVE_GETPROCESSAFFINITYMASK 0
++#define HAVE_STRERROR_RM 0
++#define HAVE_GLOB 0
++#define HAVE_STRUCT_STAT_ST_MTIM_TV_NSEC 0
++#define HAVE_STRUCT_IP_MREQ_SOURCE 0
++#define HAVE_STRUCT_GROUP_SOURCE_REQ 0
++
++
+ /* libdvdcss */
+ #define HAVE_ERRNO_H 1
+ #define HAVE_INTTYPES_H 1
+ #define HAVE_UNISTD_H 1
+ 
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+ /* libdvdcss + libdvdread */
+ #define HAVE_LIMITS_H 1
+ /* libdvdread */
+@@ -100,7 +107,6 @@
+ /* libdvdnav */
+ #define READ_CACHE_TRACE 0
+ 
+-
+ /* system headers */
+ #define HAVE_ALLOCA_H 1
+ #define HAVE_ALTIVEC_H 0
+@@ -236,11 +242,13 @@
+ #define HAVE_SETEND 0
+ #define HAVE_NEON 0
+ #define HAVE_INTRINSICS_NEON 0
++#define HAVE_I8MM 0
+ #define HAVE_IWMMXT 0
+ #define HAVE_MMI 0
+ #define HAVE_VIS 0
+ #define HAVE_MVI 0
+ #define HAVE_LASX 0
++#define HAVE_LSX 0
+ #define HAVE_ALTIVEC_EXTERNAL 0
+ #define HAVE_XOP_EXTERNAL 0
+ #define HAVE_AVX_EXTERNAL 0
+@@ -593,6 +601,7 @@
+ #define HAVE_XMM_CLOBBERS 0
+ #define HAVE_YASM 0
+ #define HAVE_X86ASM 0
++#define HAVE_PRCTL 0
+ 
+ /* system functions */
+ #define HAVE_ALIGNED_MALLOC 0
+@@ -679,6 +688,7 @@
+ 
+ #define HAVE_ALIGNED_STACK 1
+ #define HAVE_AS_ARCH_DIRECTIVE 1
++#define AS_ARCH_LEVEL armv8-a
+ #define HAVE_AS_DN_DIRECTIVE 1
+ #define HAVE_AS_FPU_DIRECTIVE 1
+ #define HAVE_AS_FUNC 0
+@@ -732,6 +742,7 @@
+ #define CONFIG_DVPROFILE 1
+ #define CONFIG_DWT 1
+ #define CONFIG_ERROR_RESILIENCE 1
++#define CONFIG_EVCPARSE 1
+ #define CONFIG_EXIF 1
+ #define CONFIG_FAANDCT 1
+ #define CONFIG_FAANIDCT 1
+diff --color -rupN old/mplayer-src-1082023/config.mak new/mplayer-src-1082023/config.mak
+--- old/mplayer-src-1082023/config.mak	2023-08-30 09:01:49.876056520 +0200
++++ new/mplayer-src-1082023/config.mak	2023-08-30 10:46:15.300834301 +0200
+@@ -467,6 +467,7 @@ CONFIG_DCT     = yes
+ CONFIG_DOVI_RPU = yes
+ CONFIG_DWT     = yes
+ CONFIG_ERROR_RESILIENCE = yes
++CONFIG_EVCPARSE = yes
+ CONFIG_EXIF    = yes
+ CONFIG_FAANDCT = yes
+ CONFIG_FAANIDCT= yes
+@@ -572,6 +573,7 @@ HAVE_THREADS    = yes
+ HAVE_YASM       = no
+ HAVE_X86ASM     = no
+ INTRINSICS      = none
++HAVE_PRCTL      = no
+ 
+ CONFIG_LIBXVID = no
+ CONFIG_AASC_DECODER = yes
+diff --color -rupN old/mplayer-src-1082023/configure new/mplayer-src-1082023/configure
+--- old/mplayer-src-1082023/configure	2023-08-01 08:28:44.000000000 +0200
++++ new/mplayer-src-1082023/configure	2023-08-30 10:17:57.810432636 +0200
+@@ -3413,7 +3413,7 @@ if arm ; then
+ fi
+ 
+ intrinsics="none"
+-cpuexts_all='ALTIVEC XOP AVX AVX2 AVX512 AVX512ICL FMA3 FMA4 MMX MMX2 MMXEXT AMD3DNOW AMD3DNOWEXT SSE SSE2 SSE3 SSSE3 SSE4 SSE42 FAST_CMOV I686 FAST_CLZ ARMV5TE ARMV6 ARMV6T2 ARMV8 VFP VFPV3 SETEND NEON INTRINSICS_NEON IWMMXT MMI VIS MVI LASX'
++cpuexts_all='ALTIVEC XOP AVX AVX2 AVX512 AVX512ICL FMA3 FMA4 MMX MMX2 MMXEXT AMD3DNOW AMD3DNOWEXT SSE SSE2 SSE3 SSSE3 SSE4 SSE42 FAST_CMOV I686 FAST_CLZ ARMV5TE ARMV6 ARMV6T2 ARMV8 VFP VFPV3 SETEND NEON INTRINSICS_NEON I8MM IWMMXT MMI VIS MVI LASX LSX'
+ test "$_altivec"   = yes && cpuexts="ALTIVEC $cpuexts"
+ test "$_mmx"       = yes && cpuexts="MMX $cpuexts"
+ test "$_mmxext"    = yes && cpuexts="MMX2 $cpuexts"
+@@ -6795,7 +6795,7 @@ if test "$_zlib" = yes ; then
+   mplayer_encoders="$mplayer_encoders PNG_ENCODER"
+ else
+   def_zlib='#define CONFIG_ZLIB 0'
+-  libavdecoders=$(filter_out_component decoder 'APNG FLASHSV FLASHSV2 PNG ZMBV ZLIB DXA EXR G2M LSCR MSCC MVHA MWSC RASC RSCC SCREENPRESSO SRGC TDSC TSCC ZEROCODEC WCMV')
++  libavdecoders=$(filter_out_component decoder 'APNG FLASHSV FLASHSV2 PNG ZMBV ZLIB DXA EXR G2M LSCR MSCC MVHA MWSC PDV RASC RSCC SCREENPRESSO SRGC TDSC TSCC ZEROCODEC WCMV')
+   libavencoders=$(filter_out_component encoder 'APNG EXR FLASHSV FLASHSV2 PNG ZMBV ZLIB')
+   libavwrappers=$(filter_out_component wrapper 'DEFLATE INFLATE')
+ fi
+@@ -8954,6 +8954,7 @@ CONFIG_DCT     = yes
+ CONFIG_DOVI_RPU = yes
+ CONFIG_DWT     = yes
+ CONFIG_ERROR_RESILIENCE = yes
++CONFIG_EVCPARSE = yes
+ CONFIG_EXIF    = yes
+ CONFIG_FAANDCT = yes
+ CONFIG_FAANIDCT= yes
+@@ -9617,6 +9618,7 @@ $def_openssl
+ 
+ #define HAVE_ALIGNED_STACK 1
+ #define HAVE_AS_ARCH_DIRECTIVE 1
++#define AS_ARCH_LEVEL armv8-a
+ #define HAVE_AS_DN_DIRECTIVE 1
+ #define HAVE_AS_FPU_DIRECTIVE 1
+ $def_as_func
+@@ -9670,6 +9672,7 @@ $def_struct_pollfd
+ #define CONFIG_DVPROFILE 1
+ #define CONFIG_DWT 1
+ #define CONFIG_ERROR_RESILIENCE 1
++#define CONFIG_EVCPARSE 1
+ #define CONFIG_EXIF 1
+ #define CONFIG_FAANDCT 1
+ #define CONFIG_FAANIDCT 1
+diff --color -rupN old/mplayer-src-1082023/etc/codecs.conf new/mplayer-src-1082023/etc/codecs.conf
+--- old/mplayer-src-1082023/etc/codecs.conf	2023-08-01 08:28:44.000000000 +0200
++++ new/mplayer-src-1082023/etc/codecs.conf	2023-08-30 10:17:57.810432636 +0200
+@@ -776,7 +776,7 @@ videocodec ffgif
+   fourcc "gif " ; for GIF-encoded QuickTime files
+   driver ffmpeg
+   dll gif
+-  out BGR8
++  out BGR8,BGRA
+ 
+ videocodec fftiff
+   info "FFmpeg TIFF"
+diff --color -rupN old/mplayer-src-1082023/etc/mplayer.desktop new/mplayer-src-1082023/etc/mplayer.desktop
+--- old/mplayer-src-1082023/etc/mplayer.desktop	2023-08-01 08:28:44.000000000 +0200
++++ new/mplayer-src-1082023/etc/mplayer.desktop	2023-08-30 10:17:57.810432636 +0200
+@@ -15,9 +15,9 @@ X-GNOME-FullName[es]=MPlayer Reproductor
+ X-GNOME-FullName[fr]=MPlayer Lecteur multimédia
+ X-GNOME-FullName[it]=MPlayer Lettore multimediale
+ X-GNOME-FullName[ja]=MPlayer メディアプレーヤー
+-Comment=Play movies and songs
++Comment=Play video and music
+ Comment[ca]=Reproduïu vídeos i cançons
+-Comment[de]=Wiedergabe von Filmen und Musik
++Comment[de]=Wiedergabe von Videos und Musik
+ Comment[es]=Reproduce vídeos y música
+ Comment[fr]=Lit les films et musiques
+ Comment[it]=Riproduce filmati e musica
+diff --color -rupN old/mplayer-src-1082023/gui/dialog/menu.c new/mplayer-src-1082023/gui/dialog/menu.c
+--- old/mplayer-src-1082023/gui/dialog/menu.c	2023-08-01 08:28:43.000000000 +0200
++++ new/mplayer-src-1082023/gui/dialog/menu.c	2023-08-30 10:17:57.812432703 +0200
+@@ -208,6 +208,7 @@ static const Languages_t Languages[] =
+   { lng( 'b','a' ), "bak", "Башҡорт теле"         },
+   { lng( 'b','e' ), "bel", "беларуская мова"   },
+   { lng( 'b','g' ), "bul", "български език"     },
++  { lng( 'b','h' ), "bih", "भोजपुरी"           },
+   { lng( 'b','i' ), "bis", "Bislama"                         },
+   { lng( 'b','n' ), "ben", "বাংলা"                 },
+   { lng( 'b','o' ), "bod", "བོད་སྐད"           },
+@@ -256,13 +257,20 @@ static const Languages_t Languages[] =
+   { lng( 'h','y' ), "hye", "Հայերեն"                  },
+   { lng( 'h','y' ), "arm", "Հայերեն"                  },
+   { lng( 'h','z' ), "her", "Otjiherero"                      },
++  { lng( 'i','a' ), "ina", "Interlingua"                     },
+   { lng( 'i','d' ), "ind", "Bahasa Indonesia"                },
++  { lng( 'i','e' ), "ile", "Interlingue"                     },
++  { lng( 'i','k' ), "ipk", "Iñupiaq"                        },
++  { lng( 'i','n' ), "ind", "Bahasa Indonesia"                },
+   { lng( 'i','s' ), "isl", "Íslenska"                       },
+   { lng( 'i','s' ), "ice", "Íslenska"                       },
+   { lng( 'i','t' ), "ita", "Italiano"                        },
+   { lng( 'i','u' ), "iku", "ᐃᓄᒃᑎᑐᑦ"              },
++  { lng( 'i','w' ), "heb", "עִבְרִית"                },
+   { lng( 'j','a' ), "jpn", "日本語"                       },
++  { lng( 'j','i' ), "yid", "יידיש"                      },
+   { lng( 'j','v' ), "jav", "Basa Jawa"                       },
++  { lng( 'j','w' ), "jav", "Basa Jawa"                       },
+   { lng( 'k','a' ), "kat", "ქართული"           },
+   { lng( 'k','a' ), "geo", "ქართული"           },
+   { lng( 'k','i' ), "kik", "Gĩkũyũ"                       },
+@@ -290,12 +298,14 @@ static const Languages_t Languages[] =
+   { lng( 'm','k' ), "mac", "Македонски јазик" },
+   { lng( 'm','l' ), "mal", "മലയാളം"              },
+   { lng( 'm','n' ), "mon", "ᠮᠣᠨᠭᠭᠣᠯ"           },
++  { lng( 'm','o' ), "mol", "Moldovenesc"                     },
+   { lng( 'm','r' ), "mar", "मराठी"                 },
+   { lng( 'm','s' ), "msa", "Bahasa Melayu"                   },
+   { lng( 'm','s' ), "may", "Bahasa Melayu"                   },
+   { lng( 'm','t' ), "mlt", "Malti"                           },
+   { lng( 'm','y' ), "mya", "မြန်မာစကား"  },
+   { lng( 'm','y' ), "bur", "မြန်မာစကား"  },
++  { lng( 'n','a' ), "nau", "Dorerin Naoero"                  },
+   { lng( 'n','b' ), "nob", "Bokmål"                         },
+   { lng( 'n','d' ), "nde", "isiNdebele"                      },
+   { lng( 'n','e' ), "nep", "नेपाली"              },
+@@ -321,9 +331,11 @@ static const Languages_t Languages[] =
+   { lng( 'r','o' ), "rum", "Română"                        },
+   { lng( 'r','u' ), "rus", "Русский"                  },
+   { lng( 'r','w' ), "kin", "Ikinyarwanda"                    },
++  { lng( 's','a' ), "san", "संस्कृतम्"     },
+   { lng( 's','c' ), "srd", "Sardu"                           },
+   { lng( 's','d' ), "snd", "‏سنڌي‎"                  },
+   { lng( 's','g' ), "sag", "Sängö"                         },
++  { lng( 's','h' ), "scr", "Srpskohrvatski"                  },
+   { lng( 's','i' ), "sin", "සිංහල"                 },
+   { lng( 's','k' ), "slk", "Slovenčina"                     },
+   { lng( 's','k' ), "slo", "Slovenčina"                     },
+@@ -358,6 +370,7 @@ static const Languages_t Languages[] =
+   { lng( 'u','r' ), "urd", "‏اردو‎"                  },
+   { lng( 'u','z' ), "uzb", "Oʻzbek tili"                    },
+   { lng( 'v','i' ), "vie", "Tiếng Việt"                  },
++  { lng( 'v','o' ), "vol", "Volapük"                        },
+   { lng( 'w','o' ), "wol", "Wolof"                           },
+   { lng( 'x','h' ), "xho", "isiXhosa"                        },
+   { lng( 'y','i' ), "yid", "יידיש"                      },
+@@ -366,6 +379,7 @@ static const Languages_t Languages[] =
+   { lng( 'z','h' ), "zho", "漢語"                          },
+   { lng( 'z','h' ), "chi", "漢語"                          },
+   { lng( 'z','u' ), "zul", "isiZulu"                         },
++  { lng( '~','~' ), "fil", "Filipino"                        },
+ };
+ 
+ #ifdef CONFIG_DVDREAD
+diff --color -rupN old/mplayer-src-1082023/help/help_mp-de.h new/mplayer-src-1082023/help/help_mp-de.h
+--- old/mplayer-src-1082023/help/help_mp-de.h	2023-08-01 08:28:44.000000000 +0200
++++ new/mplayer-src-1082023/help/help_mp-de.h	2023-08-30 10:17:57.812432703 +0200
+@@ -916,8 +916,8 @@ static const char help_text[] = MSGTR_He
+ #define MSGTR_GUI_MSG_DXR3NeedsLavc "Nicht-MPEG-Dateien können ohne erneute Encodierung mit einer DXR3/H+ nicht abgespielt werden.\nBitte lavc in der DXR3/H+-Konfiguration aktivieren.\n"
+ #define MSGTR_GUI_MSG_IconError "Icon '%s' (Größe %d) wurde nicht gefunden oder das Format wird nicht unterstützt.\n"
+ #define MSGTR_GUI_MSG_LoadingSubtitle "Untertiteldatei '%s' wird geladen.\n"
+-#define MSGTR_GUI_MSG_LocaleEncoding "G_FILENAME_ENCODING=@locale oder G_BROKEN_FILENAMES wird nicht unterstützt,\ndie Kodierung muss in G_FILENAME_ENCODING explizit angegeben werden.\n"
+-#define MSGTR_GUI_MSG_MemoryErrorImage "Es ist nicht genug Speicher für Grafik-Rendering vorhanden!\n"
++#define MSGTR_GUI_MSG_LocaleEncoding "G_FILENAME_ENCODING=@locale oder G_BROKEN_FILENAMES wird nicht unterstützt,\ndie Codierung muss in G_FILENAME_ENCODING explizit angegeben werden.\n"
++#define MSGTR_GUI_MSG_MemoryErrorImage "Es ist nicht genug Speicher für das Grafik-Rendering vorhanden!\n"
+ #define MSGTR_GUI_MSG_MemoryErrorWindow "Es ist nicht genug Speicher für das Fenster-Rendering vorhanden.\n"
+ #define MSGTR_GUI_MSG_NoFileLoaded "Keine Datei geladen."
+ #define MSGTR_GUI_MSG_NoMediaOpened "Keine Medien geöffnet."
+diff --color -rupN old/mplayer-src-1082023/libmpdemux/demux_lavf.c new/mplayer-src-1082023/libmpdemux/demux_lavf.c
+--- old/mplayer-src-1082023/libmpdemux/demux_lavf.c	2023-08-01 08:28:43.000000000 +0200
++++ new/mplayer-src-1082023/libmpdemux/demux_lavf.c	2023-08-30 10:17:57.812432703 +0200
+@@ -40,6 +40,7 @@
+ #include "libavformat/avio.h"
+ #include "libavutil/avutil.h"
+ #include "libavutil/avstring.h"
++#include "libavutil/display.h"
+ #include "libavutil/mathematics.h"
+ #include "libavutil/opt.h"
+ #include "libavutil/replaygain.h"
+@@ -294,7 +295,6 @@ static void handle_stream(demuxer_t *dem
+     int stream_id;
+     AVDictionaryEntry *lang = av_dict_get(st->metadata, "language", NULL, 0);
+     AVDictionaryEntry *title= av_dict_get(st->metadata, "title",    NULL, 0);
+-    AVDictionaryEntry *rot  = av_dict_get(st->metadata, "rotate",   NULL, 0);
+     int g;
+ 
+     switch(codec->codec_type){
+@@ -377,6 +377,8 @@ static void handle_stream(demuxer_t *dem
+             break;
+         }
+         case AVMEDIA_TYPE_VIDEO:{
++            AVDictionaryEntry *rot = av_dict_get(st->metadata, "rotate",   NULL, 0);
++            const int32_t *disp_matrix = av_stream_get_side_data(st, AV_PKT_DATA_DISPLAYMATRIX, NULL);
+             sh_video_t* sh_video;
+             BITMAPINFOHEADER *bih;
+             sh_video=new_sh_video_vid(demuxer, i, priv->video_streams);
+@@ -443,6 +445,8 @@ static void handle_stream(demuxer_t *dem
+                 sh_video->default_track = 1;
+             if (rot && rot->value)
+                 mp_msg(MSGT_IDENTIFY, MSGL_INFO, "ID_VID_%d_ROTATE=%s\n", priv->video_streams, rot->value);
++            else if (disp_matrix)
++                mp_msg(MSGT_IDENTIFY, MSGL_INFO, "ID_VID_%d_ROTATE=%f\n", priv->video_streams, (float)av_display_rotation_get(disp_matrix));
+             mp_msg(MSGT_DEMUX,MSGL_DBG2,"stream aspect= %d*%d/(%d*%d)\n",
+                 codec->width, st->sample_aspect_ratio.num,
+                 codec->height, st->sample_aspect_ratio.den);
+diff --color -rupN old/mplayer-src-1082023/libmpdemux/mp_taglists.c new/mplayer-src-1082023/libmpdemux/mp_taglists.c
+--- old/mplayer-src-1082023/libmpdemux/mp_taglists.c	2023-08-01 08:28:43.000000000 +0200
++++ new/mplayer-src-1082023/libmpdemux/mp_taglists.c	2023-08-30 10:17:57.812432703 +0200
+@@ -165,6 +165,7 @@ static const struct AVCodecTag mp_bmp_ta
+     { AV_CODEC_ID_DSICINVIDEO,       MKTAG('D', 'C', 'I', 'V') },
+     { AV_CODEC_ID_DXA,               MKTAG('D', 'X', 'A', '1') },
+     { AV_CODEC_ID_FLIC,              MKTAG('f', 'l', 'i', 'c') },
++    { AV_CODEC_ID_GIF,               MKTAG('g', 'i', 'f', ' ') },
+     { AV_CODEC_ID_HEVC,              MKTAG('H', 'E', 'V', 'C') },
+     { AV_CODEC_ID_HNM4_VIDEO,        MKTAG('H', 'N', 'M', '4') },
+     { AV_CODEC_ID_IDCIN,             MKTAG('I', 'D', 'C', 'I') },
+diff --color -rupN old/mplayer-src-1082023/libvo/gl_common.c new/mplayer-src-1082023/libvo/gl_common.c
+--- old/mplayer-src-1082023/libvo/gl_common.c	2022-08-26 12:36:54.000000000 +0200
++++ new/mplayer-src-1082023/libvo/gl_common.c	2023-08-30 10:17:57.812432703 +0200
+@@ -2238,7 +2238,8 @@ static XVisualInfo *getWindowVisualInfo(
+   XWindowAttributes xw_attr;
+   XVisualInfo vinfo_template;
+   int tmp;
+-  XGetWindowAttributes(mDisplay, win, &xw_attr);
++  if (!XGetWindowAttributes(mDisplay, win, &xw_attr))
++    return DefaultVisual(mDisplay, 0);
+   vinfo_template.visualid = XVisualIDFromVisual(xw_attr.visual);
+   return XGetVisualInfo(mDisplay, VisualIDMask, &vinfo_template, &tmp);
+ }
+diff --color -rupN old/mplayer-src-1082023/libvo/x11_common.c new/mplayer-src-1082023/libvo/x11_common.c
+--- old/mplayer-src-1082023/libvo/x11_common.c	2022-08-07 20:20:50.000000000 +0200
++++ new/mplayer-src-1082023/libvo/x11_common.c	2023-08-30 10:17:57.814432770 +0200
+@@ -1397,16 +1397,19 @@ static int vo_x11_get_fs_type(int suppor
+  * \return returns current color depth of vo_window
+  */
+ int vo_x11_update_geometry(void) {
+-    unsigned depth, w, h;
++    unsigned depth, w = 0, h = 0;
+     int dummy_int;
+     Window dummy_win;
+     XGetGeometry(mDisplay, vo_window, &dummy_win, &dummy_int, &dummy_int,
+                  &w, &h, &dummy_int, &depth);
+-    if (w <= INT_MAX && h <= INT_MAX) {
++    if (w > 0 && h > 0 && w <= INT_MAX && h <= INT_MAX) {
+         vo_dwidth = w;
+         vo_dheight = h;
+         vo_x11_update_fs_borders();
+     }
++    // ensure minimum value of 1, to avoid e.g. division by 0.
++    if (vo_dwidth <= 0) vo_dwidth = 1;
++    if (vo_dheight <= 0) vo_dheight = 1;
+     XTranslateCoordinates(mDisplay, vo_window, mRootWin, 0, 0, &vo_dx, &vo_dy,
+                           &dummy_win);
+ 
+diff --color -rupN old/mplayer-src-1082023/snapshot_version new/mplayer-src-1082023/snapshot_version
+--- old/mplayer-src-1082023/snapshot_version	2023-08-01 08:28:43.000000000 +0200
++++ new/mplayer-src-1082023/snapshot_version	2023-08-30 10:17:57.814432770 +0200
+@@ -1 +1 @@
+-38423-snapshot
++38435-snapshot

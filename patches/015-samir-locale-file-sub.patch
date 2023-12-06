@@ -1,0 +1,217 @@
+diff --color -rupN old/amigaos/amigaos_stuff.c new/amigaos/amigaos_stuff.c
+--- old/amigaos/amigaos_stuff.c	2023-08-06 11:36:21.000000000 +0200
++++ new/amigaos/amigaos_stuff.c	2023-08-07 11:07:09.253177010 +0200
+@@ -824,7 +824,7 @@ int AmigaOS_Open(int argc, char *argv[])
+ 
+ 	if (!SUBEXTPAT)
+ 	{
+-		SUBEXTPAT = strdup("#?.(aqt|ass|js|jss|rt|smi|srt|ssa|sub|txt|utf|utf8|utf-8|vob)");
++		SUBEXTPAT = strdup("#?.(aqt|ass|js|jss|rt|smi|srt|ssa|stl|sub|ttml|txt|utf|utf8|utf-8|vob|vtt)");
+ 	}
+ 
+ 
+diff --color -rupN old/amigaos/menu.c new/amigaos/menu.c
+--- old/amigaos/menu.c	2023-08-06 10:07:44.000000000 +0200
++++ new/amigaos/menu.c	2023-08-07 10:34:41.240720152 +0200
+@@ -1073,12 +1073,13 @@ void load_subtitles_proc(STRPTR args, in
+ {
+ 	char *FileName;
+ 
+-//	if (FileName = LoadFile(NULL,SUBEXTPAT,CS(MSG_Requester_OpenFile_SubTitle)))
+ 	if (FileName = LoadFile(NULL,SUBEXTPAT,CS(MSG_Requester_OpenSubTitle_Title)))
+ 	{
+ 		__tmp_file_name = strdup(FileName);
+ //DBUG("subtitles file: '%s'\n",__tmp_file_name);
+ 		put_scommand1(MP_CMD_SUB_LOAD,__tmp_file_name);
++		put_command0(MP_CMD_GET_SUB_VISIBILITY);
++		put_command0(MP_CMD_SUB_SELECT);
+ 	}
+ }
+ 
+diff --color -rupN old/amigaos/rxget.c new/amigaos/rxget.c
+--- old/amigaos/rxget.c	1970-01-01 01:00:00.000000000 +0100
++++ new/amigaos/rxget.c	2023-08-07 10:57:13.953537212 +0200
+@@ -0,0 +1,68 @@
++/*
++ * This file is part of MPlayer.
++ *
++ * MPlayer is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * MPlayer is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License along
++ * with MPlayer; if not, write to the Free Software Foundation, Inc.,
++ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
++ */
++
++long rxid_get_sub_visibility() 
++{
++	if (!mpctx) return 0;
++	if (!mpctx->sh_video) return 0;
++
++	return (mpctx->sh_video?sub_visibility:0) ;
++}
++
++long rxid_get_percent_pos()
++{
++	if (!mpctx) return 0;
++	if (!mpctx->demuxer) return 0;
++
++	return demuxer_get_percent_pos(mpctx->demuxer);
++}
++
++long rxid_get_time_length()
++{
++	if (!mpctx) return 0;
++	if (!mpctx->demuxer) return 0;
++
++	return (double)(1000.0*demuxer_get_time_length(mpctx->demuxer));
++}
++
++long rxid_get_vo_fullscreen() 
++{
++	if (!mpctx) return 0;
++	if (!mpctx->video_out) return 0;
++
++	return  (mpctx->video_out && vo_config_count)?vo_fs:0;
++}
++
++long rxid_get_time_pos()
++{
++	if (!mpctx) return 0;
++
++	if(mpctx->sh_video)
++	{
++		Printf("mpctx->sh_video\n");
++		return (long)(1000.0*mpctx->sh_video->pts);
++	}
++	else if(mpctx->sh_audio && mpctx->audio_out)
++	{
++		Printf("mpctx->sh_audio && mpctx->audio_out\n");
++		return (long)(1000.0 * (mpctx->sh_audio->stream_delay - mpctx->audio_out->get_delay() * playback_speed));
++	}
++	else
++		return 0;
++}
++
+Binarne pliki old/locale/italian/MPlayer.catalog i new/locale/italian/MPlayer.catalog różnią się
+diff --color -rupN old/locale/MPlayer.cd new/locale/MPlayer.cd
+--- old/locale/MPlayer.cd	2023-08-06 08:59:26.000000000 +0200
++++ new/locale/MPlayer.cd	2023-08-05 10:49:00.000000000 +0200
+@@ -1,4 +1,4 @@
+-; $VER: MPlayer.catalog 1.5.0 (4.08.2023)
++; $VER: MPlayer.catalog 1.5.0 (5.08.2023)
+ ; MPlayer.cd
+ ;
+ MSG_About_About (//)
+@@ -7,79 +7,79 @@ About
+ MSG_About_Licence (//)
+ Licence
+ ;
+-MSG_Menu_MPlayer (//)
++MSG_Menu_MPlayer (//62)
+ MPlayer
+ ;
+-MSG_Menu_MPlayer_LoadFile (//)
++MSG_Menu_MPlayer_LoadFile (//62)
+ Load file...
+ ;
+-MSG_Menu_MPlayer_OpenDVD (//)
++MSG_Menu_MPlayer_OpenDVD (//62)
+ Open DVD...
+ ;
+-MSG_Menu_MPlayer_OpenDVDNAV (//)
++MSG_Menu_MPlayer_OpenDVDNAV (//62)
+ Open DVDNAV...
+ ;
+-MSG_Menu_MPlayer_OpenVCD (//)
++MSG_Menu_MPlayer_OpenVCD (//62)
+ Open VCD...
+ ;
+-MSG_Menu_MPlayer_OpenNetwork (//)
++MSG_Menu_MPlayer_OpenNetwork (//62)
+ Open a stream...
+ ;
+-MSG_Menu_MPlayer_Iconify (//)
++MSG_Menu_MPlayer_Iconify (//62)
+ Iconify
+ ;
+-MSG_Menu_MPlayer_About (//)
++MSG_Menu_MPlayer_About (//62)
+ About...
+ ;
+-MSG_Menu_MPlayer_Quit (//)
++MSG_Menu_MPlayer_Quit (//62)
+ Quit
+ ;
+-MSG_Menu_Play (//)
++MSG_Menu_Play (//62)
+ Play
+ ;
+-MSG_Menu_Play_PlayPause (//)
++MSG_Menu_Play_PlayPause (//62)
+ Play/Pause
+ ;
+-MSG_Menu_Play_Stop (//)
++MSG_Menu_Play_Stop (//62)
+ Stop
+ ;
+-MSG_Menu_Play_Loop (//)
++MSG_Menu_Play_Loop (//62)
+ Loop
+ ;
+-MSG_Menu_Play_PrevFilm (//)
++MSG_Menu_Play_PrevFilm (//62)
+ Prev film
+ ;
+-MSG_Menu_Play_NextFilm (//)
++MSG_Menu_Play_NextFilm (//62)
+ Next film
+ ;
+-MSG_Menu_OptionsVideo (//)
++MSG_Menu_OptionsVideo (//62)
+ Video options
+ ;
+-MSG_Menu_OptionsVideo_StayOnTop (//)
++MSG_Menu_OptionsVideo_StayOnTop (//62)
+ Stay on top
+ ;
+-MSG_Menu_OptionsVideo_OpenSubtitles (//)
++MSG_Menu_OptionsVideo_OpenSubtitles (//62)
+ Open subtitles...
+ ;
+-MSG_Menu_OptionsVideo_CycleSubtitles (//)
++MSG_Menu_OptionsVideo_CycleSubtitles (//62)
+ Cycle subtitles
+ ;
+-MSG_Menu_OptionsVideo_Fullscreen (//)
++MSG_Menu_OptionsVideo_Fullscreen (//62)
+ Fullscreen
+ ;
+-MSG_Menu_OptionsVideo_Screenshot (//)
++MSG_Menu_OptionsVideo_Screenshot (//62)
+ Screenshot
+ ;
+-MSG_Menu_OptionsAudio (//)
++MSG_Menu_OptionsAudio (//62)
+ Audio options
+ ;
+-MSG_Menu_OptionsAudio_Mute (//)
++MSG_Menu_OptionsAudio_Mute (//62)
+ Mute
+ ;
+-MSG_Menu_OptionsAudio_VolumeUp (//)
++MSG_Menu_OptionsAudio_VolumeUp (//62)
+ Volume Up
+ ;
+-MSG_Menu_OptionsAudio_VolumeDown (//)
++MSG_Menu_OptionsAudio_VolumeDown (//62)
+ Volume Down
+ ;
+ MSG_About_Built (//)

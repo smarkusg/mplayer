@@ -1,0 +1,162 @@
+diff --color -rupN old/locale/MPlayer.cd new/locale/MPlayer.cd
+--- old/locale/MPlayer.cd	2023-08-03 18:58:23.799944838 +0200
++++ new/locale/MPlayer.cd	2023-08-03 14:39:00.000000000 +0200
+@@ -1,4 +1,4 @@
+-; $VER: MPlayer.catalog 1.5.0 (28.07.2023)
++; $VER: MPlayer.catalog 1.5.0 (25.07.2023)
+ ; MPlayer.cd
+ ;
+ MSG_About_About (//)
+@@ -7,104 +7,101 @@ About
+ MSG_About_Licence (//)
+ Licence
+ ;
+-MSG_Menu_MPlayer (//62)
++MSG_Menu_MPlayer (//)
+ MPlayer
+ ;
+-MSG_Menu_MPlayer_LoadFile (//62)
++MSG_Menu_MPlayer_LoadFile (//)
+ Load file...
+ ;
+-MSG_Menu_MPlayer_OpenDVD (//62)
++MSG_Menu_MPlayer_OpenDVD (//)
+ Open DVD...
+ ;
+-MSG_Menu_MPlayer_OpenDVDNAV (//62)
++MSG_Menu_MPlayer_OpenDVDNAV (//)
+ Open DVDNAV...
+ ;
+-MSG_Menu_MPlayer_OpenVCD (//62)
++MSG_Menu_MPlayer_OpenVCD (//)
+ Open VCD...
+ ;
+-MSG_Menu_MPlayer_OpenNetwork (//62)
++MSG_Menu_MPlayer_OpenNetwork (//)
+ Open a stream...
+ ;
+-MSG_Menu_MPlayer_Iconify (//62)
+-Iconify
+-;
+-MSG_Menu_MPlayer_About (//62)
++MSG_Menu_MPlayer_About (//)
+ About...
+ ;
+-MSG_Menu_MPlayer_Quit (//62)
++MSG_Menu_MPlayer_Iconify (//)
++Iconify
++;
++MSG_Menu_MPlayer_Quit (//)
+ Quit
+ ;
+-MSG_Menu_Play (//62)
++MSG_Menu_Play (//)
+ Play
+ ;
+-MSG_Menu_Play_PlayPause (//62)
++MSG_Menu_Play_PlayPause (//)
+ Play/Pause
+ ;
+-MSG_Menu_Play_Stop (//62)
++MSG_Menu_Play_Stop (//)
+ Stop
+ ;
+-MSG_Menu_Play_Loop (//62)
++MSG_Menu_Play_Loop (//)
+ Loop
+ ;
+-MSG_Menu_Play_PrevFilm (//62)
++MSG_Menu_Play_PrevFilm (//)
+ Prev film
+ ;
+-MSG_Menu_Play_NextFilm (//62)
++MSG_Menu_Play_NextFilm (//)
+ Next film
+ ;
+-MSG_Menu_OptionsVideo (//62)
++MSG_Menu_OptionsVideo (//)
+ Video options
+ ;
+-MSG_Menu_OptionsVideo_StayOnTop (//62)
++MSG_Menu_OptionsVideo_StayOnTop (//)
+ Stay on top
+ ;
+-MSG_Menu_OptionsVideo_OpenSubtitles (//62)
++MSG_Menu_OptionsVideo_OpenSubtitles (//)
+ Open subtitles...
+ ;
+-MSG_Menu_OptionsVideo_CycleSubtitles (//62)
++MSG_Menu_OptionsVideo_CycleSubtitles (//)
+ Cycle subtitles
+ ;
+-MSG_Menu_OptionsVideo_Fullscreen (//62)
++MSG_Menu_OptionsVideo_Fullscreen (//)
+ Fullscreen
+ ;
+-MSG_Menu_OptionsVideo_Screenshot (//62)
++MSG_Menu_OptionsVideo_Screenshot (//)
+ Screenshot
+ ;
+-MSG_Menu_OptionsAudio (//62)
++MSG_Menu_OptionsAudio (//)
+ Audio options
+ ;
+-MSG_Menu_OptionsAudio_Mute (//62)
++MSG_Menu_OptionsAudio_Mute (//)
+ Mute
+ ;
+-MSG_Menu_OptionsAudio_VolumeUp (//62)
++MSG_Menu_OptionsAudio_VolumeUp (//)
+ Volume Up
+ ;
+-MSG_Menu_OptionsAudio_VolumeDown (//62)
++MSG_Menu_OptionsAudio_VolumeDown (//)
+ Volume Down
+ ;
+ MSG_About_Built (//)
+-Built against MPlayer version:
++\nBuilt against MPlayer version:
+ ;
+ MSG_About_AmigaVersion (//)
+-Amiga version:
++\nAmiga version:
+ ;
+ MSG_About_FFmpegVersion (//)
+-FFmpeg version:
++\nFFmpeg version:
+ ;
+ MSG_About_Copyright (//)
+-Copyright (C)
++\n\nCopyright (C)
+ ;
+ MSG_About_MPlayer_Team (//)
+ MPlayer Team
+ ;
+ MSG_About_AmigaOS4Version (//)
+-AmigaOS4 version:
++\n\nAmigaOS4 version:
+ ;
+ MSG_About_GCCVersion (//)
+-GCC version:
+-;
+-MSG_About_ARexxPort (//)
+-ARexx port:
++\nGCC version:
+ ;
+ MSG_Requester_OK	 (//)
+ _Ok
+@@ -154,9 +151,11 @@ Enter a valid VCD protocol
+ MSG_Requester_OpenFile_Title (//)
+ Choose a video
+ ;
+-MSG_Requester_Subtitles_Title (//)
+-Choose subtitles
++MSG_Requester_OpenFile_SubTitle (//)
++Select a subtitle
+ ;
+ MSG_Requester_Title_About (//)
+ About MPlayer
++;
++MSG_About_ARexxPort (//)
+ ;
+\ Brak znaku nowej linii na końcu pliku

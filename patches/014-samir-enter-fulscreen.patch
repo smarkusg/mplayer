@@ -1,0 +1,15 @@
+diff --color -rupN old/input/input.c new/input/input.c
+--- old/input/input.c	2023-08-01 08:28:44.000000000 +0200
++++ new/input/input.c	2023-08-06 22:16:52.146370038 +0200
+@@ -427,7 +427,10 @@ static const mp_cmd_bind_t def_cmd_binds
+   { { KEY_HOME, 0 }, "pt_up_step 1" },
+   { { KEY_END, 0 }, "pt_up_step -1" },
+   { { '>', 0 }, "pt_step 1" },
+-  { { KEY_ENTER, 0 }, "pt_step 1 1" },
++//markus ENTER = FULLSCREEN
++//  { { KEY_ENTER, 0 }, "pt_step 1 1" },
++//end markus
++  { { KEY_ENTER, 0}, "vo_fullscreen" },
+   { { '<', 0 }, "pt_step -1" },
+   { { KEY_INS, 0 }, "alt_src_step 1" },
+   { { KEY_DEL, 0 }, "alt_src_step -1" },

@@ -1,0 +1,23 @@
++++ libvo/vo_matrixview.c   2023-08-01 17:38:28
+@@ -125,7 +125,7 @@ static int config(uint32_t width, uint32
+                   uint32_t flags, char *title, uint32_t format)
+ {
+ //markus
+-    title = GetWindowTitle();
++    //title = GetWindowTitle();
+ //
+     image_height = height;
+     image_width  = width;
+@@ -133,6 +133,13 @@ static int config(uint32_t width, uint32
+
+     if (mpglcontext_create_window(&glctx, d_width, d_height, flags, title) < 0)
+         return -1;
++
++#ifdef __AMIGAOS4__
++SDL_WM_SetCaption (GetWindowTitle(), title);
++//mp_msg(MSGT_VO, MSGL_INFO, "[AMIGAOS4] (matrixview) title: '%s'\n",title);
++//mp_msg(MSGT_VO, MSGL_INFO, "[AMIGAOS4] (matrixview) window_title: '%s'\n",window_title);
++#endif
++
+     if (glctx.setGlWindow(&glctx) == SET_WINDOW_FAILED)
+         return -1;

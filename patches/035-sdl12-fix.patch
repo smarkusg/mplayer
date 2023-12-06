@@ -1,0 +1,147 @@
+diff --color -rupN old/amigaos/amigaos_stuff.c new/amigaos/amigaos_stuff.c
+--- old/amigaos/amigaos_stuff.c	2023-08-29 15:17:02.000000000 +0200
++++ new/amigaos/amigaos_stuff.c	2023-09-26 22:12:51.129112899 +0200
+@@ -950,23 +950,10 @@ void SetAmiUpdateENVVariable(const char
+ 	}
+ }
+ 
+-
+-#include "SDL/SDL_syswm.h"
+-struct Window *AmigaOS_GetSDLWindowPtr(void)
+-{
+-  SDL_SysWMinfo wmInfo;
+-
+-  SDL_GetWMInfo(&wmInfo);
+-  return( (struct Window*)wmInfo.window );
+-}
+-
+-void AmigaOS_ScreenTitle(const char *vo_str)
++void AmigaOS_ScreenTitle(const char *vo_str, struct Window *win)
+ {
+-  struct Window *win;
+   static char scrtitle[128];
+ 
+-  win = AmigaOS_GetSDLWindowPtr();
+-
+   sprintf(scrtitle, AMIGA_VERSION" (%s)\0",vo_str);
+   SetWindowTitles(win, (CONST_STRPTR)~0, scrtitle);
+ }
+diff --color -rupN old/amigaos/amigaos_stuff.h new/amigaos/amigaos_stuff.h
+--- old/amigaos/amigaos_stuff.h	2023-08-29 14:14:56.000000000 +0200
++++ new/amigaos/amigaos_stuff.h	2023-09-26 22:13:01.895238214 +0200
+@@ -29,8 +29,7 @@ void AmigaOS_ParseArg(int argc, char *ar
+ 
+ void read_ENVARC(void);
+ void SetAmiUpdateENVVariable(const char *varname);
+-struct Window *AmigaOS_GetSDLWindowPtr(void);
+-void AmigaOS_ScreenTitle(const char *vo_str);
++void AmigaOS_ScreenTitle(const char *vo_str, struct Window *win);
+ VOID VARARGS68K EasyRequester(CONST_STRPTR text, CONST_STRPTR button, ...);
+ void AmigaOS_do_applib(struct Window *w);
+ VOID VARARGS68K AmigaOS_applib_Notify(STRPTR not_msg, ...);
+diff --color -rupN old/libvo/sdl_common.c new/libvo/sdl_common.c
+--- old/libvo/sdl_common.c	2023-08-29 13:19:02.000000000 +0200
++++ new/libvo/sdl_common.c	2023-09-26 22:34:56.696116409 +0200
+@@ -37,6 +37,10 @@ extern int spawn_count;
+ 
+ //static struct Window *win = NULL; // make_appwindow()
+ 
++#if defined(__AMIGAOS4__)
++#include "SDL/SDL_syswm.h"
++#include "version.h"
++#endif
+ 
+ static int old_w;
+ static int old_h;
+@@ -70,6 +74,17 @@ static void get_screensize(void) {
+ #endif
+ }
+ 
++#if defined(__AMIGAOS4__)
++struct Window *AmigaOS_GetSDLWindowPtr(void)
++{
++  static SDL_SysWMinfo wmInfo;
++
++  SDL_GetWMInfo(&wmInfo);
++  return( (struct Window*)wmInfo.window );
++}
++#endif
++
++
+ int vo_sdl_init(void)
+ {
+     reinit = 0;
+@@ -203,7 +218,7 @@ sdl_set_mode(int bpp, uint32_t flags)
+ 
+ #ifdef __AMIGAOS4__
+     if(mpctx->video_out) {
+-        AmigaOS_ScreenTitle(mpctx->video_out->info->short_name); // used to get -vo string/short_name) AmigaOS_ScreenTitle(mpctx->video_out->info->short_name); // used to get -vo string/short_name
++        AmigaOS_ScreenTitle(mpctx->video_out->info->short_name,AmigaOS_GetSDLWindowPtr()); // used to get -vo string/short_name) AmigaOS_ScreenTitle(mpctx->video_out->info->short_name); // used to get -vo string/short_name
+ 
+         // GL opens/closes couple of windows until showing
+         // its "real window". We "keep" the last one (aka real window)
+@@ -211,7 +226,6 @@ sdl_set_mode(int bpp, uint32_t flags)
+         make_appwindow(AmigaOS_GetSDLWindowPtr()); 
+     }
+ #endif
+-
+     vo_dwidth  = s->w;
+     vo_dheight = s->h;
+     return s;
+diff --color -rupN old/libvo/sdl_common.h new/libvo/sdl_common.h
+--- old/libvo/sdl_common.h	2023-08-22 18:31:52.000000000 +0200
++++ new/libvo/sdl_common.h	2023-09-26 22:36:11.670625071 +0200
+@@ -52,4 +52,8 @@ SDL_Surface *
+ sdl_set_mode(int bpp, uint32_t flags);
+ int sdl_default_handle_event(SDL_Event *event);
+ 
++#if defined(__AMIGAOS4__)
++struct Window *AmigaOS_GetSDLWindowPtr(void);
++#endif
++
+ #endif /* MPLAYER_SDL_COMMON_H */
+diff --color -rupN old/libvo/vo_sdl.c new/libvo/vo_sdl.c
+--- old/libvo/vo_sdl.c	2023-08-28 20:40:10.000000000 +0200
++++ new/libvo/vo_sdl.c	2023-09-26 22:18:01.838335762 +0200
+@@ -80,7 +80,7 @@
+ 
+ static const vo_info_t info =
+ {
+-	"SDL YUV/RGB/BGR renderer",
++	"SDL2 (sdl12comapt) YUV/RGB/BGR renderer",
+ 	"sdl",
+ 	"Ryan C. Gordon <icculus@lokigames.com>, Felix Buenemann <atmosfear@users.sourceforge.net>",
+ 	""
+@@ -698,6 +698,7 @@ config(uint32_t width, uint32_t height,
+ 		||(strcmp(priv->driver, "cgx") == 0)
+ 		||(strcmp(priv->driver, "os4video") == 0)
+ 		||(strcmp(priv->driver, "OS4") == 0)
++		||(strcmp(priv->driver, "os4") == 0)
+ 		||((strcmp(priv->driver, "aalib") == 0) && priv->X)){
+  			mp_msg(MSGT_VO,MSGL_V, "SDL: setting windowed mode\n");
+             set_video_mode(priv->dstwidth, priv->dstheight, priv->bpp, priv->sdlflags);
+@@ -1027,6 +1028,7 @@ break;
+ 		AmigaOS_do_applib(AmigaOS_GetSDLWindowPtr());
+ 	}
+ #endif
++
+ }
+ 
+ /* Erase (paint it black) the rectangle specified by x, y, w and h in the surface
+@@ -1329,11 +1331,11 @@ static int preinit(const char *arg)
+      I don't think anyone with a real amiga uses 16pp. 
+      UAE yes but cpu does not emulate altivec    
+   */
+-     supported_bpp=SDL_VideoModeOK(640, 480, 32, SDL_FULLSCREEN);
+-     if (SDL_HasAltiVec() && (supported_bpp <= 16)) {
+-         mp_msg(MSGT_VO, MSGL_INFO, "VO: [sdl] Don't use me, maybe you are using QEMU G4 CPU, try -vo sdl_sm502\n");
+-         return -1;
+-     }
++//     supported_bpp=SDL_VideoModeOK(640, 480, 32, SDL_FULLSCREEN);
++//     if (SDL_HasAltiVec() && (supported_bpp <= 16)) {
++//         mp_msg(MSGT_VO, MSGL_INFO, "VO: [sdl] Don't use me, maybe you are using QEMU G4 CPU, try -vo sdl_sm502\n");
++//         return -1;
++//     }
+ 
+     SDL_VideoDriverName(priv->driver, 8);
+     mp_msg(MSGT_VO,MSGL_INFO, MSGTR_LIBVO_SDL_UsingDriver, priv->driver);

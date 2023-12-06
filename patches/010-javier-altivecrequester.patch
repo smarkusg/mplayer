@@ -1,0 +1,52 @@
+--- SDK:ejemplos/mplayerSTUFF/mplayer-src-1082023/amigaos/amigaos_stuff.c	2023-08-01 07:28:44 
++++ amigaos/amigaos_stuff.c	2023-08-03 14:33:26 
+@@ -264,31 +264,32 @@ static void Free_Arg(void)
+ 
+ /******************************************************************************/
+ // Markus AltiVec info
+-void  EasyRequester(CONST_STRPTR text, CONST_STRPTR button, ...)
++extern struct Screen *FrontMostScr(void); // amigaos/menu.c
++
++VARARGS68K VOID EasyRequester(CONST_STRPTR text, CONST_STRPTR button, ...)
+ 
+ {
+-  struct TagItem tags[] = { ESA_Position, REQPOS_CENTERSCREEN, TAG_END };
++  //struct TagItem tags[] = { ESA_Position, REQPOS_CENTERSCREEN, TAG_END };
+   struct EasyStruct easyreq = { 0 };
+-  struct IntScreen *ActiveScreen;
+-  static TEXT textbuffer[1024];
+- 
+   va_list parameter;
+-  va_start(parameter,button);
+-  vsprintf(textbuffer,text,parameter);
+-  va_end(parameter);
+- 
++  APTR vargs = NULL;
++
++  va_startlinear(parameter, button);
++  vargs = va_getlinearva(parameter, APTR);
++
+   easyreq.es_StructSize   = sizeof(struct EasyStruct);
+-  easyreq.es_Flags        = ESF_SCREEN | ESF_TAGGED | ESF_EVENSIZE;
+-  easyreq.es_Title        = AMIGA_VERSION " WARNING!";
+-  easyreq.es_TextFormat   = textbuffer;
++  easyreq.es_Flags        = ESF_SCREEN | ESF_EVENSIZE;//ESF_SCREEN | ESF_TAGGED | ESF_EVENSIZE;
++  easyreq.es_Title        = CS(MSG_Warning_Title);
++  easyreq.es_TextFormat   = text;
+   easyreq.es_GadgetFormat = button;
+-  easyreq.es_Screen       = ActiveScreen ;
+-  easyreq.es_TagList      = tags;
++  easyreq.es_Screen       = FrontMostScr();
++  //easyreq.es_TagList      = tags;
+ 
+- EasyRequestArgs(NULL, &easyreq, NULL, NULL);
+-  
++  EasyRequestArgs(NULL, &easyreq, NULL, vargs);
++
++  va_end(parameter);
+ }
+- 
++
+ /******************************/
+ 
+ void AmigaOS_ParseArg(int argc, char *argv[], int *new_argc, char ***new_argv)

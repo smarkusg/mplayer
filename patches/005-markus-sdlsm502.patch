@@ -1,0 +1,23 @@
+diff --color -rupN old/libvo/sdl_common_sm502.c new/libvo/sdl_common_sm502.c
+--- old/libvo/sdl_common_sm502.c	2023-08-01 08:28:43.000000000 +0200
++++ new/libvo/sdl_common_sm502.c	2023-08-01 11:55:34.169842606 +0200
+@@ -28,6 +28,9 @@
+ #include "video_out.h"
+ #include "geometry.h"
+ 
++#include "mp_core.h"     // used to get -vo string/short_name
++extern MPContext *mpctx; // used to get -vo string/short_name
++
+ static int old_w;
+ static int old_h;
+ static int mode_flags;
+@@ -148,6 +151,9 @@ SDL_Surface *sdl_set_sm502_mode(int bpp,
+       mp_msg(MSGT_VO, MSGL_FATAL, "SDL SetVideoMode failed: %s\n", SDL_GetError());
+       return NULL;
+     }
++#ifdef __AMIGAOS4__
++    AmigaOS_ScreenTitle(mpctx->video_out->info->short_name); // used to get -vo string/short_name
++#endif
+     vo_dwidth  = s->w;
+     vo_dheight = s->h;
+     return s;

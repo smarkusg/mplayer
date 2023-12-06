@@ -1,0 +1,1149 @@
+diff --color -rupN old/amigaos/CatCompOS4_h.sd new/amigaos/CatCompOS4_h.sd
+--- old/amigaos/CatCompOS4_h.sd	2023-08-01 08:28:44.000000000 +0200
++++ new/amigaos/CatCompOS4_h.sd	2023-08-01 18:24:00.000000000 +0200
+@@ -1,3 +1,21 @@
++/*
++ * This file is part of MPlayer.
++ *
++ * MPlayer is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * MPlayer is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License along
++ * with MPlayer; if not, write to the Free Software Foundation, Inc.,
++ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
++ */
++
+ ##rem $Id$
+ ##stringtype C
+ ##shortstrings
+diff --color -rupN old/amigaos/debug.h new/amigaos/debug.h
+--- old/amigaos/debug.h	2023-08-01 08:28:44.000000000 +0200
++++ new/amigaos/debug.h	2023-08-01 18:25:00.000000000 +0200
+@@ -1,3 +1,21 @@
++/*
++ * This file is part of MPlayer.
++ *
++ * MPlayer is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * MPlayer is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License along
++ * with MPlayer; if not, write to the Free Software Foundation, Inc.,
++ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
++ */
++
+ #ifndef AMIGAOS4_DEBUG_H
+ #define AMIGAOS4_DEBUG_H
+ 
+diff --color -rupN old/amigaos/menu.c new/amigaos/menu.c
+--- old/amigaos/menu.c	2023-08-01 08:28:44.000000000 +0200
++++ new/amigaos/menu.c	2023-08-01 19:34:00.000000000 +0200
+@@ -36,12 +36,12 @@
+ 
+ #include "input/input.h"
+ #include "arexx.h"
+-//#include "menu.h"
++// #include "menu.h"
+ #include "../osdep/keycodes.h"
+ #include "../version.h"
+ #define FFMPEG_VERSION "6.0"
+ 
+-//#include "debug.h"
++// #include "debug.h"
+ 
+ 
+ BOOL is_ontop = FALSE;
+@@ -70,8 +70,8 @@ static UBYTE *LoadFile(const char *Start
+ static int32 PrintMsgProc(STRPTR args UNUSED, int32 length UNUSED, struct ExecBase *execbase);
+ void PrintMsg(CONST_STRPTR text, int REQ_TYPE, int REQ_IMAGE);
+ 
+-//extern void make_appwindow(struct Window *win );
+-//extern void delete_appwindow();
++// extern void make_appwindow(struct Window *win );
++// extern void delete_appwindow();
+ 
+ void prevfilm();
+ void nextfilm();
+@@ -86,9 +86,9 @@ extern BOOL AISS_MENU_TO_SCALE ;		// In
+ extern int AISS_MENU_SIZE ;			// In amigaos_stuff.c zzd10h Setted by MenuImageSize env variable
+ extern BOOL MENUCLASS_SUPPORT ;		// In amigaos_stuff.c zzd10h TRUE if MenuClass menu is supported (AmigaOS 4.1 FE with intuition.library >= 54.6)
+ extern BOOL BANNER_DISPLAY ;			// In amigaos_stuff.c zzd10h Display banner ? SETENV SAVE Disable_Banner_Images 1 to disable them
+-//struct Screen *screen;
++// struct Screen *screen;
+ // new AEon InfoWindow Class
+-//extern BOOL INFOWINDOWCLASS_SUPPORT ;	// AEon infowindow Class support
++// extern BOOL INFOWINDOWCLASS_SUPPORT ;	// AEon infowindow Class support
+ #include <classes/infowindow.h>
+ extern Class *InfoWindowClass;
+ extern struct ClassLibrary *InfoWindowBase;
+@@ -104,8 +104,8 @@ static void BackFillFunc(struct Hook *ho
+ #include <proto/datatypes.h>
+ #include <proto/graphics.h>
+ #include <graphics/rpattr.h>
+-//#include <graphics/composite.h>
+-//#include <graphics/blitattr.h>
++// #include <graphics/composite.h>
++// #include <graphics/blitattr.h>
+ #include <proto/layers.h>
+ 
+ 
+@@ -249,8 +249,8 @@ struct NewMenu amiga_menu[] =
+ 	{ NM_ITEM,	"Save",		"S", 0, 0, 0},
+ 	{ NM_ITEM,	"Save as...", 	0, 0, 0, 0},
+ 	{ NM_ITEM,	NM_BARLABEL,	0, 0, 0, 0},
+-	{ NM_ITEM,	"Iconify", 		"I", 0, 0, 0},
+ 	{ NM_ITEM,	"About...", 	"?", 0, 0, 0},
++	{ NM_ITEM,	"Iconify", 		"I", 0, 0, 0},
+ 	{ NM_ITEM,	NM_BARLABEL, 	0, 0, 0, 0},
+ 	{ NM_ITEM,	"Quit", 		"Q", 0, 0, 0},
+ 
+@@ -293,8 +293,8 @@ enum
+     MID_MENU_OPENDVDNAV_MENUCLASS,
+     MID_MENU_OPENVCD_MENUCLASS ,
+     MID_MENU_OPENNETWORK_MENUCLASS,
+-    MID_MENU_ICONIFY_MENUCLASS ,
+     MID_MENU_ABOUT_MENUCLASS ,
++    MID_MENU_ICONIFY_MENUCLASS ,
+     MID_MENU_QUIT_MENUCLASS,
+     MID_MENU_PLAYPAUSE_MENUCLASS ,
+     MID_MENU_STOP_MENUCLASS,
+@@ -308,33 +308,33 @@ enum
+     MID_MENU_MUTE_MENUCLASS ,
+     MID_MENU_VOLUMEUP_MENUCLASS,
+     MID_MENU_VOLUMEDOWN_MENUCLASS ,
+-MID_MENU_OPENSUBTITLES_MENUCLASS,
++    MID_MENU_OPENSUBTITLES_MENUCLASS,
+ 
+     MID_MENU_AUTO_BASE = 1000
+ };
+ 
+-Object *amiga_menuClass = NULL ;     // Menu for MenuClass of AmigaOS 4.1 FE
+-Object *menuobj_MID_MENU_LOADFILE_MENUCLASS;
+-Object *menuobj_MID_MENU_OPENDVD_MENUCLASS;
+-Object *menuobj_MID_MENU_OPENDVDNAV_MENUCLASS;
+-Object *menuobj_MID_MENU_OPENVCD_MENUCLASS;
+-Object *menuobj_MID_MENU_OPENNETWORK_MENUCLASS;
+-Object *menuobj_MID_MENU_ICONIFY_MENUCLASS;
+-Object *menuobj_MID_MENU_ABOUT_MENUCLASS;
+-Object *menuobj_MID_MENU_QUIT_MENUCLASS;
+-Object *menuobj_MID_MENU_PLAYPAUSE_MENUCLASS;
+-Object *menuobj_MID_MENU_STOP_MENUCLASS;
+-Object *menuobj_MID_MENU_LOOP_MENUCLASS;
+-Object *menuobj_MID_MENU_PREVFILM_MENUCLASS;
+-Object *menuobj_MID_MENU_NEXTFILM_MENUCLASS;
+-Object *menuobj_MID_MENU_STAYONTOP_MENUCLASS;
+-Object *menuobj_MID_MENU_CYCLESUBTITLES_MENUCLASS;
+-Object *menuobj_MID_MENU_FULLSCREEN_MENUCLASS;
+-Object *menuobj_MID_MENU_SCREENSHOT_MENUCLASS;
+-Object *menuobj_MID_MENU_MUTE_MENUCLASS;
+-Object *menuobj_MID_MENU_VOLUMEUP_MENUCLASS;
+-Object *menuobj_MID_MENU_VOLUMEDOWN_MENUCLASS;
+-	Object *menuobj_MID_MENU_OPENSUBTITLES_MENUCLASS;
++    Object *amiga_menuClass = NULL ;     // Menu for MenuClass of AmigaOS 4.1 FE
++    Object *menuobj_MID_MENU_LOADFILE_MENUCLASS;
++    Object *menuobj_MID_MENU_OPENDVD_MENUCLASS;
++    Object *menuobj_MID_MENU_OPENDVDNAV_MENUCLASS;
++    Object *menuobj_MID_MENU_OPENVCD_MENUCLASS;
++    Object *menuobj_MID_MENU_OPENNETWORK_MENUCLASS;
++    Object *menuobj_MID_MENU_ABOUT_MENUCLASS;
++    Object *menuobj_MID_MENU_ICONIFY_MENUCLASS;
++    Object *menuobj_MID_MENU_QUIT_MENUCLASS;
++    Object *menuobj_MID_MENU_PLAYPAUSE_MENUCLASS;
++    Object *menuobj_MID_MENU_STOP_MENUCLASS;
++    Object *menuobj_MID_MENU_LOOP_MENUCLASS;
++    Object *menuobj_MID_MENU_PREVFILM_MENUCLASS;
++    Object *menuobj_MID_MENU_NEXTFILM_MENUCLASS;
++    Object *menuobj_MID_MENU_STAYONTOP_MENUCLASS;
++    Object *menuobj_MID_MENU_CYCLESUBTITLES_MENUCLASS;
++    Object *menuobj_MID_MENU_FULLSCREEN_MENUCLASS;
++    Object *menuobj_MID_MENU_SCREENSHOT_MENUCLASS;
++    Object *menuobj_MID_MENU_MUTE_MENUCLASS;
++    Object *menuobj_MID_MENU_VOLUMEUP_MENUCLASS;
++    Object *menuobj_MID_MENU_VOLUMEDOWN_MENUCLASS;
++    Object *menuobj_MID_MENU_OPENSUBTITLES_MENUCLASS;
+ 
+ enum    // Root menus
+ {
+@@ -352,8 +352,8 @@ enum    // Items of MPLAYER_MENU NewMenu
+     OPENVCD,
+     OPENNETWORK,
+     BAR1,
+-    MENU_ICONIFY,
+     MENU_ABOUT,
++    MENU_ICONIFY,
+     BAR2,
+     MENU_QUIT
+ };
+@@ -370,7 +370,7 @@ enum    // Items of PLAY_MENU NewMenu me
+ enum    // Items of VIDEO_OPTIONS_MENU NewMenu menu
+ {
+     MENU_STAYONTOP,
+-MENU_OPENSUBTITLES,
++    MENU_OPENSUBTITLES,
+     MENU_CYCLESUBTITLES,
+     MENU_FULLSCREEN,
+     MENU_SCREENSHOT
+@@ -387,62 +387,62 @@ struct NewMenu amiga_menu[] =
+ {
+       // Type, Label, CommKey, Flags, MutualExclude, UserData
+ 
+-//	{ NM_TITLE, menu_MPlayer,					NULL,						0, 0L, NULL },
+-	{ NM_TITLE, menu_MPlayer,					NULL,						0, 0L, NULL },
+-		{ NM_ITEM,  menu_MPlayer_LoadFile,		(STRPTR)"F",				0, 0L, NULL },
+-		{ NM_ITEM,  menu_MPlayer_OpenDVD,		(STRPTR)"D",				0, 0L, NULL },
++		{ NM_TITLE, menu_MPlayer,				NULL,						0, 0L, NULL },
++		{ NM_ITEM,  menu_MPlayer_LoadFile,			(STRPTR)"F",				0, 0L, NULL },
++		{ NM_ITEM,  menu_MPlayer_OpenDVD,			(STRPTR)"D",				0, 0L, NULL },
+ 		{ NM_ITEM,  menu_MPlayer_OpenDVDNAV,         	(STRPTR)"N",				0, 0L, NULL },
+ 		{ NM_ITEM,  menu_MPlayer_OpenVCD,            	(STRPTR)"V",				0, 0L, NULL },
+ 		{ NM_ITEM,  menu_MPlayer_OpenNetwork,        	(STRPTR)"R",				0, 0L, NULL },
+ 		{ NM_ITEM, NM_BARLABEL,											0,                  0,  0,     0},
+-		{ NM_ITEM,  menu_MPlayer_Iconify,	 	(STRPTR)"I",				0, 0L, NULL },
+ 		{ NM_ITEM,  menu_MPlayer_AboutMPlayer,		(STRPTR)"?",				0, 0L, NULL },
++		{ NM_ITEM,  menu_MPlayer_Iconify,	 		(STRPTR)"I",				0, 0L, NULL },
+ 		{ NM_ITEM, NM_BARLABEL,											0,                  0,  0,     0},
+ 		{ NM_ITEM,  menu_MPlayer_Quit,               	(STRPTR)"Q",				0, 0L, NULL },
+ 
+-	{ NM_TITLE, menu_Play,						NULL,						0, 0L, NULL },
+-		{ NM_ITEM,  menu_Play_PlayPause,		(STRPTR)"P",				0, 0L, NULL },
+-		{ NM_ITEM,  menu_Play_Stop,			(STRPTR)"S",				0, 0L, NULL },
+-		{ NM_ITEM,  menu_Play_Loop,			(STRPTR)"L", MENUTOGGLE|CHECKIT, 	0L, NULL },
++		{ NM_TITLE, menu_Play,					NULL,						0, 0L, NULL },
++		{ NM_ITEM,  menu_Play_PlayPause,			(STRPTR)"P",				0, 0L, NULL },
++		{ NM_ITEM,  menu_Play_Stop,				(STRPTR)"S",				0, 0L, NULL },
++		{ NM_ITEM,  menu_Play_Loop,				(STRPTR)"L", MENUTOGGLE|CHECKIT, 	0L, NULL },
+ 		{ NM_ITEM,  menu_Play_PrevFilm,			(STRPTR)"E",                  	0, 0L, NULL },
+ 		{ NM_ITEM,  menu_Play_NextFilm,			(STRPTR)"X",                  	0, 0L, NULL },
+ 
+-	{ NM_TITLE, menu_OptionsVideo,				NULL,                  			0, 0L, NULL },
++		{ NM_TITLE, menu_OptionsVideo,			NULL,                  			0, 0L, NULL },
+ 		{ NM_ITEM,  menu_OptionsVideo_StayOnTop,        NULL, MENUTOGGLE|CHECKIT, 		0L, NULL },
+-{ NM_ITEM,  menu_OptionsVideo_OpenSubtitles,	0,                  			0, 0L, NULL },
++		{ NM_ITEM,  menu_OptionsVideo_OpenSubtitles,	0,                  			0, 0L, NULL },
+ 		{ NM_ITEM,  menu_OptionsVideo_CycleSubtitles,	0,                  			0, 0L, NULL },
+-		{ NM_ITEM,  menu_OptionsVideo_Fullscreen,	0,                  			0, 0L, NULL },
++		{ NM_ITEM,  menu_OptionsVideo_Fullscreen,	0,                  				0, 0L, NULL },
+ 		{ NM_ITEM,  menu_OptionsVideo_Screenshot,       NULL,                  			0, 0L, NULL },
+-/*
+-		{ NM_ITEM,  NM_BARLABEL,              		NULL,	0, 0L, NULL },
++		/*
++		{ NM_ITEM, NM_BARLABEL,              		NULL,	0, 0L, NULL },
+ 		{ NM_ITEM,  (STRPTR)"Normal Dimension",       	(STRPTR)"1",    				0, 0L, NULL },
+ 		{ NM_ITEM,  (STRPTR)"Doubled Dimension",      	(STRPTR)"2",    				0, 0L, NULL },
+ 		{ NM_ITEM,  (STRPTR)"Screen Dimension",       	(STRPTR)"3",    				0, 0L, NULL },
+ 		{ NM_ITEM,  (STRPTR)"Half Dimension",         	(STRPTR)"4",    				0, 0L, NULL },
+-		{ NM_ITEM,  NM_BARLABEL,              		NULL,	0, 0L, NULL },
+-// 23
++		{ NM_ITEM, NM_BARLABEL,              		NULL,	0, 0L, NULL },
++		// 23
+ 		{ NM_ITEM,  (STRPTR)"Aspect Ratio",       	NULL,						0, 0L, NULL },
+ 		{ NM_SUB,   (STRPTR)"Original",      		NULL,						MENUTOGGLE|CHECKIT|CHECKED, ~1, NULL },
+-		{ NM_SUB,   (STRPTR)"16:10",      		NULL,						MENUTOGGLE|CHECKIT, ~2, NULL },
+-		{ NM_SUB,   (STRPTR)"16:9",      		NULL,						MENUTOGGLE|CHECKIT, ~4, NULL },
+-		{ NM_SUB,   (STRPTR)"1.85:1",      		NULL,						MENUTOGGLE|CHECKIT, ~8, NULL },
+-		{ NM_SUB,   (STRPTR)"2.21:1",      		NULL,						MENUTOGGLE|CHECKIT, ~16, NULL },
+-		{ NM_SUB,   (STRPTR)"2.35:1",      		NULL,						MENUTOGGLE|CHECKIT, ~32, NULL },
+-		{ NM_SUB,   (STRPTR)"2.39:1",      		NULL,						MENUTOGGLE|CHECKIT, ~64, NULL },
+-		{ NM_SUB,   (STRPTR)"5:3",      		NULL,						MENUTOGGLE|CHECKIT, ~128, NULL },
+-		{ NM_SUB,   (STRPTR)"4:3",      		NULL,						MENUTOGGLE|CHECKIT, ~256, NULL },
+-		{ NM_SUB,   (STRPTR)"5:4",      		NULL,						MENUTOGGLE|CHECKIT, ~512, NULL },
+-		{ NM_SUB,   (STRPTR)"1:1",      		NULL,						MENUTOGGLE|CHECKIT, ~1024, NULL },
+-*/
++		{ NM_SUB,   (STRPTR)"16:10",      			NULL,						MENUTOGGLE|CHECKIT, ~2, NULL },
++		{ NM_SUB,   (STRPTR)"16:9",      			NULL,						MENUTOGGLE|CHECKIT, ~4, NULL },
++		{ NM_SUB,   (STRPTR)"1.85:1",      			NULL,						MENUTOGGLE|CHECKIT, ~8, NULL },
++		{ NM_SUB,   (STRPTR)"2.21:1",      			NULL,						MENUTOGGLE|CHECKIT, ~16, NULL },
++		{ NM_SUB,   (STRPTR)"2.35:1",      			NULL,						MENUTOGGLE|CHECKIT, ~32, NULL },
++		{ NM_SUB,   (STRPTR)"2.39:1",      			NULL,						MENUTOGGLE|CHECKIT, ~64, NULL },
++		{ NM_SUB,   (STRPTR)"5:3",      			NULL,						MENUTOGGLE|CHECKIT, ~128, NULL },
++		{ NM_SUB,   (STRPTR)"4:3",      			NULL,						MENUTOGGLE|CHECKIT, ~256, NULL },
++		{ NM_SUB,   (STRPTR)"5:4",      			NULL,						MENUTOGGLE|CHECKIT, ~512, NULL },
++		{ NM_SUB,   (STRPTR)"1:1",      			NULL,						MENUTOGGLE|CHECKIT, ~1024, NULL },
++		*/
+ 
+-      { NM_TITLE, menu_OptionsAudio,              		NULL,						0, 0L, NULL },
++      	{ NM_TITLE, menu_OptionsAudio,              	NULL,						0, 0L, NULL },
+ 		{ NM_ITEM,  menu_OptionsAudio_Mute,             NULL,						MENUTOGGLE|CHECKIT , 0, NULL },
+ 		{ NM_ITEM,  menu_OptionsAudio_VolumeUp  ,       (STRPTR)"+",				0, 0L, NULL },
+ 		{ NM_ITEM,  menu_OptionsAudio_VolumeDown,       (STRPTR)"-",				0, 0L, NULL },
+ 
+-      { NM_END,   NULL,                         		NULL,						0, 0L, NULL }
++      	{ NM_END,   NULL,                         	NULL,						0, 0L, NULL }
+     };
+ 
++
+ void createMenuTranslation()
+ {
+ 
+@@ -454,8 +454,8 @@ void createMenuTranslation()
+ 	strcpy(menu_MPlayer_OpenDVDNAV,CS(MSG_Menu_MPlayer_OpenDVDNAV));
+ 	strcpy(menu_MPlayer_OpenVCD,CS(MSG_Menu_MPlayer_OpenVCD));
+ 	strcpy(menu_MPlayer_OpenNetwork,CS(MSG_Menu_MPlayer_OpenNetwork));
+-	strcpy(menu_MPlayer_Iconify,CS(MSG_Menu_MPlayer_Iconify));
+ 	strcpy(menu_MPlayer_AboutMPlayer,CS(MSG_Menu_MPlayer_About));
++	strcpy(menu_MPlayer_Iconify,CS(MSG_Menu_MPlayer_Iconify));
+ 	strcpy(menu_MPlayer_Quit,CS(MSG_Menu_MPlayer_Quit));
+ 
+ 	strcpy(menu_Play,CS(MSG_Menu_Play));
+@@ -467,7 +467,7 @@ void createMenuTranslation()
+ 
+ 	strcpy(menu_OptionsVideo,CS(MSG_Menu_OptionsVideo));
+ 	strcpy(menu_OptionsVideo_StayOnTop,CS(MSG_Menu_OptionsVideo_StayOnTop));
+-strcpy(menu_OptionsVideo_OpenSubtitles,CS(MSG_Menu_OptionsVideo_OpenSubtitles));
++	strcpy(menu_OptionsVideo_OpenSubtitles,CS(MSG_Menu_OptionsVideo_OpenSubtitles));
+ 	strcpy(menu_OptionsVideo_CycleSubtitles,CS(MSG_Menu_OptionsVideo_CycleSubtitles));
+ 	strcpy(menu_OptionsVideo_Fullscreen,CS(MSG_Menu_OptionsVideo_Fullscreen));
+ 	strcpy(menu_OptionsVideo_Screenshot,CS(MSG_Menu_OptionsVideo_Screenshot));
+@@ -483,27 +483,27 @@ void findMenuClassObj()	// zzd10h
+ {
+ 	if (amiga_menuClass)
+ 	{
+-		menuobj_MID_MENU_LOADFILE_MENUCLASS    = (Object *)IDoMethod(amiga_menuClass,MM_FINDID,0,  MID_MENU_LOADFILE_MENUCLASS);
+-		menuobj_MID_MENU_OPENDVD_MENUCLASS     = (Object *)IDoMethod(amiga_menuClass,MM_FINDID,0,  MID_MENU_OPENDVD_MENUCLASS);
+-		menuobj_MID_MENU_OPENDVDNAV_MENUCLASS  = (Object *)IDoMethod(amiga_menuClass,MM_FINDID,0,  MID_MENU_OPENDVDNAV_MENUCLASS);
+-		menuobj_MID_MENU_OPENVCD_MENUCLASS     = (Object *)IDoMethod(amiga_menuClass,MM_FINDID,0,  MID_MENU_OPENVCD_MENUCLASS);
+-		menuobj_MID_MENU_OPENNETWORK_MENUCLASS = (Object *)IDoMethod(amiga_menuClass,MM_FINDID,0,  MID_MENU_OPENNETWORK_MENUCLASS);
+-		menuobj_MID_MENU_ABOUT_MENUCLASS       = (Object *)IDoMethod(amiga_menuClass,MM_FINDID,0,  MID_MENU_ABOUT_MENUCLASS);
+-		menuobj_MID_MENU_ICONIFY_MENUCLASS     = (Object *)IDoMethod(amiga_menuClass,MM_FINDID,0,  MID_MENU_ICONIFY_MENUCLASS);
+-		menuobj_MID_MENU_QUIT_MENUCLASS        = (Object *)IDoMethod(amiga_menuClass,MM_FINDID,0,  MID_MENU_QUIT_MENUCLASS);
+-		menuobj_MID_MENU_PLAYPAUSE_MENUCLASS = (Object *)IDoMethod(amiga_menuClass,MM_FINDID,0,  MID_MENU_PLAYPAUSE_MENUCLASS);
+-		menuobj_MID_MENU_STOP_MENUCLASS      = (Object *)IDoMethod(amiga_menuClass,MM_FINDID,0,  MID_MENU_STOP_MENUCLASS);
+-		menuobj_MID_MENU_LOOP_MENUCLASS      = (Object *)IDoMethod(amiga_menuClass,MM_FINDID,0,  MID_MENU_LOOP_MENUCLASS);
+-		menuobj_MID_MENU_PREVFILM_MENUCLASS  = (Object *)IDoMethod(amiga_menuClass,MM_FINDID,0,  MID_MENU_PREVFILM_MENUCLASS);
+-		menuobj_MID_MENU_NEXTFILM_MENUCLASS  = (Object *)IDoMethod(amiga_menuClass,MM_FINDID,0,  MID_MENU_NEXTFILM_MENUCLASS);
+-		menuobj_MID_MENU_STAYONTOP_MENUCLASS      = (Object *)IDoMethod(amiga_menuClass,MM_FINDID,0,  MID_MENU_STAYONTOP_MENUCLASS);
+-menuobj_MID_MENU_OPENSUBTITLES_MENUCLASS  = (Object *)IDoMethod(amiga_menuClass,MM_FINDID,0,  MID_MENU_OPENSUBTITLES_MENUCLASS);
++		menuobj_MID_MENU_LOADFILE_MENUCLASS		= (Object *)IDoMethod(amiga_menuClass,MM_FINDID,0,  MID_MENU_LOADFILE_MENUCLASS);
++		menuobj_MID_MENU_OPENDVD_MENUCLASS		= (Object *)IDoMethod(amiga_menuClass,MM_FINDID,0,  MID_MENU_OPENDVD_MENUCLASS);
++		menuobj_MID_MENU_OPENDVDNAV_MENUCLASS	= (Object *)IDoMethod(amiga_menuClass,MM_FINDID,0,  MID_MENU_OPENDVDNAV_MENUCLASS);
++		menuobj_MID_MENU_OPENVCD_MENUCLASS		= (Object *)IDoMethod(amiga_menuClass,MM_FINDID,0,  MID_MENU_OPENVCD_MENUCLASS);
++		menuobj_MID_MENU_OPENNETWORK_MENUCLASS	= (Object *)IDoMethod(amiga_menuClass,MM_FINDID,0,  MID_MENU_OPENNETWORK_MENUCLASS);
++		menuobj_MID_MENU_ABOUT_MENUCLASS		= (Object *)IDoMethod(amiga_menuClass,MM_FINDID,0,  MID_MENU_ABOUT_MENUCLASS);
++		menuobj_MID_MENU_ICONIFY_MENUCLASS		= (Object *)IDoMethod(amiga_menuClass,MM_FINDID,0,  MID_MENU_ICONIFY_MENUCLASS);
++		menuobj_MID_MENU_QUIT_MENUCLASS		= (Object *)IDoMethod(amiga_menuClass,MM_FINDID,0,  MID_MENU_QUIT_MENUCLASS);
++		menuobj_MID_MENU_PLAYPAUSE_MENUCLASS	= (Object *)IDoMethod(amiga_menuClass,MM_FINDID,0,  MID_MENU_PLAYPAUSE_MENUCLASS);
++		menuobj_MID_MENU_STOP_MENUCLASS		= (Object *)IDoMethod(amiga_menuClass,MM_FINDID,0,  MID_MENU_STOP_MENUCLASS);
++		menuobj_MID_MENU_LOOP_MENUCLASS		= (Object *)IDoMethod(amiga_menuClass,MM_FINDID,0,  MID_MENU_LOOP_MENUCLASS);
++		menuobj_MID_MENU_PREVFILM_MENUCLASS		= (Object *)IDoMethod(amiga_menuClass,MM_FINDID,0,  MID_MENU_PREVFILM_MENUCLASS);
++		menuobj_MID_MENU_NEXTFILM_MENUCLASS		= (Object *)IDoMethod(amiga_menuClass,MM_FINDID,0,  MID_MENU_NEXTFILM_MENUCLASS);
++		menuobj_MID_MENU_STAYONTOP_MENUCLASS	= (Object *)IDoMethod(amiga_menuClass,MM_FINDID,0,  MID_MENU_STAYONTOP_MENUCLASS);
++		menuobj_MID_MENU_OPENSUBTITLES_MENUCLASS  = (Object *)IDoMethod(amiga_menuClass,MM_FINDID,0,  MID_MENU_OPENSUBTITLES_MENUCLASS);
+ 		menuobj_MID_MENU_CYCLESUBTITLES_MENUCLASS = (Object *)IDoMethod(amiga_menuClass,MM_FINDID,0,  MID_MENU_CYCLESUBTITLES_MENUCLASS);
+ 		menuobj_MID_MENU_FULLSCREEN_MENUCLASS     = (Object *)IDoMethod(amiga_menuClass,MM_FINDID,0,  MID_MENU_FULLSCREEN_MENUCLASS);
+ 		menuobj_MID_MENU_SCREENSHOT_MENUCLASS     = (Object *)IDoMethod(amiga_menuClass,MM_FINDID,0,  MID_MENU_SCREENSHOT_MENUCLASS);
+-		menuobj_MID_MENU_MUTE_MENUCLASS       = (Object *)IDoMethod(amiga_menuClass,MM_FINDID,0,  MID_MENU_MUTE_MENUCLASS);
+-		menuobj_MID_MENU_VOLUMEUP_MENUCLASS   = (Object *)IDoMethod(amiga_menuClass,MM_FINDID,0,  MID_MENU_VOLUMEUP_MENUCLASS);
+-		menuobj_MID_MENU_VOLUMEDOWN_MENUCLASS = (Object *)IDoMethod(amiga_menuClass,MM_FINDID,0,  MID_MENU_VOLUMEDOWN_MENUCLASS);
++		menuobj_MID_MENU_MUTE_MENUCLASS		= (Object *)IDoMethod(amiga_menuClass,MM_FINDID,0,  MID_MENU_MUTE_MENUCLASS);
++		menuobj_MID_MENU_VOLUMEUP_MENUCLASS		= (Object *)IDoMethod(amiga_menuClass,MM_FINDID,0,  MID_MENU_VOLUMEUP_MENUCLASS);
++		menuobj_MID_MENU_VOLUMEDOWN_MENUCLASS	= (Object *)IDoMethod(amiga_menuClass,MM_FINDID,0,  MID_MENU_VOLUMEDOWN_MENUCLASS);
+ 	}
+ }
+ 
+@@ -515,8 +515,8 @@ static struct Image *MenuImage(STRPTR na
+    STRPTR name_s, name_g;
+    uint32 len;
+ 
+-  if (AISS_MENU && MENUCLASS_SUPPORT)
+-  {
++   if (AISS_MENU && MENUCLASS_SUPPORT)
++   {
+    len = strlen(name);
+ 
+    name_s = AllocVecTags(len + 3 + len + 3,TAG_END);
+@@ -543,18 +543,18 @@ static struct Image *MenuImage(STRPTR na
+          prev_dir = SetCurrentDir(dir);
+ 
+          i = (struct Image *)NewObject(NULL,"bitmap.image",
+-                                       BITMAP_SourceFile, name,
+-                                       BITMAP_SelectSourceFile, name_s,
+-                                       BITMAP_DisabledSourceFile, name_g,
+-                                       BITMAP_Screen, screen,
+-                                       BITMAP_Masking, TRUE,
+-                                       // Scale the AISS_MENU picture if AISS_MENU_TO_SCALE = TRUE (ENV:MenuImageSize > 0)
+-    		                       AISS_MENU_TO_SCALE ? IA_Scalable : TAG_IGNORE, TRUE,
+-				       AISS_MENU_TO_SCALE ? IA_Width : TAG_IGNORE , AISS_MENU_SIZE,
+-				       AISS_MENU_TO_SCALE ? IA_Height : TAG_IGNORE , AISS_MENU_SIZE,
+-				       // If AISS picture size <= screen font height, up it
+-				       // AISS_MENU_TO_SCALE && (AISS_MENU_SIZE <= screen->RastPort.TxHeight) ? IA_Top : TAG_IGNORE , -1,
+-                                      TAG_END);
++						BITMAP_SourceFile, name,
++						BITMAP_SelectSourceFile, name_s,
++						BITMAP_DisabledSourceFile, name_g,
++						BITMAP_Screen, screen,
++						BITMAP_Masking, TRUE,
++						// Scale the AISS_MENU picture if AISS_MENU_TO_SCALE = TRUE (ENV:MenuImageSize > 0)
++						AISS_MENU_TO_SCALE ? IA_Scalable : TAG_IGNORE, TRUE,
++						AISS_MENU_TO_SCALE ? IA_Width : TAG_IGNORE , AISS_MENU_SIZE,
++						AISS_MENU_TO_SCALE ? IA_Height : TAG_IGNORE , AISS_MENU_SIZE,
++						// If AISS picture size <= screen font height, up it
++						// AISS_MENU_TO_SCALE && (AISS_MENU_SIZE <= screen->RastPort.TxHeight) ? IA_Top : TAG_IGNORE , -1,
++						TAG_END);
+ 
+          if (i && !AISS_MENU_TO_SCALE)
+             SetAttrs((Object *)i,IA_Height,i->Height + 2,TAG_END);
+@@ -578,7 +578,7 @@ void makeMenuClass()	// zzd10h
+ 	{
+ 		amiga_menuClass = MStrip,
+ 
+-                   MA_AddChild, MTitle(CS(MSG_Menu_MPlayer)),	// Menu MPlayer
++                   MA_AddChild, MTitle(CS(MSG_Menu_MPlayer)),	// Start of MPlayer menu
+                      MA_AddChild, MItem(CS(MSG_Menu_MPlayer_LoadFile)),
+                        MA_Key, "F",
+                        MA_Image, MenuImage("pictureload",screen),
+@@ -605,25 +605,25 @@ void makeMenuClass()	// zzd10h
+                        MA_ID, MID_MENU_OPENNETWORK_MENUCLASS,
+                      MEnd,
+                      MA_AddChild, MSeparator, MEnd,
+-                     MA_AddChild, MItem(CS(MSG_Menu_MPlayer_Iconify)),
+-                       MA_Key, "I",
+-                       MA_Image, MenuImage("iconify",screen),
+-                       MA_ID, MID_MENU_ICONIFY_MENUCLASS,
+-                     MEnd,
+                      MA_AddChild, MItem(CS(MSG_Menu_MPlayer_About)),
+                        MA_Key, "?",
+                        MA_Image, MenuImage("info",screen),
+                        MA_ID, MID_MENU_ABOUT_MENUCLASS,
+                      MEnd,
++                     MA_AddChild, MItem(CS(MSG_Menu_MPlayer_Iconify)),
++                       MA_Key, "I",
++                       MA_Image, MenuImage("iconify",screen),
++                       MA_ID, MID_MENU_ICONIFY_MENUCLASS,
++                     MEnd,
+                      MA_AddChild, MSeparator, MEnd,
+                      MA_AddChild, MItem(CS(MSG_Menu_MPlayer_Quit)),
+                        MA_Key, "Q",
+                        MA_Image, MenuImage("Quit",screen),
+                        MA_ID, MID_MENU_QUIT_MENUCLASS,
+                      MEnd,
+-                   MEnd,  // End of MPlayer menu
++                   MEnd,	// End of MPlayer menu
+ 
+-                   MA_AddChild, MTitle(CS(MSG_Menu_Play)),	// Menu PLAY_MENU
++                   MA_AddChild, MTitle(CS(MSG_Menu_Play)),	// Start of PLAY_MENU menu
+                      MA_AddChild, MItem(CS(MSG_Menu_Play_PlayPause)),
+                        MA_Key, "P",
+                        MA_Image, MenuImage("tapeplay",screen),
+@@ -653,7 +653,7 @@ void makeMenuClass()	// zzd10h
+                      MEnd,
+                    MEnd,  // End of PLAY_MENU menu
+ 
+-                   MA_AddChild, MTitle(CS(MSG_Menu_OptionsVideo)),	// Menu VIDEO_OPTIONS_MENU
++                   MA_AddChild, MTitle(CS(MSG_Menu_OptionsVideo)),	// Start of VIDEO_OPTIONS_MENU
+                      MA_AddChild, MItem(CS(MSG_Menu_OptionsVideo_StayOnTop)),
+                        MA_Toggle, TRUE,
+                        MA_Selected,is_ontop,
+@@ -661,23 +661,23 @@ void makeMenuClass()	// zzd10h
+                        MA_ID, MID_MENU_STAYONTOP_MENUCLASS,
+                      MEnd,
+                      MA_AddChild, MSeparator, MEnd,
+-MA_AddChild, MItem(CS(MSG_Menu_OptionsVideo_OpenSubtitles)),
+-  MA_Image, MenuImage("textframe",screen),
+-  MA_ID, MID_MENU_OPENSUBTITLES_MENUCLASS,
+-MEnd,
+-                     MA_AddChild, MItem(CS(MSG_Menu_OptionsVideo_CycleSubtitles)),
+-                       MA_Image, MenuImage("refresh",screen),
+-                       MA_ID, MID_MENU_CYCLESUBTITLES_MENUCLASS,
+-                     MEnd,
+-                     MA_AddChild, MSeparator, MEnd,
++			 MA_AddChild, MItem(CS(MSG_Menu_OptionsVideo_OpenSubtitles)),
++			  MA_Image, MenuImage("textframe",screen),
++			  MA_ID, MID_MENU_OPENSUBTITLES_MENUCLASS,
++			 MEnd,
++                   MA_AddChild, MItem(CS(MSG_Menu_OptionsVideo_CycleSubtitles)),
++                     MA_Image, MenuImage("refresh",screen),
++                     MA_ID, MID_MENU_CYCLESUBTITLES_MENUCLASS,
++                   MEnd,
++                   MA_AddChild, MSeparator, MEnd,
+                      MA_AddChild, MItem(CS(MSG_Menu_OptionsVideo_Fullscreen)),
+-                       MA_Image, MenuImage("fullscreen",screen),
+-                       MA_ID, MID_MENU_FULLSCREEN_MENUCLASS,
+-                     MEnd,
+-                     MA_AddChild, MItem(CS(MSG_Menu_OptionsVideo_Screenshot)),
+-                       MA_Image, MenuImage("snapshot",screen),
+-                       MA_ID, MID_MENU_SCREENSHOT_MENUCLASS,
+-                     MEnd,
++                     MA_Image, MenuImage("fullscreen",screen),
++                     MA_ID, MID_MENU_FULLSCREEN_MENUCLASS,
++                   MEnd,
++                   MA_AddChild, MItem(CS(MSG_Menu_OptionsVideo_Screenshot)),
++                     MA_Image, MenuImage("snapshot",screen),
++                     MA_ID, MID_MENU_SCREENSHOT_MENUCLASS,
++                   MEnd,
+                    MEnd,  // End of VIDEO_OPTIONS_MENU menu
+ 
+                    MA_AddChild, MTitle(CS(MSG_Menu_OptionsAudio)),	// Menu AUDIO_OPTIONS_MENU
+@@ -689,12 +689,12 @@ MEnd,
+                      MEnd,
+                      MA_AddChild, MItem(CS(MSG_Menu_OptionsAudio_VolumeUp)),
+                        MA_Key, "+",
+-                       MA_Image, MenuImage("arrowupfilled",screen), // "add"
++                       MA_Image, MenuImage("arrowupfilled",screen),	// "Add"
+                        MA_ID, MID_MENU_VOLUMEUP_MENUCLASS,
+                      MEnd,
+                      MA_AddChild, MItem(CS(MSG_Menu_OptionsAudio_VolumeDown)),
+                        MA_Key, "-",
+-                       MA_Image, MenuImage("arrowdownfilled",screen), // "remove"
++                       MA_Image, MenuImage("arrowdownfilled",screen),	// "Remove"
+                        MA_ID, MID_MENU_VOLUMEDOWN_MENUCLASS,
+                      MEnd,
+                    MEnd,  // End of AUDIO_OPTIONS_MENU menu
+@@ -713,16 +713,16 @@ void attach_menu(struct Window *window)
+ 	// Create translation for NewMenu and MenuClass menu // zzd10h
+ 	createMenuTranslation() ;
+ 
+-	//struct Menu *menu;
+-	//struct VisualInfo *vi;
++	// struct Menu *menu;
++	// struct VisualInfo *vi;
+ 
+ 	open_menu();
+ 
+ 	if (( (menu || amiga_menuClass) ) && (window))
+ 	{
+-//#if 1
+-//		make_appwindow(window);
+-//#endif
++		// #if 1
++		// make_appwindow(window);
++		// #endif
+ 
+ 		if (!MENUCLASS_SUPPORT)
+ 		{
+@@ -747,10 +747,10 @@ void attach_menu(struct Window *window)
+ 
+ void detach_menu(struct Window *window)
+ {
+-	//struct Menu *menu;
+-//#if 1
+-//	delete_appwindow();
+-//#endif
++	// struct Menu *menu;
++	// #if 1
++	// delete_appwindow();
++	// #endif
+ 
+ 	// char msg[256] ;
+ 	// memset (msg, 0, sizeof (msg));
+@@ -776,7 +776,7 @@ void detach_menu(struct Window *window)
+ 
+ void open_menu(void)
+ {
+-	//struct Menu *menu;
++	// struct Menu *menu;
+ 
+ 	if (!MENUCLASS_SUPPORT)
+ 	{
+@@ -785,7 +785,7 @@ void open_menu(void)
+ 		else
+ 			amiga_menu[ play_start_id + ID_loop ].nm_Flags = MENUTOGGLE|CHECKIT;
+ 
+-/*
++	/*
+         if (vi)
+         {
+             if (isStarted == FALSE)
+@@ -795,14 +795,14 @@ void open_menu(void)
+             else
+             {
+             	int i = 0;
+-*/
++	*/
+ 
+-			if (is_ontop==1)
+-				amiga_menu[ video_start_id + ID_ontop ].nm_Flags = MENUTOGGLE|CHECKIT|CHECKED;
+-			       else
+-				amiga_menu[ video_start_id + ID_ontop ].nm_Flags = MENUTOGGLE|CHECKIT;
++		if (is_ontop==1)
++			amiga_menu[ video_start_id + ID_ontop ].nm_Flags = MENUTOGGLE|CHECKIT|CHECKED;
++		       else
++			amiga_menu[ video_start_id + ID_ontop ].nm_Flags = MENUTOGGLE|CHECKIT;
+ 
+-/*
++	/*
+ 		for (i=24;i<35;i++)
+ 			nm[i].nm_Flags = MENUTOGGLE|CHECKIT;
+ 
+@@ -844,7 +844,7 @@ void open_menu(void)
+ 		}
+ 
+ 	}
+-*/
++	*/
+ 
+ 		menu = CreateMenusA(amiga_menu,NULL);
+ 	}
+@@ -853,7 +853,7 @@ void open_menu(void)
+ 		// SetAttrs(window, WA_NewLookMenus,FALSE , TAG_END);
+ 		makeMenuClass() ;
+ 		// SetAttrs(window, WA_MenuStrip,amiga_menuClass , TAG_END);
+-		findMenuClassObj() ;	// populate Menu class item Objj
++		findMenuClassObj() ;	// Populate Menu class item Objj
+ 	}
+ }
+ 
+@@ -862,8 +862,8 @@ void spawn_died(int32 ret,int32 x)
+ 	// if (!INFOWINDOWCLASS_SUPPORT)
+ 	// {
+ 		spawn_count--;
+-//DBUG("spawn_count = %ld\n",spawn_count );
+-	//}
++	// DBUG("Spawn_count = %ld\n",spawn_count );
++	// }
+ }
+ 
+ struct Process *spawn( void *fn, char *name )
+@@ -879,7 +879,7 @@ struct Process *spawn( void *fn, char *n
+ 			TAG_DONE);
+ 
+ 	if (ret) spawn_count ++;
+-//DBUG("spawn_count = %ld\n",spawn_count );
++	// DBUG("Spawn_count = %ld\n",spawn_count );
+ 
+ 	return ret;
+ }
+@@ -938,7 +938,7 @@ void PlayFile_proc(STRPTR args, int32 le
+ 		__tmp_file_name = NULL;
+ 	}
+ 
+-	//return RETURN_OK;
++	// return RETURN_OK;
+ }
+ 
+ 
+@@ -1086,14 +1086,14 @@ void menu_mplayer(ULONG menucode)
+ 		case ID_open_network:
+ 			cmd_open_network();
+ 			break;
+-		case ID_iconify:
+-			Iconify(Menu_Window);
+-			break;
+ 		case ID_about:
+ 			ShowAbout();
+ 			break;
++		case ID_iconify:
++			Iconify(Menu_Window);
++			break;
+ 		case ID_quit:
+-//DBUG("spawn_count = %ld\n",spawn_count);
++			// DBUG("Spawn_count = %ld\n",spawn_count);
+ 			if(spawn_count == 0) put_command0(MP_CMD_QUIT);
+ 			break;
+ 	}
+@@ -1133,7 +1133,7 @@ void menu_video(ULONG menucode)
+ 			put_command0(MP_CMD_VO_ONTOP);
+ 			break;
+ case ID_opensubtitles:
+-//DBUG("Open subtitles ASL\n",NULL);
++	// DBUG("Open subtitles ASL\n",NULL);
+ 	break;
+ 		case ID_subtitles:
+ 			put_command0(MP_CMD_SUB_SELECT);
+@@ -1161,49 +1161,50 @@ case ID_opensubtitles:
+ 		case 10:
+ 			switch (SUBNUM(menucode))
+ 			{
+-				case 0:
+-					AspectRatio = AR_ORIGINAL;
+-					p96pip_ChangeWindowSize(AR_ORIGINAL);
+-					break;
+-				case 2:
+-					AspectRatio = AR_16_10;
+-					p96pip_ChangeWindowSize(AR_16_10);
+-				case 3:
+-					AspectRatio = AR_16_9;
+-					p96pip_ChangeWindowSize(AR_16_9);
+-					break;
+-				case 4:
+-					AspectRatio = AR_185_1;
+-					p96pip_ChangeWindowSize(AR_185_1);
+-					break;
+-				case 5:
+-					AspectRatio = AR_221_1;
+-					p96pip_ChangeWindowSize(AR_221_1);
+-					break;
+-				case 6:
+-					AspectRatio = AR_235_1;
+-					p96pip_ChangeWindowSize(AR_235_1);
+-					break;
+-				case 7:
+-					AspectRatio = AR_239_1;
+-					p96pip_ChangeWindowSize(AR_239_1);
+-					break;
+-				case 8:
+-					AspectRatio = AR_5_3;
+-					p96pip_ChangeWindowSize(AR_5_3);
+-					break;
+-				case 9:
+-					AspectRatio = AR_4_3;
+-					p96pip_ChangeWindowSize(AR_4_3);
+-					break;
+-				case 10:
+-					AspectRatio = AR_5_4;
+-					p96pip_ChangeWindowSize(AR_5_4);
+-					break;
+-				case 11:
+-					AspectRatio = AR_1_1;
+-					p96pip_ChangeWindowSize(AR_1_1);
+-					break;
++
++		case 0:
++			AspectRatio = AR_ORIGINAL;
++			p96pip_ChangeWindowSize(AR_ORIGINAL);
++			break;
++		case 2:
++			AspectRatio = AR_16_10;
++			p96pip_ChangeWindowSize(AR_16_10);
++		case 3:
++			AspectRatio = AR_16_9;
++			p96pip_ChangeWindowSize(AR_16_9);
++			break;
++		case 4:
++			AspectRatio = AR_185_1;
++			p96pip_ChangeWindowSize(AR_185_1);
++			break;
++		case 5:
++			AspectRatio = AR_221_1;
++			p96pip_ChangeWindowSize(AR_221_1);
++			break;
++		case 6:
++			AspectRatio = AR_235_1;
++			p96pip_ChangeWindowSize(AR_235_1);
++			break;
++		case 7:
++			AspectRatio = AR_239_1;
++			p96pip_ChangeWindowSize(AR_239_1);
++			break;
++		case 8:
++			AspectRatio = AR_5_3;
++			p96pip_ChangeWindowSize(AR_5_3);
++			break;
++			case 9:
++			AspectRatio = AR_4_3;
++			p96pip_ChangeWindowSize(AR_4_3);
++			break;
++		case 10:
++			AspectRatio = AR_5_4;
++			p96pip_ChangeWindowSize(AR_5_4);
++			break;
++		case 11:
++			AspectRatio = AR_1_1;
++			p96pip_ChangeWindowSize(AR_1_1);
++			break;
+ 			}
+ */
+ 	}
+@@ -1215,7 +1216,7 @@ void menu_audio(ULONG menucode)
+ 	switch (ITEMNUM(menucode))
+ 	{
+ 		case ID_mute:
+-			mp_input_queue_cmd(mp_input_parse_cmd("mute"));
++			mp_input_queue_cmd(mp_input_parse_cmd("Mute"));
+ 			is_mute = !is_mute ;
+ 			break;
+ 		case ID_volume_up:
+@@ -1255,16 +1256,16 @@ void processMenusClass(uint32 MenuClass_
+ 			cmd_open_network();
+ 			break;
+ 
+-		case MID_MENU_ICONIFY_MENUCLASS:
+-			Iconify(Menu_Window);
+-			break;
+-
+ 		case MID_MENU_ABOUT_MENUCLASS:
+ 			ShowAbout();
+ 			break;
+ 
++		case MID_MENU_ICONIFY_MENUCLASS:
++			Iconify(Menu_Window);
++			break;
++
+ 		case MID_MENU_QUIT_MENUCLASS:
+-//DBUG("spawn_count = %ld\n",spawn_count);
++			// DBUG("Spawn_count = %ld\n",spawn_count);
+ 			if(spawn_count == 0) put_command0(MP_CMD_QUIT);
+ 			break;
+ 
+@@ -1292,9 +1293,9 @@ void processMenusClass(uint32 MenuClass_
+ 			put_command0(MP_CMD_VO_ONTOP);
+ 			break;
+ 
+-case MID_MENU_OPENSUBTITLES_MENUCLASS:
+-//DBUG("MID_MENU_OPENSUBTITLES_MENUCLASS:\n",NULL);
+-	break;
++		case MID_MENU_OPENSUBTITLES_MENUCLASS:
++			// DBUG("MID_MENU_OPENSUBTITLES_MENUCLASS:\n",NULL);
++			break;
+ 
+ 		case MID_MENU_CYCLESUBTITLES_MENUCLASS:
+ 			put_command0(MP_CMD_SUB_SELECT);
+@@ -1326,9 +1327,9 @@ case MID_MENU_OPENSUBTITLES_MENUCLASS:
+ void menu_events( struct IntuiMessage *IntuiMsg)
+ {
+ 	ULONG menucode = IntuiMsg->Code;
+-// add
+-	//struct Menu *menu;
+-//
++	// add
++	// struct Menu *menu;
++	//
+ 	// char msg[256] ;
+ 	// sprintf(msg,"menu_events %ld",menucode) ;
+ 	// PrintMsg(msg,REQTYPE_INFO,REQIMAGE_INFO) ;
+@@ -1374,7 +1375,7 @@ void open_AboutInfowindow(struct pmpMess
+ 	Object *win_About;
+ 	struct Hook BackFillHook = { {NULL, NULL}, (HOOKFUNC)BackFillFunc, NULL, NULL };
+ 	char license_path[512] ;
+-	//char title[128] ;
++	// char title[128] ;
+ 	// Banner loading
+ 	struct Screen *screen ;
+ 	struct RastPort rp;
+@@ -1391,15 +1392,15 @@ void open_AboutInfowindow(struct pmpMess
+ 		{ NULL, NULL, TABDATA_END }
+ 	};
+ 
+-	choosing(TRUE);		// Not selecting file, but need to know if a window is open.
++	choosing(TRUE);	// Not selecting file, but need to know if a window is open.
+ 
+ 	strcpy(license_path,"PROGDIR:Docs/LICENSE");
+-	//strcpy(title, CS(MSG_Requester_Title_About));
++	// strcpy(title, CS(MSG_Requester_Title_About));
+ 
+ 	screen = FrontMostScr();
+-//	if ( (screen=LockPubScreen(NULL)) )
+-//	{
+-//		UnlockPubScreen(NULL,screen);
++	//	if ( (screen=LockPubScreen(NULL)) )
++	//	{
++	//		UnlockPubScreen(NULL,screen);
+ 
+ 		InitRastPort( &rp );
+ 
+@@ -1467,11 +1468,11 @@ void open_AboutInfowindow(struct pmpMess
+ 		                      BITMAP_Width,   BANNER_WIDTH,
+ 		                      BITMAP_Height,  BANNER_HEIGHT,
+ 		                     TAG_DONE);
+-////DBUG("AboutLogo = 0x%08lx\n",AboutLogo);
++		//// DBUG("AboutLogo = 0x%08lx\n",AboutLogo);
+ 		if(!AboutLogo) BANNER_DISPLAY = FALSE;
+ 
+ 		if ( (win_About = NewObject(InfoWindowClass, NULL,
+-		                   WA_Title,       CS(MSG_Requester_Title_About),//title,
++		                   WA_Title,       CS(MSG_Requester_Title_About), // Title,
+ 		                   WA_ScreenTitle, AMIGA_VERSION,
+ 		                   WA_PubScreen,   screen,
+ 		                   WA_CloseGadget, TRUE ,
+@@ -1493,7 +1494,7 @@ void open_AboutInfowindow(struct pmpMess
+ //	} // End LockPubScreen
+ 
+ bailout:
+-////DBUG("BAILOUT",REQTYPE_INFO,REQIMAGE_INFO);
++//// DBUG("BAILOUT",REQTYPE_INFO,REQIMAGE_INFO);
+ 	if ( dtobj )
+ 		DisposeDTObject( dtobj );
+ 
+@@ -1528,7 +1529,7 @@ void ShowAbout(void)
+ 
+ 	if(!pmp) return;
+ 
+-	//memset (message_about, 0, sizeof (message_about));
++	// memset (message_about, 0, sizeof (message_about));
+ 
+ //	sprintf(message_about,"MPlayer \n%s %s%s %s %s %s",
+ //				CS(MSG_About_Built),VERSION,CS(MSG_About_AmigaVersion),AMIGA_VERSION,
+@@ -1549,14 +1550,14 @@ void ShowAbout(void)
+ 				"\nMichael Trebilcock",
+ 				"\nAOS4 fans from Mars");
+ */
+-////DBUG("ARexx port: %s\n",ARexxPortName);
+-	sprintf(message_about, "\n\033h%s\n %s\n" \
+-"\n\033h%s\n %s\n" \
+-"\n\033h%s\n %s\n" \
+-"\n\033h%s\n %ld.%ld\n" \
+-"\n\033h%s\n %s\n" \
+-"\n\033[s:10]\n\033c%s %s\n\033chttp://www.mplayerhq.hu\n\033[s:10]" \
+-"\n\n\033h%s%s",
++//// DBUG("ARexx port: %s\n",ARexxPortName);
++				sprintf(message_about, "\n\033h%s\n %s\n" \
++				"\n\033h%s\n %s\n" \
++				"\n\033h%s\n %s\n" \
++				"\n\033h%s\n %ld.%ld\n" \
++				"\n\033h%s\n %s\n" \
++				"\n\033[s:10]\n\033c%s %s\n\033chttp://www.mplayerhq.hu\n\033[s:10]" \
++				"\n\n\033h%s%s",
+ 				CS(MSG_About_Built),VERSION, \
+ 				CS(MSG_About_AmigaVersion),AMIGA_VERSION, \
+ 				CS(MSG_About_FFmpegVersion),FFMPEG_VERSION, \
+@@ -1606,13 +1607,13 @@ void ShowAbout(void)
+ 	if (TaskMessage) spawn_count++;
+ 	else
+ 	{
+-		//if (INFOWINDOWCLASS_SUPPORT)
++		// if (INFOWINDOWCLASS_SUPPORT)
+ 		if(InfoWindowBase) open_AboutInfowindow(pmp) ;
+ 		else PrintMsg(pmp->about,REQTYPE_INFO,REQIMAGE_INFO);
+ 
+ 		FreeVec(pmp);
+ 	}
+-//DBUG("spawn_count=%ld\n",spawn_count);
++// DBUG("spawn_count=%ld\n",spawn_count);
+ }
+ 
+ static void OpenNetwork(STRPTR args UNUSED, int32 length UNUSED, struct ExecBase *execbase UNUSED)
+@@ -1654,14 +1655,14 @@ static void OpenDVD(STRPTR args UNUSED,
+ 	ULONG result;
+ 
+ 	dvdobj = (Object *) NewObject(REQUESTER_GetClass(),NULL,
+-				REQ_Type,	  REQTYPE_STRING,
+-				REQ_TitleText,	  CS(MSG_Requester_DVD_Title),
+-				REQ_BodyText,	  CS(MSG_Requester_DVD_Body),
+-				REQ_GadgetText,	  CS(MSG_Requester_DVD_Gadget),
+-				REQS_Invisible,	  FALSE,
+-				REQS_Buffer,	  buffer,
+-				REQS_ShowDefault, TRUE,
+-				REQS_MaxChars,	  255,
++				REQ_Type,		REQTYPE_STRING,
++				REQ_TitleText,	CS(MSG_Requester_DVD_Title),
++				REQ_BodyText,	CS(MSG_Requester_DVD_Body),
++				REQ_GadgetText,	CS(MSG_Requester_DVD_Gadget),
++				REQS_Invisible,	FALSE,
++				REQS_Buffer,	buffer,
++				REQS_ShowDefault,	TRUE,
++				REQS_MaxChars,	255,
+ 				TAG_DONE);
+ 	if ( dvdobj )
+ 	{
+@@ -1732,14 +1733,14 @@ static void OpenVCD(STRPTR args UNUSED,
+ 	ULONG result;
+ 
+ 	vcdobj = (Object *) NewObject(REQUESTER_GetClass(),NULL,
+-				REQ_Type,	  REQTYPE_STRING,
+-				REQ_TitleText,	  CS(MSG_Requester_VCD_Title),
+-				REQ_BodyText,	  CS(MSG_Requester_VCD_Body),
+-				REQ_GadgetText,	  CS(MSG_Requester_VCD_Gadget),
+-				REQS_Invisible,	  FALSE,
+-				REQS_Buffer,	  buffer,
+-				REQS_ShowDefault, TRUE,
+-				REQS_MaxChars,	  255,
++				REQ_Type,		REQTYPE_STRING,
++				REQ_TitleText,	CS(MSG_Requester_VCD_Title),
++				REQ_BodyText,	CS(MSG_Requester_VCD_Body),
++				REQ_GadgetText,	CS(MSG_Requester_VCD_Gadget),
++				REQS_Invisible,	FALSE,
++				REQS_Buffer,	buffer,
++				REQS_ShowDefault,	TRUE,
++				REQS_MaxChars,	255,
+ 				TAG_DONE);
+ 	if ( vcdobj )
+ 	{
+@@ -1845,7 +1846,7 @@ static int32 PrintMsgProc(STRPTR args UN
+ 
+ 	if(pmp)
+ 	{
+-//			if (INFOWINDOWCLASS_SUPPORT)
++		// if (INFOWINDOWCLASS_SUPPORT)
+ 		if(InfoWindowBase) open_AboutInfowindow(pmp) ;
+ 		else PrintMsg(pmp->about, pmp->type, pmp->image);
+ 
+@@ -2037,6 +2038,7 @@ static void BackFillFunc(struct Hook *ho
+ 	RectFillColor(&newrp, msg->Bounds.MinX, msg->Bounds.MinY,
+ 	              msg->Bounds.MaxX, msg->Bounds.MaxY, 0xff006E99); // #006E99 color
+ }
++
+ /* Backfill function for banner borders */
+ /****************************************/
+ 
+@@ -2074,11 +2076,11 @@ struct Screen *FrontMostScr(void)
+ 
+     if(!public_screen_address)
+     {
+-//DBUG("No public screen, using WB screen\n",NULL);
+-        public_screen_address = LockPubScreen(NULL);
+-        UnlockPubScreen(NULL, public_screen_address);
++    // DBUG("No public screen, using WB screen\n",NULL);
++       public_screen_address = LockPubScreen(NULL);
++       UnlockPubScreen(NULL, public_screen_address);
+     }
+-////DBUG("0x%08lx\n", (int)public_screen_address);
+-    return(public_screen_address);
++    // DBUG("0x%08lx\n", (int)public_screen_address);
++	 return(public_screen_address);
+ }
+ 
+diff --color -rupN old/libvo/vo_comp_yuv2.c new/libvo/vo_comp_yuv2.c
+--- old/libvo/vo_comp_yuv2.c	2023-08-01 08:28:43.000000000 +0200
++++ new/libvo/vo_comp_yuv2.c	2023-08-01 19:38:00.000000000 +0200
+@@ -613,7 +613,7 @@ static ULONG Open_Window()
+ 
+ 		if (force_monitor_aspect)
+ 		{
+-			printf("**\nYour are forcing aspect to %0.2f:1\n",force_monitor_aspect );
++			printf("**\nYou are forcing aspect to %0.2f:1\n",force_monitor_aspect );
+ 			best_screen_aspect_ratio = force_monitor_aspect;
+ 			printf("WARNING: Workbench screen resolution suggests %0.2f:1\n", (float) the_screen -> Width / (float) the_screen -> Height);
+ 
+@@ -1326,6 +1326,7 @@ static void flip_page(void)
+ 		IExec->Wait(SIGF_CHILD);	// Just because some other process need to wake up first
+ 	}
+ }
++
+ /***************************** DRAW_FRAME ***************************/
+ static int draw_frame(uint8_t *src[])
+ {
+@@ -1660,7 +1661,7 @@ static void voprocess()
+ 		
+ 			if (ModeID == INVALID_ID)				// So if vo failed to open on monitor
+ 			{
+-				is_fullscreen &= ~VOFLAG_FULLSCREEN;	// we do not have fullscreen
++				is_fullscreen &= ~VOFLAG_FULLSCREEN;	// We do not have fullscreen
+ 				set_gfx_rendering_option();
+ 
+ 				if ( ( the_screen = IIntuition->LockPubScreen ( gfx_screenname) ) )
+@@ -1809,7 +1810,7 @@ static void StopVOProcess()
+ 	{
+ 		IExec->Signal( &vo_process->pr_Task, SIGBREAKF_CTRL_C );
+ 		IExec->Wait(SIGF_CHILD);	// Wait for process to signal to continue
+-		IDOS->Delay(1);			// I just wait and hope it has quit.
++		IDOS->Delay(1);			// I just wait and hope it has quit
+ 		vo_process = NULL;
+ 	}
+ }
+diff --color -rupN old/locale/italian/MPlayer.ct new/locale/italian/MPlayer.ct
+--- old/locale/italian/MPlayer.ct	2023-08-01 08:28:44.000000000 +0200
++++ new/locale/italian/MPlayer.ct	2023-08-01 18:46:00.000000000 +0200
+@@ -1,4 +1,4 @@
+-## version $VER: MPlayer.catalog 1.5.0 (21.01.2018)
++## version $VER: MPlayer.catalog 1.5.0 (31.07.2023)
+ ## codeset 0
+ ## language italiano
+ ## chunk AUTH Translated by Samir Hawamdeh (http://www.betatesting.it/backforthefuture)
+@@ -207,7 +207,14 @@ MSG_Requester_OpenFile_Title
+ Seleziona un video
+ ; Choose a video
+ ;
++MSG_Requester_OpenFile_SubTitle
++Seleziona sottotitoli
++; Select a subtitle
++;
+ MSG_Requester_Title_About
+ Informazioni su MPlayer
+ ; About MPlayer
++;
++MSG_About_ARexxPort
++;
+ ;
+\ Brak znaku nowej linii na koÅ„cu pliku
+diff --color -rupN old/locale/MPlayer.ct new/locale/MPlayer.ct
+--- old/locale/MPlayer.ct	2023-08-01 08:28:44.000000000 +0200
++++ new/locale/MPlayer.ct	2023-08-01 18:47:00.000000000 +0200
+@@ -212,4 +212,7 @@ MSG_Requester_OpenFile_SubTitle
+ MSG_Requester_Title_About
+ 
+ ; About MPlayer
++;
++MSG_About_ARexxPort
++;
+ ;
+\ Brak znaku nowej linii na koÅ„cu pliku
+diff --color -rupN old/README_AOS4 new/README_AOS4
+--- old/README_AOS4	2023-08-01 08:28:44.000000000 +0200
++++ new/README_AOS4	2023-08-01 19:56:00.000000000 +0200
+@@ -28,7 +28,7 @@ The default settings in the config file
+ Credits:
+ ========
+ 
+-Thanks to everyone who has contributed to the development of MPlayer, Jörg Strohmayer, Andrea Palmatè, Kjetil Hvalstrand, Daniel Westerberg, Roman Kargin, Fabien Coeurjoly,
++Thanks to everyone who has contributed to the development of MPlayer, Jörg Strohmayer, Andrea Palmatè, Kjetil Hvalstrand, Daniel Westerberg, Roman Kargin, Fabien Coeurjoly, Javier de Las Rivas,
+ DET Nicolas, Diego Biurrum, Felix Bunemann, Ryan C. Fordon and many more.
+ 
+ Thanks to pjs, sundown, K-L, AmigaSociety, mbrantley, kas1e, samo79 and many others for testing.
+@@ -38,12 +38,11 @@ Know problems:
+ ==============
+ 
+ * Support for va.library (VAAPI) WIP WIP WIP
+-* About window of the newer InfoWindow class have problem when opened while MPlayer is playing a video in fullscreen
++* Add "Load Subtitles" and "Properties" options in video menu
++* About window have problem when opened while MPlayer is playing a video in fullscreen
+ * Stay paused if using MPlayer-GUI and paused outside of it
+ * vo_comp.c: Videos are not correctly centered on screen when opened in another seperated screen
+-* vo_comp.c: Debug still active when starting a second video: ("monitor ratio: 16, 16" message)
+ * vo_cgx_wpa.c: Video scaling in driver need to be reimplemented
+-* vo_pip.c: Crashed on RadeonHD cards instead of quit trasparently
+ * vo_pip.c: Fullscreen support need to be reimplemented
+ * vo_pip.c: Menu need to be reimplemented
+ * vo_pip.c: Drag and Drop need to be reimplemented
+@@ -53,11 +52,12 @@ Know problems:
+ Changelog:
+ ==========
+ 
+-MPlayer 1.5 (MPlayer 1.5) - MickJT, samo79 and Marek
++MPlayer 1.5 (MPlayer 1.5) - MickJT, Marek, Javier and samo79
+ 	* Based on MPlayer 1.5 SVN-r38423 (FFmpeg 6.0)
+ 	  From now on the Amiga version will follow the official release numbering scheme
+ 	* Compiled with GCC 10.3
+ 	* Currently compiling with optimisation -O1
++	* Cleaned code
+ 	* Made screen/window title standard in all supported video drivers
+ 	* Added video path in all supported video drivers
+ 	  It show again the path of the video into the MPlayer's window as it was in the Andrea Palmatè version
+@@ -65,8 +65,8 @@ MPlayer 1.5 (MPlayer 1.5) - MickJT, samo
+ 	* Added more video formats in ASL requester and reorder them alphabetically
+ 	* Added gadgets for iconification and fullscreen
+ 	* Added AmiUpdate support again
+-	* Fixed AppWindow support, now drag and drop of files over AmiDock works (thx Javierdlr!)
+-	* Fixed crash on AltiVec version when started on non AltiVec machines
++	* Fixed AppWindow support, now drag and drop of files over AmiDock works (thx Javier!)
++	* Fixed crash on AltiVec version when launched on non AltiVec CPUs
+ 	* Fixed crash on quit in the GL video drivers
+ 	* Improved RegisterApplication support
+ 	* Separation of video outputs for SM502 G4 vo_sdl_sm502.c
+@@ -82,28 +82,28 @@ MPlayer 1.0.2 (MPlayer 1.4) - MickJT & G
+ 	  - Added MenuClass support if available (AmigaOS 4.1 FE required)
+ 	  - Added AISS images to MenuClass if available (TBIMAGES: assign required)
+ 	  - Use of MenuImageSize environment variable to specify AISS picture size (SETENV SAVE MenuImageSize 16)
+-	  - Use of AEon InfoWindow class for About window if available
+-	  - Use of environment variable Disable_Banner_Images to disable About window banner (SETENV SAVE Disable_Banner_Images 1)
++	  - Use of AEon InfoWindow class for the about window, if available
++	  - Use of environment variable Disable_Banner_Images to disable about window banner (SETENV SAVE Disable_Banner_Images 1)
+ 	  - Added catalog support
+ 	  - Added Italian catalog (samo79)
+ 	  - Reenable AppWindow support to handle drop of files over the icon (*bugged)
+-	  - Fixed new About window crash and avoid multiple openings
++	  - Fixed new about window crash and avoid multiple openings
+ 	  - When a window is still open, trying to open another window or to quit MPlayer blinks the screen
+ 	  - PrintMsg timeout is now 15 seconds instead of 10 seconds
+-	  - Added GCC version in InfoWindow About window
++	  - Added GCC version in InfoWindow about window
+ 	  - Added __GNUC__ and #if HAVE_ALTIVEC in version.sh
+ 	  - MSG_Requester_Title_About for InfoWindow about window
+ 	  - Menu shortcuts modifications
+ 
+ MPlayer 1.0.1 (MPlayer 1.3.0) - MickJT (30.12.2017) - Released (3.01.2018)
+ 	* Disabled experimental AHI code that was freezing some machines
+-	* Suppressed an error preventing some .avis playing with vo_comp_yuv/yuv2
++	* Suppressed an error preventing some .avi files playing with vo_comp_yuv/yuv2
+ 	* Fixed some path issues preventing OSD menus from working
+-	* P96_PIP: Fixed issue causing some videos to play distorted
++	* P96_PIP: Fixed an issue causing some videos to play distorted
+ 	* P96_PIP: Remember window position when returning from fullscreen
+ 	* Added "Stay on Top" functionality for all video outputs
+ 	* Change keyboard shortcut for "Load File". Conflicted with "Loop"
+-	* Cosmetic tweaks to the About window
++	* Cosmetic tweaks to the about window
+ 	* Disabled some debug output that was printing to shell
+ 
+ MPlayer 1.0 (MPlayer 1.3.0) - MickJT (24.12.2017)
