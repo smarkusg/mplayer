@@ -1,145 +1,145 @@
-## version $VER: MPlayer.catalog 1.5.0 (21.11.2023)
-## codeset 4
-## language german
+## version $VER: MPlayer.catalog 1.5.0 (30.08.2023)
+## codeset 5
+## language polish
 ;
-; $VER: MPlayer.catalog 1.5.0 (11.09.2023)
+; $VER: MPlayer.catalog 1.5.0 (29.08.2023)
 ; MPlayer.ct
-; flexcat MPlayer.cd MPlayer.ct catalog=MPlayer.catalog
+; flexcat MPlayer.cd MPlayer_PL.ct catalog=MPlayer.catalog
 ;
 MSG_Menu_Project
 Projekt
 ; Project
 ;
 MSG_Menu_Project_OpenFile
-Datei öffnen...
+Otwórz plik...
 ; Open file...
 ;
 MSG_Menu_Project_OpenDVD
-Öffnen DVD...
+Otwórz DVD...
 ; Open DVD...
 ;
 MSG_Menu_Project_OpenDVDNAV
-Öffnen DVDNAV...
+Otwórz DVDNAV...
 ; Open DVDNAV...
 ;
 MSG_Menu_Project_OpenVCD
-Öffnen VCD...
+Otwórz VCD...
 ; Open VCD...
 ;
 MSG_Menu_Project_OpenNetwork
-Öffnen stream...
+Otwórz strumieñ...
 ; Open stream...
 ;
 MSG_Menu_Project_Iconify
-Ikonisieren
+Ikonizacja
 ; Iconify
 ;
 MSG_Menu_Project_About
-Über...
+O programie...
 ; About...
 ;
 MSG_Menu_Project_Quit
-Beenden
+Wyj¶cie
 ; Quit
 ;
 MSG_Menu_Play
-Play
+Odtwórz
 ; Play
 ;
 MSG_Menu_Play_PlayPause
-Play/Pause
+Odtwarzaj/Pauza
 ; Play/Pause
 ;
 MSG_Menu_Play_Stop
-Stop
+Zatrzymaj
 ; Stop
 ;
 MSG_Menu_Play_Record
-Stream aufnehmen
+Nagraj strumieñ
 ; Record stream
 ;
 MSG_Menu_Play_Loop
-Schleife
+Zapêtlij
 ; Loop
 ;
 MSG_Menu_Play_PrevFile
-Vorherige Datei
+Poprzedni plik
 ; Prev file
 ;
 MSG_Menu_Play_NextFile
-Nächste Datei
+Nastêpny plik
 ; Next file
 ;
 MSG_Menu_Play_Properties
-Eigenschaften...
+W³a¶ciwo¶ci...
 ; Properties...
 ;
 MSG_Menu_OptionsVideo
-Video Options
+Opcje Wideo
 ; Video options
 ;
 MSG_Menu_OptionsVideo_StayOnTop
-Stay on top
+Zostañ na wierzchu
 ; Stay on top
 ;
 MSG_Menu_OptionsVideo_Fullscreen
-Vollbild umschalten
+Prze³±cz na pe³ny ekran
 ; Toggle fullscreen
 ;
 MSG_Menu_OptionsVideo_Screenshot
-Bildschirmfoto
+Zrzut ekranu
 ; Screenshot
 ;
 MSG_Menu_OptionsVideo_OpenSubtitles
-Untertitel öffnen...
+Otwórz napisy...
 ; Open subtitles...
 ;
 MSG_Menu_OptionsVideo_CycleSubtitles
-Untertitel für den Zyklus
+Zapêtlijj napisy
 ; Cycle subtitles
 ;
 MSG_Menu_OptionsVideo_UnloadSubtitles
-Untertitel entladen
+Za³aduj napisy
 ; Unload subtitles
 ;
-MSG_Menu_OptionsVideo_SubtitlesSize
-Größe der Untertitel
-; Subtitles size
+MSG_Menu_OptionsVideo_SubtitlesSize 
+Wielko¶æ napisow
+;Subtitles size
 ;
-MSG_Menu_OptionsVideo_SubtitlesBig
-Größer
-; Bigger
+MSG_Menu_OptionsVideo_SubtitlesBig 
+Wiêkszy
+;Bigger
 ;
-MSG_Menu_OptionsVideo_SubtitlesSmall
-Kleiner
-; Smaller
+MSG_Menu_OptionsVideo_SubtitlesSmall 
+Mniejszy
+;Smaller
 ;
 MSG_Menu_OptionsVideo_AspectRatio
-Bildseitenverhältnis
+Wspó³czynnik Proporcji
 ; Aspect Ratio
 ;
 MSG_Menu_OptionsVideo_AR_Original
-Original
+Oryginalny
 ; Original
 ;
 MSG_Menu_OptionsAudio
-Audio Options
+Opcje Audio
 ; Audio options
 ;
 MSG_Menu_OptionsAudio_Mute
-Mute
+Wycisz
 ; Mute
 ;
 MSG_Menu_OptionsAudio_VolumeUp
-Lauter
+Zwiêksz G³o¶no¶æ
 ; Volume Up
 ;
 MSG_Menu_OptionsAudio_VolumeDown
-Leiser
+Zmiejsz G³o¶no¶æ
 ; Volume Down
 ;
 MSG_Menu_Settings
-Einstellungen
+Ustawienia
 ; Settings
 ;
 MSG_Menu_Settings_MPlayerGUI
@@ -147,157 +147,158 @@ MPlayer-GUI...
 ; MPlayer-GUI...
 ;
 MSG_About_About
-Über
+O Programie
 ; About
 ;
 MSG_About_Licence
-Lizenz
+Licencja
 ; Licence
 ;
 MSG_About_Built
-Built against MPlayer version:
+Zbudowany o wersjê Mplayer:
 ; Built against MPlayer version:
 ;
 MSG_About_AmigaVersion
-Amiga version:
+Wersja dla Amigii:
 ; Amiga version:
 ;
 MSG_About_FFmpegVersion
-FFmpeg version:
+Wersja FFmpeg:
 ; FFmpeg version:
 ;
 MSG_About_Copyright
-Copyright (C)
+Prawa Autorskie (C)
 ; Copyright (C)
 ;
 MSG_About_MPlayer_Team
-MPlayer Team
+Zespó³ Mplayer
 ; MPlayer Team
 ;
 MSG_About_AmigaOS4Version
-AmigaOS4 release:
+Wydanie dla AmigaOS:
 ; AmigaOS4 release:
 ;
 MSG_About_GCCVersion
-GCC version:
+Wersja GCC:
 ; GCC version:
 ;
 MSG_About_ARexxPort
-ARexx Port:
+Porta ARexx:
 ; ARexx Port:
 ;
 MSG_About_Translation
-Translation:
+T³umaczenie:
 ; Translation:
 ;
 ; translator: change to your name/nick/...
 ;
 MSG_About_Translator
-Rene 'Maijestro' Engel
+(zbudowany za pomoc±)
 ; (using built-in strings)
 ;
 MSG_About_VideoDriver
-Video driver in use:
-; Video driver in use:
+Aktualnie u¿ywasz sterownik Wideo:
+;Video driver in use:
+;
 ;
 MSG_Requester_OK
 _OK
 ; _Ok
 ;
 MSG_Requester_Title
-MPlayer für AmigaOs4.1
+Mplayer dla AmigaOS
 ; MPlayer for AmigaOS4
 ;
 MSG_Requester_Network_Title
-Einen Stream öffnen
-; Open a stream
+Otwórz strumieñ
+; Open stream
 ;
 MSG_Requester_Network_Body
-URL zum öffnen eingeben
+Wprowadz adres URL do otwarcie:
 ; Enter URL to open:
 ;
 MSG_Requester_Network_Gadget
-_Laden|_Abbrechen
+_Za³aduj|_Zaniechaj
 ; _Load|_Cancel
 ;
 MSG_Requester_DVD_Title
-Laden DVD
+Za³adujj DVD
 ; Load DVD
 ;
 MSG_Requester_DVD_Body
-MSG_Requester_DVD_Body
-; Enter Chapter to Open:
+Wprowadz rozdzia³ do otwarcia:
+; Enter Chapter to open:
 ;
 MSG_Requester_DVD_Gadget
-_Öffnen|_Abbrechen
+_Otwórz|_Zaniechaj
 ; _Open|_Cancel
 ;
 MSG_Requester_DVD_Error
-Geben Sie ein gültiges DVD-Protokoll ein:
+Wprowadz poprawny protokó³ DVD:
 ; Enter valid DVD protocol:
 ;
 MSG_Requester_DVDNAV_Title
-Laden DVDNAV
+Za³aduj DVDNAV
 ; Load DVDNAV
 ;
 MSG_Requester_DVDNAV_Error
-Um DVDNAV zu verwenden, müssen Sie den Cache in der Konfigurationsdatei auskommentieren
+DO poprawnego dzia³ania DVDNAV odznacz opcje cache w pliku konfiguracyjnym
 ; To use DVDNAV, you must comment out cache in the config file
 ;
 MSG_Requester_VCD_Title
-Laden VCD
+Za³adujj VCD
 ; Load VCD
 ;
 MSG_Requester_VCD_Body
-Kapitel zum öffnen eingeben:
-; Enter Chapter to Open:
+Wprowadz rozdzia³ do otwarcia:
+; Enter Chapter to open:
 ;
 MSG_Requester_VCD_Gadget
-_Öffnen|_Abbrechen
+_Otwórz|_Zaniechaj
 ; _Open|_Cancel
 ;
 MSG_Requester_VCD_Error
-Geben Sie ein gültiges VCD-Protokoll ein:
+Wprowadz poprawny protokó³ VCD:
 ; Enter valid VCD protocol:
 ;
 MSG_Requester_OpenFile_Video
-Video auswählen
+Wybierz Wideo
 ; Choose video
 ;
 MSG_Requester_OpenFile_SubTitles
-Untertitel auswählen
+Wybierz napisy
 ; Choose subtitles
 ;
 MSG_Requester_Title_About
-Über MPlayer
+O Programie Mplayer
 ; About MPlayer
 ;
 MSG_Requester_Title_Warning
-MPlayer: WARNUNG!
+MPlayer: UWAGA!
 ; MPlayer: WARNING!
 ;
 MSG_Requester_Title_Error
-MPlayer: Fehler!
+ MPlayer: B£AD!
 ; MPlayer: ERROR!
 ;
 MSG_Warning_AltiVec
-Diese Version ist leider nur für AltiVec-fähige Maschinen geeignet!
+Przepraszam, ta wersja jest tylko dla maszyn\nkompatybilncyh z AltiVec!
 ; Sorry, this version is only for\nAltiVec capable machine!
 ;
 MSG_Warning_Button_OK
-OK
+Ok
 ; Ok
 ;
 MSG_Warning_Button_Cancel
-Abbrechen
+Zaniechaj
 ; Cancel
 ;
 MSG_Properties_Video
-\033bCodec: \033n%s \n\033bBitrate: \033n%d kbps \n\033bResolution: \033n%d x %d \n\033bFrames/sec.: \033n%5.2f \0
+ \033bCodec: \033n%s \n\033bBitrate: \033n%d kbps \n\033bResolution: \033n%d x %d \n\033bFrames/sec.: \033n%5.2f \0
 ; \033bCodec: \033n%s \n\033bBitrate: \033n%d kbps \n\033bResolution: \033n%d x %d \n\033bFrames/sec.: \033n%5.2f \0
 ;
 MSG_Properties_Audio
-\033bCodec: \033n%s \n\033bBitrate: \033n%d kbps \n\033bRate: \033n%d Hz \n\033bChannels: \033n%d \0
+ \033bCodec: \033n%s \n\033bBitrate: \033n%d kbps \n\033bRate: \033n%d Hz \n\033bChannels: \033n%d \0
 ; \033bCodec: \033n%s \n\033bBitrate: \033n%d kbps \n\033bRate: \033n%d Hz \n\033bChannels: \033n%d \0
 ;
 MSG_Properties_Clip
@@ -305,15 +306,15 @@ MSG_Properties_Clip
 ; \033bTitle: \033n%s \n\033bArtist: \033n%s \n\033bAlbum: \033n%s \n\033bYear: \033n%s \n\033bComment: \033n%s \n\033bGenre: \033n%s \0
 ;
 MSG_Properties_Title
-MSG_Eigenschaften_Titel
+Mplayer: Opcje
 ; MPlayer: Properties
 ;
 MSG_Properties_Prop
-\033b VIDEO \033n\n%s\n\n\033b AUDIO \033n\n%s\n\n\033b CLIP \033n\n%s\n
+ \033b VIDEO \033n\n%s\n\n\033b AUDIO \033n\n%s\n\n\033b CLIP \033n\n%s\n
 ; \033b VIDEO \033n\n%s\n\n\033b AUDIO \033n\n%s\n\n\033b CLIP \033n\n%s\n
 ;
 MSG_Properties_IW_Video
-Video
+Wideo
 ; Video
 ;
 MSG_Properties_IW_Audio
@@ -325,22 +326,22 @@ Clip
 ; Clip
 ;
 MSG_Warning_Cant_Iconify
- Kann nicht ikonifizieren!\nVersucht, das Symbol aus dem falschen Pfad zu holen.
+Nie potrafiê przej¶æ do Ikony!\nPróbujê pobraæ iconê ze z³ej lokalizacji.
 ; Can't iconify!\nTrying to get icon from wrong path.
 ;
 MSG_RegisterAppID_Description
-Der Video Spieler
+Odtwarzacz Wideo
 ; The Movie Player
 ;
-MSG_OSD_Added_Files
-Hinzufügen %d Datei(en)
+MSG_OSD_Added_Files 
+Dodano %d plik(i)
 ; Added %d file(s)
 ;
-MSG_Notify_Added_File
-Hinzufügen: '%s'
+MSG_Notify_Added_File 
+Dodano: '%s'
 ; Added: '%s'
 ;
 MSG_MPlayer_ScreenTitle
-MPlayer Bildschirm
+Ekran MPlayer
 ; MPlayer Screen
 ;

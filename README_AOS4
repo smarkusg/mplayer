@@ -3,7 +3,7 @@ description: A powerful multimedia video and audio player
 version: 1.5
 author: Various
 submitter: Samir Hawamdeh
-url: http://www.mplayerhq.hu
+url: https://github.com/smarkusg/mplayer
 category: video/play
 replaces: video/play/mickjt-mplayer.lha
 requirements: AmigaOS 4.1 FE + AmiSSL 5.x + Enhancer Software Core 2 (optional)
@@ -23,7 +23,7 @@ MPlayer can play most standard video formats out of the box and almost all the o
 
 MPlayer currently works best from the command line, but visual feedback for many functions is available from its onscreen status display (OSD), which is also used for displaying subtitles.
 
-MPlayer for AmigaOS4 is currently based on MPlayer 1.5 (w/ FFmpeg 6.1), merging code from LiveForIt-MPlayer, MickJT-MPlayer and the Andrea Palmatè's MPlayer ports, with various additional changes and improvements.
+MPlayer for AmigaOS4 is currently based on MPlayer 1.5 (w/ FFmpeg 6.0), merging code from LiveForIt-MPlayer, MickJT-MPlayer and the Andrea Palmatè's MPlayer ports, with various additional changes and improvements.
 
 The default settings in the config file will degrade the video quality in order to decrease the CPU usage.
 
@@ -58,12 +58,10 @@ Know problems:
 Changelog:
 ==========
 
-MPlayer 1.5 (MPlayer 1.5) - MickJT, Marek, Javier and Samo79 (xx.xx.2023)
-	* Based on MPlayer 1.5 SVN-r38446 (FFmpeg 6.1)
+MPlayer 1.5 (MPlayer 1.5) - MickJT, Marek, Javier and Samo79 (25.12.2023)
+	* Based on MPlayer 1.5 SVN-r38440 (FFmpeg 6.0)
 	  From now on, the AmigaOS4 release will follow the official versioning scheme!
 	* Compiled with GCC 11.3 + LTO (currently compiled with optimisation -O2)
-	* Added support for va.library (VAAPI) providing hardware video decoding!
-	  (Needs RadeonHD v5 / RadeonRX) WIP
 	* Added support for append, now dragging more than one file will append them
 	* Added support for AmiUpdate (yes again!)
 	* Added amiga video output (a new modern P96 video output written by Jörg Strohmayer!)
@@ -75,8 +73,6 @@ MPlayer 1.5 (MPlayer 1.5) - MickJT, Marek, Javier and Samo79 (xx.xx.2023)
 	* Added "Unload subtitles" option menu to unload the subtitles from MPlayer
 	* Added "Subtitles size" option menu to increase/decrease the size of the subtitles
 	* Added "Properties" option menu to show informations about the video playing
-	* Added "Record stream" option menu to record network streams WIP
-	* Added "Aspect Ratio" option menu to manage the Aspect Ratio of the video playing WIP
 	* Added "MPlayer-GUI" option menu to open MPlayer-GUI from MPlayer
 	* Added catalogs for French, German, Polish, Russian and Spanish
 	  (Credits: zzd10h, Maijestro, Marek, Samo79 and Javier)
@@ -244,6 +240,12 @@ MPlayer 6.2 (MPlayer 1.1.1)
 	* DVD: Removed some silly debug text
 
 MPlayer 6.1 (MPlayer 1.1.1)
+	* Comp_yuv, Comp & CGX_WPA now respect monitor nr.
+	  (Sorry don't think this can be done for overlay PIP / p96_pip)
+	* Comp_yuv: Now respects -monitoraspect command line argument
+	* Comp_yuv: Default monitor aspect is now taken for named public screen, 
+	  If your using vo:pubscreen=dopus.1 (in case you have two monitors) 
+	  (else its taken from Workbench screen, like before)
 	* Comp_yuv: Fixed green line on top of window/screen
 	* Fixed problem finding all screen modes
 	* Tried to increase the AHI buffer (hope audio gets better)
@@ -252,12 +254,6 @@ MPlayer 6.1 (MPlayer 1.1.1)
 	* Fixed support for multiple monitors
 	  vo:monitor=0 is for first monitor, 
 	  vo:monitor=1 is for second monitor
-	* Comp_yuv, comp & CGX_WPA now respect monitor nr.
-	  (Sorry don't think this can be done for overlay PIP / p96_pip)
-	* Comp_yuv: Now respects -monitoraspect command line argument
-	* Comp_yuv: Default monitor aspect is now taken for named public screen, 
-	  If your using vo:pubscreen=dopus.1 (in case you have two monitors) 
-	  (else its taken from Workbench screen, like before)
 
 MPlayer 6.0 (MPlayer 1.1.1)
 	* Fixed green line on top of videos
