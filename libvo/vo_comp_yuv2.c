@@ -561,7 +561,8 @@ static int preinit(const char *arg)
 		if (test_bitmap = IGraphics->AllocBitMapTags(200, 200, 32,
 							BMATags_Displayable, TRUE,
 							BMATags_PixelFormat, PIXF_YUV420P,
-							BMATags_Friend,      &the_screen -> BitMap,
+// rem 15.12 LiveForIt					BMATags_Friend,      &the_screen -> BitMap,
+							BMATags_Friend,      the_screen->RastPort.BitMap,
 						TAG_DONE))
 		{
 			have_bitmap_format = TRUE;

@@ -186,9 +186,9 @@ const vo_functions_t* const video_out_drivers[] =
 
 		&video_out_comp_yuv2,
 		&video_out_comp_yuv,
-&video_out_amiga,
 		&video_out_p96_pip,
 		&video_out_comp,
+		&video_out_amiga,
 		&video_out_cgx_wpa,
 		&video_out_pip,
 

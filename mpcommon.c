@@ -620,11 +620,7 @@ int common_init(void)
                        filename_recode(font_name));
         } else {
             // try default:
-            char *desc_path = get_path("font/font.desc");
-            vo_font = read_font_desc(desc_path, font_factor, verbose>1);
-            free(desc_path);
-            if (!vo_font)
-                vo_font = read_font_desc(MPLAYER_DATADIR "/font/font.desc", font_factor, verbose>1);
+              vo_font = read_font_desc(MPLAYER_DATADIR "/Conf/font/font.desc", font_factor, verbose>1);
         }
         if (sub_font_name)
             sub_font = read_font_desc(sub_font_name, font_factor, verbose>1);

@@ -37,7 +37,7 @@ test $svn_revision || svn_revision=UNKNOWN
 version=$svn_revision
 fi
 
-AMIGA_VERSION=1.5-rc1
+AMIGA_VERSION=1.5-rc2
 NEW_REVISION="#define VERSION \"${version}${extra}\""
 OLD_REVISION=$(head -n 1 version.h 2> /dev/null)
 TITLE='#define MP_TITLE "%s '$AMIGA_VERSION' "VERSION" (C) 2000-2023 MPlayer Team\n"'
