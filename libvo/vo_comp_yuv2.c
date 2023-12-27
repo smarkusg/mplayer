@@ -52,11 +52,11 @@
 #if HAVE_ALTIVEC
 #ifdef memcpy
 #undef memcpy
-#endif
+#endif 
 #define memcpy(des,src,size) ALTIVEC_memcpy(des,src,size)
 #else
 #define memcpy(des,src,size) IExec->CopyMemQuick(src,dst,size)
-#endif
+#endif 
 
 // -- benchmark ----
 static struct timezone dontcare = { 0,0 };
@@ -83,7 +83,7 @@ extern int benchmark;
 #if debug_level > 0
 #define dprintf( ... ) IDOS->Printf( __VA_ARGS__ )
 #else
-#define dprintf(...)
+#define dprintf(...) 
 #endif*/
 #include "../amigaos/debug.h"
 
@@ -117,7 +117,7 @@ static int32 vo_format = 0;
 extern struct kIcon iconifyIcon;
 //extern struct kIcon padlockicon;
 extern struct kIcon fullscreenicon;
-// end markus
+// end markus 
 
 // markus
 static char * window_title;
@@ -180,17 +180,17 @@ static vo_info_t info =
 
 LIBVO_EXTERN(comp_yuv2)
 
-struct XYSTW_Vertex3D {
-float x, y;
-float s, t, w;
-};
+struct XYSTW_Vertex3D { 
+float x, y; 
+float s, t, w; 
+}; 
 
 // ----- From vo_XV ------------
 static int buffer_allocated	= 0;
 static int current_buf		= 0;
 static int current_ip_buf	= 0;
 static int num_buffers		= 1;	// Default
-static int visible_buf		= 0;
+static int visible_buf		= 0;    
 // -----------------------------
 
 static struct BitMap *ram_bitmap[NUM_BUFFERS];
@@ -336,7 +336,7 @@ static void no_clip_composite(struct RastPort *rastPort)
 		COMPTAG_OffsetX,    My_Window->LeftEdge,
 		COMPTAG_OffsetY,    My_Window->TopEdge,
 		COMPTAG_DestX,      My_Window->LeftEdge,
-		COMPTAG_DestY,      My_Window->TopEdge,
+		COMPTAG_DestY,      My_Window->TopEdge, 
 		COMPTAG_DestWidth,  My_Window->Width,
 		COMPTAG_DestHeight, My_Window->Height,
 		COMPTAG_Flags,      COMPFLAG_SrcFilter | COMPFLAG_IgnoreDestAlpha | COMPFLAG_HardwareOnly,
@@ -508,13 +508,13 @@ static int preinit(const char *arg)
 
 	if ( ! LIB_IS_AT_LEAST(GraphicsBase, 54,100) )
 	{
-		mp_msg(MSGT_VO, MSGL_INFO, "VO: [comp_yuv2] You need graphics.library version 54.100 or newer\n");
+		mp_msg(MSGT_VO, MSGL_INFO, "VO: [comp_yuv2] You need graphics.library version 54.100 or newer\n");	
 		return -1;
 	}
 
 	if ( ! LIB_IS_AT_LEAST(LayersBase, 54,2) )
 	{
-		mp_msg(MSGT_VO, MSGL_INFO, "VO: [comp_yuv2] You need layers.library version 54.2 or newer\n");
+		mp_msg(MSGT_VO, MSGL_INFO, "VO: [comp_yuv2] You need layers.library version 54.2 or newer\n");	
 		return -1;
 	}
 
@@ -522,7 +522,7 @@ static int preinit(const char *arg)
 
 	if (!gfx_GiveArg(arg))
 	{
-		mp_msg(MSGT_VO, MSGL_INFO, "VO: [comp_yuv2] Config is wrong\n");
+		mp_msg(MSGT_VO, MSGL_INFO, "VO: [comp_yuv2] Config is wrong\n");	
 		return -1;
 	}
 
@@ -561,8 +561,8 @@ static int preinit(const char *arg)
 		if (test_bitmap = IGraphics->AllocBitMapTags(200, 200, 32,
 							BMATags_Displayable, TRUE,
 							BMATags_PixelFormat, PIXF_YUV420P,
-// rem 15.12 LiveForIt					BMATags_Friend,      &the_screen -> BitMap,
-							BMATags_Friend,      the_screen->RastPort.BitMap,
+							//BMATags_Friend,      &the_screen -> BitMap,
+							BMATags_Friend, the_screen->RastPort.BitMap,
 						TAG_DONE))
 		{
 			have_bitmap_format = TRUE;
@@ -603,7 +603,7 @@ static int preinit(const char *arg)
 
 	if (have_compositing == FALSE)
 	{
-		mp_msg(MSGT_VO, MSGL_INFO, "VO: [comp_yuv2] Screen mode does not have compositing\n");
+		mp_msg(MSGT_VO, MSGL_INFO, "VO: [comp_yuv2] Screen mode does not have compositing\n");	
 		return -1;
 	}
 
@@ -634,7 +634,7 @@ static ULONG Open_FullScreen( void );
 static void voprocess( void );
 
 static ULONG Open_Window()
-{
+{		
 	// Window
 	ULONG ModeID = INVALID_ID;
 	BOOL WindowActivate = TRUE;
@@ -717,7 +717,7 @@ static ULONG Open_Window()
 					WA_IDCMP,		IDCMP_COMMON,
 					WA_Flags,		WFLG_REPORTMOUSE,
 					// WA_SkinInfo,	NULL,
-				TAG_DONE);
+				TAG_DONE);	
 				break;
 
 			default:
@@ -787,7 +787,7 @@ static ULONG Open_Window()
 
 		if (gfx_screenname)
 		{
-			free(gfx_screenname);
+			free(gfx_screenname); 
 			gfx_screenname = NULL;
 		}
 
@@ -795,10 +795,10 @@ static ULONG Open_Window()
 		return INVALID_ID;
 	}
 
-	offset_x = (gfx_BorderMode == NOBORDER) ? 0 : My_Window->BorderRight;
+	offset_x = (gfx_BorderMode == NOBORDER) ? 0 : My_Window->BorderRight;	
 	offset_y = (gfx_BorderMode == NOBORDER) ? 0 : My_Window->BorderTop;
 
-	if ( (ModeID = IGraphics->GetVPModeID(&My_Window->WScreen->ViewPort) ) == INVALID_ID)
+	if ( (ModeID = IGraphics->GetVPModeID(&My_Window->WScreen->ViewPort) ) == INVALID_ID) 
 	{
 		uninit();
 		return INVALID_ID;
@@ -815,7 +815,7 @@ static ULONG Open_Window()
 
 
 static ULONG Open_FullScreen()
-{
+{ 
 	// If fullscreen -> let's open our own screen
 	// It is not a very clean way to get a good ModeID, but at least it works
 	struct Screen *Screen;
@@ -831,7 +831,7 @@ static ULONG Open_FullScreen()
 	}
 	else
 	{
-		if ( ! ( Screen = IIntuition->LockPubScreen(NULL) ) )
+		if ( ! ( Screen = IIntuition->LockPubScreen(NULL) ) ) 
 		{
 			uninit();
 			return INVALID_ID;
@@ -841,7 +841,7 @@ static ULONG Open_FullScreen()
 		IIntuition->UnlockPubScreen(NULL, Screen);
 	}
 
-	if ( ModeID == INVALID_ID)
+	if ( ModeID == INVALID_ID) 
 	{
 		uninit();
 		return INVALID_ID;
@@ -874,7 +874,7 @@ is_fullscreen? SA_BackFill : TAG_IGNORE , backfillhook,
 		TAG_DONE);
 	}
 
-	 if ( ! the_screen )
+	 if ( ! the_screen ) 
 	{
 		mp_msg(MSGT_VO, MSGL_ERR, "Unable to open the screen ID:0x%x\n", (int) ModeID);
 		uninit();
@@ -946,7 +946,7 @@ if(is_fullscreen)
 			WA_Flags,         WFLG_REPORTMOUSE,
 		TAG_DONE);
 
-	if ( ! My_Window)
+	if ( ! My_Window) 
 	{
 		mp_msg(MSGT_VO, MSGL_ERR, "Unable to open a window\n");
 		uninit();
@@ -962,7 +962,7 @@ IDBUG("Screen w %ld h %ld\n",the_screen->Width,the_screen->Height);
 	gfx_ControlBlanker(the_screen, FALSE);
 
 	return ModeID;
-}
+} 
 
 extern struct {  const char* name;  unsigned int fmt; } *mp_imgfmt_list ;
 
@@ -1021,7 +1021,7 @@ static int config(uint32_t width, uint32_t height, uint32_t d_width,
 
 	num_buffers = vo_doublebuffering ? (vo_directrendering ? NUM_BUFFERS : 2) : 1;
 
-	amiga_image_format = in_format;
+	amiga_image_format = in_format; 
 
 	if (FirstTime)
 	{
@@ -1413,7 +1413,7 @@ static void FreeGfx(void)
 /****************************** UNINIT ******************************/
 static void uninit(void)
 {
-	unsigned long long int microsec;
+	unsigned long long int microsec;	
 
 	if (benchmark_frame_cnt>0)
 	{
@@ -1450,7 +1450,7 @@ backfillhook = NULL;
 static int control(uint32_t request, void *data)
 {
 
-	switch (request)
+	switch (request) 
 	{
 		case VOCTRL_GUISUPPORT:
 			return VO_TRUE;
@@ -1553,7 +1553,7 @@ static int query_format(uint32_t format)
 //	printf("Query_format(uint32_t format)\n");
 //	printf("Format %d is hardware accelerated %d\n", format, IMGFMT_IS_HWACCEL(format) );
 
-	switch( format)
+	switch( format) 
 	{
 		case IMGFMT_YV12:
 //		case IMGFMT_IYUV:
@@ -1611,8 +1611,8 @@ static uint32_t get_image(mp_image_t * mpi)
 
 //	printf("Should not be called\n");
 
-	if (mpi->imgfmt != amiga_image_format) return VO_FALSE;
-	if (mpi->height > amiga_image_height) return VO_FALSE;
+	if (mpi->imgfmt != amiga_image_format) return VO_FALSE;  
+	if (mpi->height > amiga_image_height) return VO_FALSE;     
 
 	if (mpi->flags & (MP_IMGFLAG_ACCEPT_STRIDE | MP_IMGFLAG_ACCEPT_ALIGNED_STRIDE | MP_IMGFLAG_ACCEPT_WIDTH))
 	{
@@ -1683,7 +1683,7 @@ static uint32_t get_image(mp_image_t * mpi)
 }
 
 // To serialize screen open & close, and prevent mutex locks in page flip.
-// and to keep main code in MPlayer running while waiting for VSync.
+// and to keep main code in MPlayer running while waiting for VSync. 
 
 static void voprocess(void)
 {
@@ -1724,7 +1724,7 @@ static void voprocess(void)
 				amiga_aspect_ratio = (float) arg_d_width /  (float) arg_d_height;
 				ModeID = Open_FullScreen();
 			}
-
+		
 			if (ModeID == INVALID_ID)				// So if vo failed to open on monitor
 			{
 				is_fullscreen &= ~VOFLAG_FULLSCREEN;	// We do not have fullscreen
@@ -1763,13 +1763,13 @@ static void voprocess(void)
 
 		if (rsigs & (1<<sig_vo_closewindow))
 		{
-			/*if (bf_Window)
+			/*if (bf_Window) 
 			{
 				IIntuition->CloseWindow(bf_Window);
 				bf_Window=NULL;
 			}*/
 
-			if (My_Window)
+			if (My_Window) 
 			{
 				gfx_StopWindow(My_Window);
 				ILayers->InstallLayerHook(My_Window->RPort->Layer, NULL);
@@ -1786,7 +1786,7 @@ static void voprocess(void)
 
 			if (is_my_screen)
 			{
-				if (the_screen)
+				if (the_screen) 
 				{
 					IIntuition->CloseScreen(the_screen);
 					the_screen = NULL;
@@ -1860,9 +1860,9 @@ static void StartVOProcess()
 	MainTask = IExec->FindTask(NULL);
 	vo_process = IDOS->CreateNewProcTags(
 				NP_Name,		"MPlayer Video Process",
-				NP_Entry,		voprocess,
+				NP_Entry,		voprocess, 
 				// NP_Output,	output,
-				NP_Priority,	20,
+				NP_Priority,	20, 
 				NP_Child,		TRUE,
 			TAG_END);
 

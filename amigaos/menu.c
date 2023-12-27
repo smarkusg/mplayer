@@ -74,6 +74,7 @@ static int32 PrintMsgProc(STRPTR args UNUSED, int32 length UNUSED, struct ExecBa
 
 extern void make_appwindow(struct Window *win);
 extern void delete_appwindow(void);
+extern BOOL Iconify(struct Window *w); // cgx_common.c
 
 
 //void prevfile(void);
@@ -84,11 +85,11 @@ extern void delete_appwindow(void);
 extern BOOL choosing_flag;
 extern void set_gfx_rendering_option();
 
-extern BOOL AISS_MENU ;				// In amigaos_stuff.c zzd10h
-extern BOOL AISS_MENU_TO_SCALE ;		// In amigaos_stuff.c zzd10h
-extern int AISS_MENU_SIZE ;			// In amigaos_stuff.c zzd10h Setted by MenuImageSize env variable
-extern BOOL MENUCLASS_SUPPORT ;		// In amigaos_stuff.c zzd10h TRUE if MenuClass menu is supported (AmigaOS 4.1 FE with intuition.library >= 54.6)
-extern BOOL BANNER_DISPLAY ;			// In amigaos_stuff.c zzd10h Display banner ? SETENV SAVE Disable_Banner_Images 1 to disable them
+extern BOOL AISS_MENU;          // In amigaos_stuff.c zzd10h
+extern BOOL AISS_MENU_TO_SCALE; // In amigaos_stuff.c zzd10h
+extern int AISS_MENU_SIZE;      // In amigaos_stuff.c zzd10h Setted by MenuImageSize env variable
+extern BOOL MENUCLASS_SUPPORT;  // In amigaos_stuff.c zzd10h TRUE if MenuClass menu is supported (AmigaOS 4.1 FE with intuition.library >= 54.6)
+extern BOOL BANNER_DISPLAY;     // In amigaos_stuff.c zzd10h Display banner ? SETENV SAVE Disable_Banner_Images 1 to disable them
 // struct Screen *screen;
 
 extern Class *RequesterClass, *InfoWindowClass, *BitMapClass;

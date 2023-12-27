@@ -24,12 +24,12 @@
  *  Maintained and updated by Fabien Coeurjoly
 */
 
-/*markus
-  we do not currently compile the old printf debug
-  future code to be removed as it will work
+/* markus
+   we do not currently compile the old printf debug
+   future code to be removed as it will work
 */
-//#define OLD_DEBUG
-//end markus
+// #define OLD_DEBUG
+// end markus
 
 #define SYSTEM_PRIVATE
 
@@ -65,8 +65,8 @@
 #include <inttypes.h>	// Fix <postproc/rgb2rgb.h> bug
 
 // Debug
-//#define kk(x)
-//#define dprintf(...)
+// #define kk(x)
+// #define dprintf(...)
 #include "../amigaos/debug.h"
 
 extern struct Catalog *catalog;
@@ -76,7 +76,7 @@ extern struct Catalog *catalog;
 extern STRPTR myGetCatalogStr (struct Catalog *catalog, LONG num, STRPTR def);
 #define CS(id) myGetCatalogStr(catalog,id,id##_STR)
 
-//#include <proto/Picasso96API.h>
+// #include <proto/Picasso96API.h>
 
 #include <graphics/gfxbase.h>
 
@@ -107,14 +107,14 @@ static vo_info_t info =
 };
 
 // markus iconify ?
-//#include <classes/window.h>
+// #include <classes/window.h>
 #include <intuition/imageclass.h>
 #include <../amigaos/window_icons.h>
 
 extern struct kIcon iconifyIcon;
-//extern struct kIcon padlockicon;
+// extern struct kIcon padlockicon;
 extern struct kIcon fullscreenicon;
-//end markus
+// end markus
 
 // markus
 static char * window_title;
@@ -145,7 +145,7 @@ static BOOL FirstTime = TRUE;
 
 static struct Window	*	My_Window		= NULL;
 static struct Screen	*	My_Screen		= NULL;
-//static struct Window	*	bf_Window		= NULL;
+// static struct Window	*	bf_Window		= NULL;
 
 static struct RastPort	*	rp			= NULL;
 
@@ -304,7 +304,7 @@ static int preinit(const char *arg)
 #endif
 
 
-	//backfillhook = { {NULL, NULL}, (HOOKFUNC)BackFillfunc, NULL, NULL };
+	// backfillhook = { {NULL, NULL}, (HOOKFUNC)BackFillfunc, NULL, NULL };
 	backfillhook = (struct Hook *)AllocSysObjectTags(ASOT_HOOK, ASOHOOK_Entry,BackFillfunc, TAG_END);
 DBUG("backfillhook = %p (alloc)\n",backfillhook);
 
@@ -328,7 +328,7 @@ static ULONG Open_Window(void)
 
 	My_Window = NULL;
 
-	//DBUG("%s:%ld\n",__FUNCTION__,__LINE__);
+	// DBUG("%s:%ld\n",__FUNCTION__,__LINE__);
 
 	if(!is_fullscreen) { My_Screen = LockPubScreen(gfx_screenname); }
 //	if ( ( My_Screen = LockPubScreen(gfx_screenname) ) )
@@ -387,14 +387,14 @@ is_fullscreen? WA_Backdrop : TAG_IGNORE , TRUE,
 					WA_CloseGadget,	FALSE,
 					WA_DepthGadget,	FALSE,
 					WA_DragBar,		FALSE,
-					//WA_Borderless,	FALSE,
+					// WA_Borderless,	FALSE,
 					WA_SizeGadget,	FALSE,
 					WA_NewLookMenus,	TRUE,
 					WA_Activate,	WindowActivate,
 					WA_StayTop,		(is_ontop==1) ? TRUE : FALSE,
 					WA_IDCMP,		IDCMP_COMMON,
 					WA_Flags,		WFLG_REPORTMOUSE,
-				// 	WA_SkinInfo,	NULL,
+				 	// WA_SkinInfo,	NULL,
 				TAG_DONE);
 				break;
 
@@ -422,7 +422,7 @@ is_fullscreen? WA_Backdrop : TAG_IGNORE , TRUE,
 					WA_CloseGadget,	TRUE,
 					WA_DepthGadget,	TRUE,
 					WA_DragBar,		TRUE,
-					//WA_Borderless,	(gfx_BorderMode == NOBORDER) ? TRUE : FALSE,
+					// WA_Borderless,	(gfx_BorderMode == NOBORDER) ? TRUE : FALSE,
 					WA_SizeGadget,	FALSE,
 					WA_SizeBBottom,	TRUE,
 					WA_Hidden,		FALSE,
@@ -431,10 +431,10 @@ is_fullscreen? WA_Backdrop : TAG_IGNORE , TRUE,
 					WA_StayTop,		(is_ontop==1) ? TRUE : FALSE,
 					WA_IDCMP,		IDCMP_COMMON | IDCMP_GADGETUP,
 					WA_Flags,		WFLG_REPORTMOUSE,
-				// 	WA_SkinInfo,	NULL,
+				 	// WA_SkinInfo,	NULL,
 				TAG_DONE);
 // markus gadget
-		//if(gfx_BorderMode==ALWAYSBORDER  &&  My_Window)
+		// if(gfx_BorderMode==ALWAYSBORDER  &&  My_Window)
 				if(My_Window)
 				{
 					open_icon( My_Window, ICONIFYIMAGE, GID_ICONIFY, &iconifyIcon );
@@ -466,7 +466,7 @@ is_fullscreen? WA_Backdrop : TAG_IGNORE , TRUE,
 
 		if (gfx_screenname)
 		{
-			// open on workbench if no pubscreen found.
+			// open on workbench if no pubscreen found
 			free(gfx_screenname);
 			gfx_screenname = NULL;
 		}
@@ -606,10 +606,10 @@ is_fullscreen? SA_BackFill : TAG_IGNORE , backfillhook,
 			WA_Width,         screen_width,
 			WA_SimpleRefresh, TRUE,
 			WA_CloseGadget,   FALSE,
-			WA_DragBar,       FALSE,//TRUE,
+			WA_DragBar,       FALSE, // TRUE,
 			WA_Borderless,    TRUE,
-//is_fullscreen? WA_BackFill : TAG_IGNORE , backfillhook,
-//WA_Backdrop,      TRUE,
+			// is_fullscreen? WA_BackFill : TAG_IGNORE , backfillhook,
+			// WA_Backdrop,   TRUE,
 			WA_NewLookMenus,  TRUE,
 			WA_Activate,      TRUE,
 			WA_IDCMP,         IDCMP_COMMON,
@@ -623,9 +623,9 @@ is_fullscreen? SA_BackFill : TAG_IGNORE , backfillhook,
 		return INVALID_ID;
 	}*/
 
-	//RectFillColor( My_Window->RPort, 0,0, screen_width, screen_height, 0x00000000);
+	// RectFillColor( My_Window->RPort, 0,0, screen_width, screen_height, 0x00000000);
 
-//	FillPixelArray( My_Window->RPort, 0,0, screen_width, screen_height, 0x00000000);
+	// FillPixelArray( My_Window->RPort, 0,0, screen_width, screen_height, 0x00000000);
 /*
 	vo_screenwidth = My_Screen->Width;
 	vo_screenheight = My_Screen->Height;
@@ -695,13 +695,13 @@ static int config(uint32_t width, uint32_t height, uint32_t d_width,
 	{
 		ModeID = Open_FullScreen();
 DBUG("ModeID=0x%08lx  Open_FullScreen()\n",ModeID);
-		if(ModeID != INVALID_ID) { gfx_BorderMode = NOBORDER; }// Open_Window(); }
+		if(ModeID != INVALID_ID) { gfx_BorderMode = NOBORDER; } // Open_Window(); }
 	}
 
 	if (ModeID == INVALID_ID)
 	{
 		is_fullscreen &= ~VOFLAG_FULLSCREEN;	// We do not have fullscreen
-		//ModeID = Open_Window();
+		// ModeID = Open_Window();
 	}
 
 	ModeID = Open_Window();
@@ -721,7 +721,7 @@ DBUG("ModeID=0x%08lx  Open_FullScreen()\n",ModeID);
 	UserMsg = My_Window->UserPort;
 
 
-//DBUG("%s:%ld\n",__FUNCTION__,__LINE__);
+// DBUG("%s:%ld\n",__FUNCTION__,__LINE__);
 
 	if (PrepareBuffer(in_format, IMGFMT_BGR32) < 0)
 	{
@@ -729,22 +729,22 @@ DBUG("ModeID=0x%08lx  Open_FullScreen()\n",ModeID);
 		return -1;
 	}
 
-//DBUG("%s:%ld\n",__FUNCTION__,__LINE__);
+// DBUG("%s:%ld\n",__FUNCTION__,__LINE__);
 
 	draw_alpha_func = draw_alpha_rgb32;
 
-//DBUG("%s:%ld\n",__FUNCTION__,__LINE__);
+// DBUG("%s:%ld\n",__FUNCTION__,__LINE__);
 
 	gfx_Start(My_Window);
 
-//DBUG("%s:%ld\n",__FUNCTION__,__LINE__);
+// DBUG("%s:%ld\n",__FUNCTION__,__LINE__);
 
 #ifdef CONFIG_GUI
 	if (use_gui)
 		guiGetEvent(guiSetWindowPtr, (char *) My_Window);
 #endif
 
-//DBUG("%s:%ld\n",__FUNCTION__,__LINE__);
+// DBUG("%s:%ld\n",__FUNCTION__,__LINE__);
 
 	return 0; // -> Ok
 }

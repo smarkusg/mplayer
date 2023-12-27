@@ -28,7 +28,7 @@ unsigned const int __newlib_minversion = (52 << 16) | 20;
 
 #ifdef __USE_INLINE__
 	#undef __USE_INLINE__
-//#error AmigaOS 4.x code, fix your compiler options
+// #error AmigaOS 4.x code, fix your compiler options
 #endif
 
 #define NO_DRAW_FRAME
@@ -114,22 +114,22 @@ static struct BitMap *tmpBitMap;
 #endif
 struct BitMap *R5G6B5_BitMap;
 
-//#include <classes/window.h>
+// #include <classes/window.h>
 #include <intuition/imageclass.h>
 #include <../amigaos/window_icons.h>
 #include <../amigaos/debug.h>
 
 extern struct kIcon iconifyIcon;
-//extern struct kIcon padlockicon;
+// extern struct kIcon padlockicon;
 extern struct kIcon fullscreenicon;
 
 static struct Screen *My_Screen = NULL;
 extern uint32_t is_fullscreen;
 
-//static struct Window *bf_Window = NULL;
+// static struct Window *bf_Window = NULL;
 static struct Hook *backfillhook;
 
-//#define USERTG
+// #define USERTG
 
 enum
 {
@@ -206,13 +206,13 @@ static void procWindowInit(void)
 {
    oldProcWindow = IDOS->SetProcWindow((APTR)-1);
 }
-//__attribute__((section(".ctors"))) static void (*procWindowInitPtr)(void) USED = procWindowInit;
+// __attribute__((section(".ctors"))) static void (*procWindowInitPtr)(void) USED = procWindowInit;
 
 static void procWindowExit(void)
 {
    IDOS->SetProcWindow(oldProcWindow);
 }
-//__attribute__((section(".dtors"))) static void (*procWindowExitPtr)(void) USED = procWindowExit;
+// __attribute__((section(".dtors"))) static void (*procWindowExitPtr)(void) USED = procWindowExit;
 
 /***************************************************/
 extern BOOL gfx_CheckEvents(struct Screen * My_Screen, struct Window *My_Window, uint32_t *window_height, uint32_t *window_width,
@@ -270,7 +270,7 @@ extern BOOL gfx_CheckEvents(struct Screen * My_Screen, struct Window *My_Window,
                                 case 1:
                                    switch (ITEMNUM(menucode))
                                    {
-                                      case 0:  // pause/play
+                                      case 0:  // Play/Pause
                                          mplayer_put_key('p');
                                       break;
 
@@ -379,7 +379,7 @@ extern BOOL gfx_CheckEvents(struct Screen * My_Screen, struct Window *My_Window,
                          if ( ( (float)old_d_width / (float)old_d_height) < ( (float)inner_width / (float) inner_height) )
                          {
  #if 0
-                                 // Width (Longeur) is too big
+                                 // Width (Longer) is too big
                                  y_offset = 0;
                                  x_offset = inner_width - inner_height * ( (float) old_d_width / old_d_height);
                                  x_offset /= 2;
@@ -390,7 +390,7 @@ extern BOOL gfx_CheckEvents(struct Screen * My_Screen, struct Window *My_Window,
  #endif
                          } else {
  #if 0
-                                 // Height (largeur) too big
+                                 // Height (Larger) too big
                                  y_offset = inner_height - inner_width * ( (float) old_d_height / old_d_width);
                                  y_offset /= 2;
                                  x_offset = 0;
@@ -561,7 +561,7 @@ static struct RTGBase *RTGBase;
                                COMPTAG_ScaleY,     scaleY,
                                TAG_DONE);
    } else {
-#if 0 // hangs, can't use RastPort functions
+#if 0 // Hangs, can't use RastPort functions
       IGraphics->SetAPen(My_Window->RPort, 0);
       IGraphics->RectFill(My_Window->RPort,
                           My_Window->BorderLeft,
@@ -600,7 +600,7 @@ static uint32 Open_Window(uint32 hidden)
 {
    // Window
    uint32 ModeID = INVALID_ID;
-   //struct Screen *My_Screen;
+   // struct Screen *My_Screen;
 IDBUG("Open_Window() %s\n",hidden? "[hidden]":"");
 //   SourceBitMap = IP96->p96AllocBitMap(image_width, image_height, 8, BMF_USERPRIVATE, NULL, RGBFB_YUV420P);
 //   SourceBitMap = IP96->p96AllocBitMap(image_width, image_height * 2, 8, BMF_USERPRIVATE, NULL, RGBFB_YUV420P);
@@ -633,7 +633,7 @@ IDBUG("  My_Screen=0x%08lx\n",My_Screen);
 if(!is_fullscreen) My_Screen = IIntuition->LockPubScreen(NULL);
 IDBUG("  My_Screen=0x%08lx\n",My_Screen);
    if(My_Screen)
-   //if ((My_Screen = IIntuition->LockPubScreen(NULL)))
+   // if ((My_Screen = IIntuition->LockPubScreen(NULL)))
    {
       APTR vi;
       ModeID = IGraphics->GetVPModeID(&My_Screen->ViewPort);
@@ -692,13 +692,13 @@ IDBUG("  using OpenWindowTags()\n",NULL);
 #else
                         WA_CustomScreen,    (uint32) My_Screen,
 #endif
-                        //ALWAYSBORDER == BorderMode ? WA_Title : WA_WindowName, GetWindowTitle(),
+                        // ALWAYSBORDER == BorderMode ? WA_Title : WA_WindowName, GetWindowTitle(),
                         ALWAYSBORDER == BorderMode ? WA_Title : TAG_IGNORE, GetWindowTitle(),
-                        WA_ScreenTitle,     AMIGA_VERSION " (amiga)",//(uint32) "MPlayer",
+                        WA_ScreenTitle,     AMIGA_VERSION " (amiga)", // (uint32) "MPlayer",
                         WA_Left,            window_left,
                         WA_Top,             window_top,
                         WA_NewLookMenus,    TRUE,
-//                        WA_SmartRefresh,    TRUE,
+				// WA_SmartRefresh,    TRUE,
                         WA_CloseGadget,     ALWAYSBORDER == BorderMode ? TRUE : FALSE,
                         WA_DepthGadget,     ALWAYSBORDER == BorderMode ? TRUE : FALSE,
                         WA_DragBar,         ALWAYSBORDER == BorderMode ? TRUE : FALSE,
@@ -710,18 +710,18 @@ is_fullscreen? WA_Backdrop : TAG_IGNORE, TRUE,
                         WA_StayTop,         (is_ontop==1) ? TRUE : FALSE,
                         WA_IDCMP,           ALWAYSBORDER == BorderMode ? /*IDCMP_SIZEVERIFY | */IDCMP_CHANGEWINDOW | IDCMP_RAWKEY | IDCMP_VANILLAKEY | IDCMP_CLOSEWINDOW | IDCMP_MENUPICK | IDCMP_GADGETUP | IDCMP_MOUSEBUTTONS | IDCMP_EXTENDEDMOUSE
                                                                        : IDCMP_RAWKEY | IDCMP_VANILLAKEY | IDCMP_MENUPICK | IDCMP_GADGETUP | IDCMP_MOUSEBUTTONS | IDCMP_EXTENDEDMOUSE ,
-//: IDCMP_MOUSEMOVE | IDCMP_MENUPICK | IDCMP_MENUVERIFY | IDCMP_MOUSEBUTTONS | IDCMP_RAWKEY | IDCMP_VANILLAKEY | IDCMP_EXTENDEDMOUSE | IDCMP_REFRESHWINDOW ,
+// : IDCMP_MOUSEMOVE | IDCMP_MENUPICK | IDCMP_MENUVERIFY | IDCMP_MOUSEBUTTONS | IDCMP_RAWKEY | IDCMP_VANILLAKEY | IDCMP_EXTENDEDMOUSE | IDCMP_REFRESHWINDOW ,
 WA_Flags,           WFLG_REPORTMOUSE,
-                        //ALWAYSBORDER == BorderMode ? TAG_IGNORE : WA_Gadgets, &MyDragGadget,
+                        // ALWAYSBORDER == BorderMode ? TAG_IGNORE : WA_Gadgets, &MyDragGadget,
                         WA_InnerWidth,      old_d_width,
                         WA_InnerHeight,     old_d_height,
                         WA_MinWidth,        160,
                         WA_MinHeight,       100,
                         WA_MaxWidth,        ~0,
                         WA_MaxHeight,       ~0,
-                        //WA_BackFill,        backfillhook,
+                        // WA_BackFill,        backfillhook,
                         ALWAYSBORDER == BorderMode ? WA_Zoom : TAG_IGNORE, &zoombox,
-//                        WA_DropShadows,     FALSE,
+				// WA_DropShadows,     FALSE,
                         WA_Hidden,          hidden,
                      TAG_DONE);
 
@@ -751,18 +751,18 @@ IDBUG("  using p96PIP_OpenTags()\n",NULL);
 #else
                         WA_CustomScreen,    (uint32) My_Screen,
 #endif
-                        //ALWAYSBORDER == BorderMode ? WA_Title : WA_WindowName, GetWindowTitle(),
+                        // ALWAYSBORDER == BorderMode ? WA_Title : WA_WindowName, GetWindowTitle(),
                         ALWAYSBORDER == BorderMode ? WA_Title : TAG_IGNORE, GetWindowTitle(),
-                        WA_ScreenTitle,     AMIGA_VERSION " (amiga)",//(uint32) "MPlayer",
+                        WA_ScreenTitle,     AMIGA_VERSION " (amiga)", // (uint32) "MPlayer",
                         WA_Left,            window_left,
                         WA_Top,             window_top,
                         WA_NewLookMenus,    TRUE,
-//                        WA_SmartRefresh,    TRUE,
+				// WA_SmartRefresh, TRUE,
                         WA_CloseGadget,     ALWAYSBORDER == BorderMode ? TRUE : FALSE,
                         WA_DepthGadget,     ALWAYSBORDER == BorderMode ? TRUE : FALSE,
                         WA_DragBar,         ALWAYSBORDER == BorderMode ? TRUE : FALSE,
                         WA_Borderless,      NOBORDER     == BorderMode ? TRUE : FALSE,
-is_fullscreen? WA_Backdrop : TAG_IGNORE , TRUE ,
+				is_fullscreen? WA_Backdrop : TAG_IGNORE , TRUE ,
                         WA_SizeGadget,      ALWAYSBORDER == BorderMode ? TRUE : FALSE,
                         ALWAYSBORDER == BorderMode ? WA_SizeBBottom : TAG_IGNORE , TRUE,
                         WA_Activate,        TRUE,
@@ -770,7 +770,7 @@ is_fullscreen? WA_Backdrop : TAG_IGNORE , TRUE ,
                         WA_IDCMP,           ALWAYSBORDER == BorderMode ? /*IDCMP_SIZEVERIFY | */IDCMP_CHANGEWINDOW | IDCMP_RAWKEY | IDCMP_VANILLAKEY | IDCMP_CLOSEWINDOW | IDCMP_MENUPICK | IDCMP_GADGETUP | IDCMP_MOUSEBUTTONS | IDCMP_EXTENDEDMOUSE
                                                                        : IDCMP_RAWKEY | IDCMP_VANILLAKEY | IDCMP_MENUPICK | IDCMP_MOUSEBUTTONS | IDCMP_EXTENDEDMOUSE ,
 WA_Flags,           WFLG_REPORTMOUSE,
-                        //ALWAYSBORDER == BorderMode ? TAG_IGNORE : WA_Gadgets, &MyDragGadget,
+                        // ALWAYSBORDER == BorderMode ? TAG_IGNORE : WA_Gadgets, &MyDragGadget,
                         WA_InnerWidth,      old_d_width,
                         WA_InnerHeight,     old_d_height,
                         WA_MinWidth,        160,
@@ -790,7 +790,7 @@ if(BorderMode == ALWAYSBORDER)
 {
 open_icon( My_Window, ICONIFYIMAGE, GID_ICONIFY, &iconifyIcon );
 open_icon( My_Window, SETTINGSIMAGE, GID_FULLSCREEN, &fullscreenicon );
-//open_icon( My_Window, PADLOCKIMAGE, GID_PADLOCK, &padlockicon );
+// open_icon( My_Window, PADLOCKIMAGE, GID_PADLOCK, &padlockicon );
 IIntuition->RefreshWindowFrame(My_Window); // or it won't show/render added gadgets
 }
 
@@ -816,7 +816,7 @@ IIntuition->RefreshWindowFrame(My_Window); // or it won't show/render added gadg
                   }
 
 #endif*/
-                  //IIntuition->SetMenuStrip(My_Window, menu);
+                  // IIntuition->SetMenuStrip(My_Window, menu);
 attach_menu(My_Window);
                }
 
@@ -865,7 +865,7 @@ IDBUG("  vo_screenwidth=%ld  vo_screenheight=%ld\n",vo_screenwidth,vo_screenheig
 	                         SA_ShowTitle,     FALSE,
 	                         SA_Compositing,   FALSE, // No white stripes anymore, yeah! (fix from kas1e/Jörg Strohmayer)
 	                         SA_Quiet,         TRUE,
-is_fullscreen? SA_BackFill : TAG_IGNORE , backfillhook,
+					 is_fullscreen? SA_BackFill : TAG_IGNORE , backfillhook,
 	                        TAG_END);
 IDBUG("  My_Screen=0x%08lx\n",My_Screen);
 	if(!My_Screen) { return INVALID_ID; }
@@ -886,8 +886,8 @@ if(is_fullscreen)
 	                         WA_Borderless,    TRUE,
 	                         WA_Backdrop,      TRUE,
 	                         WA_Activate,      FALSE,
-	                         //WA_BackFill,      backfillhook,
-//	                         is_fullscreen? WA_BackFill : TAG_IGNORE , backfillhook,
+	                         // WA_BackFill,	 backfillhook,
+					 // is_fullscreen? WA_BackFill : TAG_IGNORE , backfillhook,
 	                        TAG_DONE);
 //	if(!bf_Window) { return INVALID_ID; }
 	IIntuition->CloseWindow(bf_Window);
@@ -923,12 +923,12 @@ static int preinit(const char *arg)
    struct Screen *screen;
    uint32 ModeID;
 
-   mp_msg(MSGT_VO, MSGL_INFO, "VO: [amiga]\n");
+   mp_msg(MSGT_VO, MSGL_INFO, "VO: [amiga] Welcome man !\n");
 
    opt_border   = 2;
    opt_mode     = 0;
 // #warning FixMe
-//   opt_mode     = 1;
+// opt_mode     = 1;
 
    if (subopt_parse(arg, subopts) != 0 || opt_help || opt_question)
    {
@@ -986,7 +986,7 @@ static int preinit(const char *arg)
    }
 
 
-	//backfillhook = { {NULL, NULL}, (HOOKFUNC)BackFillfunc, NULL, NULL };
+	// backfillhook = { {NULL, NULL}, (HOOKFUNC)BackFillfunc, NULL, NULL };
 	backfillhook = (struct Hook *)IExec->AllocSysObjectTags(ASOT_HOOK, ASOHOOK_Entry,BackFillfunc, TAG_END);
 IDBUG("backfillhook = %p (alloc)\n",backfillhook);
 
@@ -1103,7 +1103,7 @@ static int config(uint32_t width, uint32_t height, uint32_t d_width,
 //   aspect_save_prescale(d_width,d_height);
    aspect_save_screenres(vo_screenwidth, vo_screenheight);
 
-//#if 0
+// #if 0
 IDBUG("vo_fs=is_fullscreen 0x%08lx\n",flags);
    if(flags&VOFLAG_FULLSCREEN) { /* -fs */
 //   if(vo_fs) {
@@ -1113,7 +1113,7 @@ is_fullscreen = vo_fs;
       vo_fs = VO_TRUE;
    }
    else
-//#endif
+// #endif
    {
       vo_fs = VO_FALSE;
       aspect(&d_width, &d_height, /*A_ZOOM*/ A_WINZOOM /*A_NOZOOM*/);
@@ -1136,7 +1136,7 @@ BorderMode = ALWAYSBORDER;
 
 
 if(is_fullscreen  &&  (ModeID=Open_FullScreen())!=INVALID_ID)
-{// window without borders in fullscreen mode
+{ // window without borders in fullscreen mode
 IDBUG("ModeID=0x%08lx  Open_FullScreen()\n",ModeID);
 	BorderMode = NOBORDER;
 }
@@ -1957,7 +1957,7 @@ printf("[amiga] direct\n");
 
       return VO_TRUE;
    }
-   /*if (0) //(0 == pip_format)
+   /*if (0) // (0 == pip_format)
    {
 #if 0
       struct YUVRenderInfo sri = { {image[0], stride[0], 0, RGBFB_CLUT/ * RGBFB_YUV420P * /}, {image[0], image[1], image[2]}, {stride[0], stride[1], stride[2]}, 0};
@@ -2111,7 +2111,7 @@ printf("[amiga] direct\n");
    } else if (RGBFB_YUV422CGX == pip_format)
       /* not used */
    } else {
-      printf("[amiga] Unsupported pip_format 0x%x\n", pip_format);
+      printf("[amiga] unsupported pip_format 0x%x\n", pip_format);
       IP96->p96UnlockBitMap(bm, lock_h);
       return VO_ERROR;
    }
@@ -2358,7 +2358,7 @@ static void FreeGfx(void)
 	closeRemainingOpenWin();
 
 IDBUG("is_fullscreen=%ld (0x%08lx)\n",is_fullscreen,My_Screen);
-	if(My_Screen)//is_fullscreen)
+	if(My_Screen) // is_fullscreen)
 	{
 		IIntuition->CloseScreen(My_Screen);
 		My_Screen = NULL;
@@ -2558,7 +2558,7 @@ printf("control %d\n", request);
 /**************************** CHECK_EVENTS **************************/
 static void check_events(void)
 {
-    //CheckEvents();
+    // CheckEvents();
     gfx_CheckEvents(My_Screen, My_Window, &window_height, &window_width, &window_left, &window_top);
 #if 0
 /* ARexx */
