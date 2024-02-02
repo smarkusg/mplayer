@@ -1,16 +1,17 @@
 name: MPlayer
 description: A powerful multimedia video and audio player
 version: 1.5
+date: 20231225-05.16
 author: Various
 submitter: Samir Hawamdeh
-url: https://github.com/smarkusg/mplayer
+url: http://www.mplayerhq.hu
 category: video/play
-replaces: video/play/mickjt-mplayer.lha
+replaces: video/play/mplayer.lha
 requirements: AmigaOS 4.1 FE + AmiSSL 5.x + Enhancer Software Core 2 (optional)
 license: GPL
 minosversion: 4.1
-distribute: yes
-fileid: 10446
+distribute: no
+fileid: 12775
 hend:
 
 
@@ -23,7 +24,7 @@ MPlayer can play most standard video formats out of the box and almost all the o
 
 MPlayer currently works best from the command line, but visual feedback for many functions is available from its onscreen status display (OSD), which is also used for displaying subtitles.
 
-MPlayer for AmigaOS4 is currently based on MPlayer 1.5 (w/ FFmpeg 6.0), merging code from LiveForIt-MPlayer, MickJT-MPlayer and the Andrea Palmatè's MPlayer ports, with various additional changes and improvements.
+MPlayer for AmigaOS4 is currently based on MPlayer 1.5 (w/ FFmpeg 6.1.1), merging code from LiveForIt-MPlayer, MickJT-MPlayer and the Andrea Palmatè's MPlayer ports, with various additional changes and improvements.
 
 The default settings in the config file will degrade the video quality in order to decrease the CPU usage.
 
@@ -41,6 +42,7 @@ Know problems:
 ==============
 
 * Incorrect display size when entering fullscreen if using custom AutoScroll dimensions on Workbench screen
+* OSD menu may crash if used with playlist or when quit
 * AHI: Wav audio files noises if using AHI output driver, they works fine with -ao sdl
 * ARexx: Stay paused if using MPlayer-GUI and paused outside of it (pausing get_time_pos)
 * SDL: Support for SDL12-Compat need to be fixed (compatibility layer for SDL2)
@@ -58,7 +60,11 @@ Know problems:
 Changelog:
 ==========
 
-MPlayer 1.5 (MPlayer 1.5) - MickJT, Marek, Javier and Samo79 (25.12.2023)
+MPlayer 1.5 RC3 (MPlayer 1.5) - Marek, Javier and Samo79 (xx.xx.2024)
+	* Based on MPlayer 1.5 SVN-r38448 (FFmpeg 6.1.1)
+	* Fixed pause in fullscreen on Comp_yuv and Comp_yuv2
+
+MPlayer 1.5 RC2 (MPlayer 1.5) - MickJT, Marek, Javier and Samo79 (25.12.2023)
 	* Based on MPlayer 1.5 SVN-r38440 (FFmpeg 6.0)
 	  From now on, the AmigaOS4 release will follow the official versioning scheme!
 	* Compiled with GCC 11.3 + LTO (currently compiled with optimisation -O2)
@@ -77,7 +83,7 @@ MPlayer 1.5 (MPlayer 1.5) - MickJT, Marek, Javier and Samo79 (25.12.2023)
 	* Added catalogs for French, German, Polish, Russian and Spanish
 	  (Credits: zzd10h, Maijestro, Marek, Samo79 and Javier)
 	* Fixed support for AppWindow, now drag and drop of files over AmiDock really works
-	* Fixed external windows problems when opening on fullscreen
+	* Fixed external windows problems when opened on fullscreen
 	* Fixed crash on AltiVec version if launched on non AltiVec CPUs
 	* Fixed crash on quit in the GL video outputs
 	* PIP: Added support for menu
@@ -137,7 +143,7 @@ MPlayer 1.0 (MPlayer 1.3.0) - MickJT (24.12.2017)
 
 MPlayer 6.5.8 (MPlayer 1.1.1) - AltiVec release only (13.08.2015)
 	* Back to FFmpeg 2.6.3, it is just faster on my computer then 2.7.1 (Don't care about the green bug)
-	* AHI_DEV: Assembler optimised Float to Int for AmigaOne G3/SAM440/SAM460  (~320us delay cost on AmigaOne X1000)
+	* AHI_DEV: Assembler optimised Float to Int for AmigaOne G3/SAM440/SAM460 (~320us delay cost on AmigaOne X1000)
 	* AHI_DEV: AltiVec optimised Float to int (~88us delay cost on AmigaOne X1000)
 
 MPlayer 6.5.7 (MPlayer 1.1.1) - LiveForIt (19.07.2015)
@@ -240,12 +246,6 @@ MPlayer 6.2 (MPlayer 1.1.1)
 	* DVD: Removed some silly debug text
 
 MPlayer 6.1 (MPlayer 1.1.1)
-	* Comp_yuv, Comp & CGX_WPA now respect monitor nr.
-	  (Sorry don't think this can be done for overlay PIP / p96_pip)
-	* Comp_yuv: Now respects -monitoraspect command line argument
-	* Comp_yuv: Default monitor aspect is now taken for named public screen, 
-	  If your using vo:pubscreen=dopus.1 (in case you have two monitors) 
-	  (else its taken from Workbench screen, like before)
 	* Comp_yuv: Fixed green line on top of window/screen
 	* Fixed problem finding all screen modes
 	* Tried to increase the AHI buffer (hope audio gets better)
@@ -254,6 +254,12 @@ MPlayer 6.1 (MPlayer 1.1.1)
 	* Fixed support for multiple monitors
 	  vo:monitor=0 is for first monitor, 
 	  vo:monitor=1 is for second monitor
+	* Comp_yuv, comp & CGX_WPA now respect monitor nr.
+	  (Sorry don't think this can be done for overlay PIP / p96_pip)
+	* Comp_yuv: Now respects -monitoraspect command line argument
+	* Comp_yuv: Default monitor aspect is now taken for named public screen, 
+	  If your using vo:pubscreen=dopus.1 (in case you have two monitors) 
+	  (else its taken from Workbench screen, like before)
 
 MPlayer 6.0 (MPlayer 1.1.1)
 	* Fixed green line on top of videos
@@ -308,15 +314,15 @@ MPlayer 3.1 (MPlayer 1.0 RC5)
 	* Copied "double click" to fullscreen event code from old p96_pip to cgx_common.c
 	* Centered windows when they open first time
 
-Version 2.1 beta 2 (MPlayer 1.0 RC5)
-	* Fixed mouse buttons, events in p96_pip
+MPlayer 2.1 Beta 2 (MPlayer 1.0 RC5)
+	* Fixed mouse buttons events in p96_pip
 	* Tried to fix p96_pip fullscreen
 
 MPlayer 2.1 (MPlayer 1.0 RC5)
 	* Added mouse wheel support
-	* Removed flickering when resizing, fixed to composition is rendered into the window, not on top
+	* Removed flickering when resizing, fixed for composition to rendered into the window, not on top
 	* ARexx support enabled
-	* Fixed bad startup / Exit bug
+	* Fixed bad startup / exit bug
 	* Renamed some stuff
 
 MPlayer 1.1 (MPlayer 1.0 RC5)
@@ -331,7 +337,7 @@ MPlayer 1.0 (MPlayer 1.0 RC5)
 	* Fixed a lockup problem when closing MPlayer without a GUI, missing #ifdef
 	* Fixed a problem with Comp where graphics was zoomed in after resizing window
 	* Fixed a problem with Comp because FFmpeg was initialized wrong for this output driver
-	* Purged p96_pip removed all GUI stuff (a bit broken for now but works, it will be fixed in some other version)
+	* Purged p96_pip removing all GUI stuff (a bit broken for now but works, it will be fixed in some future version)
 	* Renamed PIP to p96_pip for compatibility
 
 
@@ -486,3 +492,5 @@ MPlayer 1.0 Pre6 Dirty Preview #2 (24.01.2005)
 	- mplayer -vo cgx_vmem::TINYBORDER filename
 	- mplayer -framedrop -vo cgx_vmem::ALWAYSBORDER filename.vob
 	- mplayer filename.(mp3|ogg|wav)
+
+

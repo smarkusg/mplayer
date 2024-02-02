@@ -1318,12 +1318,13 @@ static int32 open_subtitles_proc(STRPTR args, int32 length, APTR execbase)
 
 	if (FileName = LoadFile(NULL,SUBEXTPAT,CS(MSG_Requester_OpenFile_SubTitles)))
 	{
-		__tmp_file_name = strdup(FileName);
-FreeVec(FileName); FileName = NULL;
+	        __tmp_file_name = strdup(FileName);
+                FreeVec(FileName); FileName = NULL;
 DBUG("subtitles file: '%s'\n",__tmp_file_name);
 		put_scommand1(MP_CMD_SUB_LOAD,__tmp_file_name);
 		put_icommand1(MP_CMD_SUB_SELECT,0);
 		put_icommand1(MP_CMD_SUB_VISIBILITY,1);
+                Delay(15); // micro-pause to let subtitiles stuff "finish"
 	}
 
 	if(get_icommand("pause") == 1) // 1 -> already in pause
