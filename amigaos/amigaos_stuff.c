@@ -342,12 +342,12 @@ void AmigaOS_ParseArg(int argc, char *argv[], int *new_argc, char ***new_argv)
 
 	if (!EXTPATTERN)
 	{
-		EXTPATTERN = strdup("#?.(3g2|3gp|3ivx|asf|avi|cdxl|cin|dat|divx|flv|mpg|mpeg|mkv|mov|m2v|m4a|m4v|mjpg|mp3|mp4|m2ts|mts|nsv|nuv|ogg|ogv|qt|rm|rmvb|smk|ts|vob|wav|webm|wma|wmv|wtv|xvid)");
+		EXTPATTERN = strdup("#?.(3g2|3gp|3ivx|asf|avi|cdxl|cin|dat|divx|flc|fli|flv|mpg|mpeg|mkv|mov|m2v|m4a|m4v|mjpg|mp3|mp4|m2ts|mts|nsv|nut|nuv|ogg|ogm|ogv|pva|qt|rm|rmvb|roq|smk|ts|vivo|vob|wav|webm|wma|wmv|wtv|xvid)");
 	}
 
 	if (!SUBEXTPAT)
 	{
-		SUBEXTPAT = strdup("#?.(aqt|ass|js|jss|rt|smi|srt|ssa|stl|sub|ttml|txt|utf|utf8|utf-8|vob|vtt)");
+		SUBEXTPAT = strdup("#?.(aqt|ass|js|jss|pjs|rt|smi|srt|ssa|stl|sub|ttml|txt|utf|utf8|utf-8|vob|vtt)");
 	}
 
 	if(!TOOL_MPGUI)
@@ -439,7 +439,7 @@ DBUG("2:fullpath_mplayer: '%s'\n",fullpath_mplayer);
 		AmigaOS_argv = calloc(1, AmigaOS_argc * sizeof(char *) );
 		if (!AmigaOS_argv) goto fail;
 
-		//memset(AmigaOS_argv, 0x00, AmigaOS_argc * sizeof(char *) );
+		// memset(AmigaOS_argv, 0x00, AmigaOS_argc * sizeof(char *) );
 
 		for(i=0; i<AmigaOS_argc; i++)
 		{
@@ -505,7 +505,7 @@ DBUG("2:fullpath_mplayer: '%s'\n",fullpath_mplayer);
 		AmigaOS_argv = calloc(1, AmigaOS_argc * sizeof(char *) );
 		if (!AmigaOS_argv) goto fail;
 
-		//memset(AmigaOS_argv, 0x00, AmigaOS_argc * sizeof(char *) );
+		// memset(AmigaOS_argv, 0x00, AmigaOS_argc * sizeof(char *) );
 
 		AmigaOS_argv[0] = strdup(FilePart(fullpath_mplayer));//"MPlayer");
 // DBUG("'%s' (%s)\n",AmigaOS_argv[0],argv[0]);
@@ -1066,11 +1066,11 @@ DBUG("  [%ld]ASL_Process (0%08lx)\n",pid,ASL_Process->pr_Task.tc_UserData);
 
 	if(Req_Process) {
 		uint32 pid = GetPID(Req_Process, GPID_PROCESS);
-//DBUG("  [%ld]Req_Process (0%08lx)\n",pid,Req_Process->pr_Task.tc_UserData);
+// DBUG("  [%ld]Req_Process (0%08lx)\n",pid,Req_Process->pr_Task.tc_UserData);
 DBUG("  [%ld]Req_Process\n",pid);
 // ToDo: howto "quit" requester.class window ¿:-/
-//SetAttrs( (Object*)Req_Process->pr_Task.tc_UserData, REQ_TimeOutSecs,1, TAG_END );
-//Req_Process->pr_Task.tc_UserData = NULL;
+// SetAttrs( (Object*)Req_Process->pr_Task.tc_UserData, REQ_TimeOutSecs,1, TAG_END );
+// Req_Process->pr_Task.tc_UserData = NULL;
 mp_msg(MSGT_VO, MSGL_INFO, "WARNING: still one requester opened! Close it to exit properly.\n");
 		WaitForChildExit(pid);
 	}
